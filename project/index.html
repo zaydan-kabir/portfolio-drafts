@@ -71,7 +71,7 @@
       width:0; height:0;
       transition:width .35s cubic-bezier(.22,1,.36,1), height .35s cubic-bezier(.22,1,.36,1);
     }
-    body.img-hover #cursor-bubble { min-width:160px; height:40px; padding:0 18px; }
+    body.img-hover #cursor-bubble { min-width:260px; height:60px; padding:0 24px; }
     #cursor-label {
       font-family:'Pixelary', cursive; font-size:26px; color:#fff;
       opacity:0; transition:opacity .2s .1s; pointer-events:none;
@@ -148,7 +148,7 @@
       border-bottom:1px solid transparent;
     }
     .left { display:flex; flex-direction:column; gap:8px; position:relative; }
-    .name { font-size:26px; font-weight:400; letter-spacing:-0.02em; color:var(--ink); }
+    .name { font-size:32px; font-weight:400; letter-spacing:-0.02em; color:var(--ink); }
     .name-cursor {
       display:inline-block; width:2px; height:.85em;
       background:var(--gray2); margin-left:2px; vertical-align:middle;
@@ -157,20 +157,20 @@
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
     .nav-links { display:flex; gap:28px; align-items:baseline; }
     .divider { width:100%; height:1px; background:var(--gray3); flex-shrink:0; }
-    .section-label { font-size:13px; font-weight:400; color:var(--ink); letter-spacing:.01em; flex-shrink:0; }
-    .bio { font-size:11px; font-weight:300; color:var(--gray2); line-height:1.5; font-style:italic; flex-shrink:0; }
-    .hobbies { display:flex; flex-direction:column; gap:2px; flex-shrink:0; }
-    .hobby { display:flex; align-items:flex-start; gap:7px; font-size:11px; color:var(--gray2); font-style:italic; font-weight:300; line-height:1.4; }
+    .section-label { font-size:15px; font-weight:400; color:var(--ink); letter-spacing:.01em; flex-shrink:0; }
+    .bio { font-size:13px; font-weight:300; color:var(--gray2); line-height:1.6; font-style:italic; flex-shrink:0; }
+    .hobbies { display:flex; flex-direction:column; gap:4px; flex-shrink:0; }
+    .hobby { display:flex; align-items:flex-start; gap:7px; font-size:13px; color:var(--gray2); font-style:italic; font-weight:300; line-height:1.5; }
     .hobby-dash { color:var(--gray); flex-shrink:0; }
     .exp-block { flex-shrink:0; }
-    .exp-item { display:flex; justify-content:space-between; align-items:baseline; gap:8px; padding:2px 0; border-bottom:1px solid var(--gray3); }
+    .exp-item { display:flex; justify-content:space-between; align-items:baseline; gap:8px; padding:3px 0; border-bottom:1px solid var(--gray3); }
     .exp-item:last-child { border-bottom:none; }
-    .exp-org { font-size:11px; font-weight:400; color:var(--ink); line-height:1.3; }
-    .exp-role { font-size:10.5px; font-weight:300; font-style:italic; color:var(--gray2); }
-    .exp-year { font-size:10px; color:var(--gray2); font-style:italic; white-space:nowrap; flex-shrink:0; }
+    .exp-org { font-size:13px; font-weight:400; color:var(--ink); line-height:1.3; }
+    .exp-role { font-size:12px; font-weight:300; font-style:italic; color:var(--gray2); }
+    .exp-year { font-size:12px; color:var(--gray2); font-style:italic; white-space:nowrap; flex-shrink:0; }
     .edu { margin-top:2px; flex-shrink:0; display:flex; flex-direction:column; gap:4px; }
-    .edu-school { font-size:11.5px; font-weight:400; color:var(--ink); line-height:1.3; }
-    .edu-degree { font-size:10.5px; color:var(--gray2); font-style:italic; font-weight:300; line-height:1.35; margin-top:1px; }
+    .edu-school { font-size:13px; font-weight:400; color:var(--ink); line-height:1.3; }
+    .edu-degree { font-size:12px; color:var(--gray2); font-style:italic; font-weight:300; line-height:1.35; margin-top:1px; }
     .img-col-center { display:flex; flex-direction:column; }
     .img-col-right { display:flex; flex-direction:column; gap:16px; }
     .img-box {
@@ -326,9 +326,8 @@
 
     <!-- CENTER IMAGE -->
     <div class="img-col-center">
-      <div class="img-box" id="box-0" data-input="file-0">
-        <img id="img-0" alt="" />
-        <div class="img-placeholder"><svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="#555" stroke-width="1.5"/><circle cx="14" cy="16" r="3" stroke="#555" stroke-width="1.5"/><path d="M4 26l8-7 6 5 5-4 9 7" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/></svg><span>click or drag to add image</span></div>
+      <div class="img-box has-image" id="box-0">
+        <img id="img-0" alt="Camera photo" src="uploads/IMG_0104.jpg" style="display:block" />
       </div>
     </div>
 
@@ -338,9 +337,8 @@
         <img id="img-1" alt="Community photo" src="uploads/IMG_2059.JPG" style="display:block" />
         <div class="img-placeholder"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="#555" stroke-width="1.5"/><circle cx="14" cy="16" r="3" stroke="#555" stroke-width="1.5"/><path d="M4 26l8-7 6 5 5-4 9 7" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/></svg><span>click or drag to add image</span></div>
       </div>
-      <div class="img-box" id="box-2" data-input="file-2">
-        <img id="img-2" alt="" />
-        <div class="img-placeholder"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="#555" stroke-width="1.5"/><circle cx="14" cy="16" r="3" stroke="#555" stroke-width="1.5"/><path d="M4 26l8-7 6 5 5-4 9 7" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/></svg><span>click or drag to add image</span></div>
+      <div class="img-box has-image" id="box-2">
+        <img id="img-2" alt="Hiking photo" src="uploads/IMG_3073.jpg" style="display:block" />
       </div>
     </div>
   </div>
@@ -369,9 +367,7 @@
 </div>
 
 <!-- Shared file inputs -->
-<input type="file" id="file-0" accept="image/*" />
 <input type="file" id="file-1" accept="image/*" />
-<input type="file" id="file-2" accept="image/*" />
 
 <script>
 (() => {
@@ -523,16 +519,14 @@
     };
     reader.readAsDataURL(file);
   }
-  [0,1,2].forEach(idx => {
-    const box = document.getElementById('box-'+idx);
-    const inp = document.getElementById('file-'+idx);
-    try { const s=localStorage.getItem('zaydan-img-'+idx); if(s){ document.getElementById('img-'+idx).src=s; box.classList.add('has-image'); } } catch(e){}
-    box.addEventListener('click', () => inp.click());
-    inp.addEventListener('change', e => { handleFile(e.target.files[0], idx); inp.value=''; });
-    box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('drag-over'); });
-    box.addEventListener('dragleave', () => box.classList.remove('drag-over'));
-    box.addEventListener('drop', e => { e.preventDefault(); box.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0], idx); });
-  });
+  const box1 = document.getElementById('box-1');
+  const inp1 = document.getElementById('file-1');
+  try { const s=localStorage.getItem('zaydan-img-1'); if(s){ document.getElementById('img-1').src=s; box1.classList.add('has-image'); } } catch(e){}
+  box1.addEventListener('click', () => inp1.click());
+  inp1.addEventListener('change', e => { handleFile(e.target.files[0], 1); inp1.value=''; });
+  box1.addEventListener('dragover', e => { e.preventDefault(); box1.classList.add('drag-over'); });
+  box1.addEventListener('dragleave', () => box1.classList.remove('drag-over'));
+  box1.addEventListener('drop', e => { e.preventDefault(); box1.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0], 1); });
 
   // ── ZAYDAN: scroll → horizontal translate ─────────────────────────
   const zTrack    = document.getElementById('z-track');
