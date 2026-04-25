@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zaydan — Work</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0a0a0a; --ink: #f0f0f0; --gray: #2a2a2a; --gray2: #8a8a8a; --gray3: #2a2a2a; }
+
+    html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'Lora', serif; color: var(--ink); overflow: hidden; cursor: none; }
+    a, a:hover, a:active, button, button:hover { cursor: none !important; }
+
+    #cursor {
+      position: fixed; top: 0; left: 0;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #D03030;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+    }
+    #trail-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    #page-out { position: fixed; inset: 0; background: #f0f0f0; z-index: 8888; transform: scaleY(0); transform-origin: bottom; transition: transform 0.45s cubic-bezier(.76,0,.24,1); }
+    #page-out.covering  { transform: scaleY(1); transform-origin: bottom; }
+    #page-out.revealing { transform: scaleY(0); transform-origin: top; transition: transform 0.45s cubic-bezier(.76,0,.24,1) 0.05s; }
+
+    .page { display: grid; grid-template-rows: auto 1fr; grid-template-columns: 1fr; height: 100vh; padding: 24px 48px; position: relative; z-index: 2; overflow: hidden; }
+
+    .header { grid-column: 1/-1; display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid var(--gray3); padding-bottom: 10px; margin-left: -48px; margin-right: -48px; padding-left: 48px; padding-right: 48px; }
+    .nav-links { display: flex; gap: 28px; align-items: baseline; }
+    .nav-link { font-size: 13px; font-weight: 400; font-style: italic; color: var(--gray2); text-decoration: none; letter-spacing: 0.02em; transition: color 0.2s; position: relative; }
+    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 1px; background: var(--ink); transform: scaleX(0); transition: transform 0.2s ease; }
+    .nav-link:hover { color: var(--ink); }
+    .nav-link:hover::after { transform: scaleX(1); }
+    .nav-link.active { color: var(--ink); }
+    .nav-link.active::after { transform: scaleX(1); }
+
+    .placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 16px;
+    }
+    .placeholder-title { font-size: 48px; font-weight: 400; letter-spacing: -0.03em; color: var(--ink); }
+    .placeholder-sub { font-size: 13px; font-style: italic; color: var(--gray2); font-weight: 400; }
+  </style>
+</head>
+<body>
+  <div id="cursor"></div>
+  <div id="page-out"></div>
+  <canvas id="trail-canvas"></canvas>
+
+  <div class="page">
+    <div class="header">
+      <a class="nav-link" href="home.html" data-page="home.html" style="font-style:normal; color:var(--gray2); font-size:14px; letter-spacing:-0.01em;">Zaydan Kabir Amanullah</a>
+      <nav class="nav-links">
+        <a class="nav-link active" href="work.html">Work</a>
+        <a class="nav-link" href="archive.html" data-page="archive.html">Archive</a>
+        <a class="nav-link" href="index.html" data-page="index.html">About</a>
+      </nav>
+    </div>
+    <div class="placeholder">
+      <div class="placeholder-title">Work</div>
+      <div class="placeholder-sub">coming soon —</div>
+    </div>
+  </div>
+
+  <script>
+    const overlay = document.getElementById('page-out');
+    overlay.classList.add('revealing');
+    setTimeout(() => overlay.classList.remove('revealing'), 600);
+
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+    });
+    document.querySelectorAll('a').forEach(el => {
+      el.addEventListener('mouseenter', () => {  });
+      el.addEventListener('mouseleave', () => {  });
+    });
+
+    const canvas = document.getElementById('trail-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = innerWidth; canvas.height = innerHeight;
+    window.addEventListener('resize', () => { canvas.width = innerWidth; canvas.height = innerHeight; });
+    const pts = [];
+    document.addEventListener('mousemove', e => { pts.push({ x: e.clientX, y: e.clientY, t: Date.now() }); if (pts.length > 40) pts.shift(); });
+    (function drawTrail() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const now = Date.now();
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      for (let i = 1; i < pts.length; i++) {
+        const age = (now - pts[i].t) / 300;
+        const a = Math.max(0, 1 - age);
+        ctx.beginPath(); ctx.moveTo(pts[i-1].x, pts[i-1].y); ctx.lineTo(pts[i].x, pts[i].y);
+        ctx.strokeStyle = `rgba(208,48,48,${a * 0.55})`; ctx.lineWidth = (i / pts.length) * 2.5; ctx.stroke();
+      }
+      while (pts.length && now - pts[0].t > 300) pts.shift();
+      requestAnimationFrame(drawTrail);
+    })();
+
+    document.querySelectorAll('a[data-page]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        overlay.classList.add('covering');
+        setTimeout(() => { window.location.href = link.getAttribute('href'); }, 460);
+      });
+    });
+  </script>
+</body>
+</html>

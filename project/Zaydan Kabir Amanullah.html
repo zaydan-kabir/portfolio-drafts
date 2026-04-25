@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zaydan Kabir Amanullah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Cormorant+SC:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="animations.jsx"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+    #root { width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+// ── Particle pool (computed once, deterministically) ────────────────────────
+const ASCII_POOL = '!@#$%^&*<>?|\\][}{ZZZZZaydanKbirAmullhABCDEFGHJLMNOPQRSTUVWXY0123456789+-=~';
+const PARTICLE_COUNT = 500;
+
+function seededRand(seed) {
+  let s = (seed ^ 0xdeadbeef) >>> 0;
+  s = Math.imul(s ^ (s >>> 16), 0x45d9f3b) >>> 0;
+  s = Math.imul(s ^ (s >>> 16), 0x45d9f3b) >>> 0;
+  return (s >>> 0) / 0xffffffff;
+}
+
+const PARTICLES = Array.from({ length: PARTICLE_COUNT }, (_, i) => {
+  const r = (n) => seededRand(i * 13 + n);
+  const angle = r(0) * Math.PI * 2;
+  const speed = r(1) * 3.5 + 0.5;
+  return {
+    // Starting position: biased toward center with wide spread
+    x: 960 + (r(2) - 0.5) * 1400,
+    y: 540 + (r(3) - 0.5) * 800,
+    // Radial velocity from center + some angular randomness
+    vx: Math.cos(angle) * speed + (r(4) - 0.5) * 1.5,
+    vy: Math.sin(angle) * speed + (r(5) - 0.5) * 1.5,
+    char: ASCII_POOL[Math.floor(r(6) * ASCII_POOL.length)],
+    size: r(7) * 22 + 9,
+    baseOpacity: r(8) * 0.65 + 0.35,
+    phase: r(9) * Math.PI * 2,
+    wobble: r(10) * 0.8 + 0.2,
+    isZ: r(6) < 0.08, // ~8% are Z characters
+  };
+});
+
+// ── Main scene ──────────────────────────────────────────────────────────────
+
+function ZaydanScene() {
+  const time = useTime();
+  const canvasRef = React.useRef(null);
+
+  // ── Canvas: ASCII swarm ─────────────────────────────────────────────────
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 1920, 1080);
+
+    // Swarm envelope
+    const SWARM_IN_START  = 3.2;
+    const SWARM_IN_END    = 5.0;
+    const SWARM_OUT_START = 6.2;
+    const SWARM_OUT_END   = 8.0;
+
+    let env = 0;
+    if (time >= SWARM_IN_START && time < SWARM_IN_END) {
+      env = (time - SWARM_IN_START) / (SWARM_IN_END - SWARM_IN_START);
+      env = env * env * (3 - 2 * env); // smoothstep
+    } else if (time >= SWARM_IN_END && time < SWARM_OUT_START) {
+      env = 1;
+    } else if (time >= SWARM_OUT_START && time < SWARM_OUT_END) {
+      const t = (time - SWARM_OUT_START) / (SWARM_OUT_END - SWARM_OUT_START);
+      env = 1 - t * t * (3 - 2 * t);
+    }
+    if (env <= 0.001) return;
+
+    const elapsed = Math.max(0, time - SWARM_IN_START);
+
+    ctx.save();
+    PARTICLES.forEach((p) => {
+      const speed = elapsed * 55;
+      const px = ((p.x + p.vx * speed + Math.sin(elapsed * 1.8 + p.phase) * 18 * p.wobble) % 1920 + 1920) % 1920;
+      const py = ((p.y + p.vy * speed + Math.cos(elapsed * 1.4 + p.phase) * 14 * p.wobble) % 1080 + 1080) % 1080;
+
+      const alpha = p.baseOpacity * env;
+      ctx.font = `${p.size}px 'Courier New', monospace`;
+
+      if (p.isZ) {
+        ctx.fillStyle = `rgba(245, 196, 58, ${alpha})`;
+      } else {
+        const bright = Math.floor(220 + Math.sin(elapsed * 3 + p.phase) * 35);
+        ctx.fillStyle = `rgba(${bright}, ${bright}, ${bright}, ${alpha * 0.75})`;
+      }
+      ctx.fillText(p.char, px, py);
+    });
+    ctx.restore();
+  }, [time]);
+
+  // ── Z entrance ─────────────────────────────────────────────────────────
+  const zScale    = animate({ from: 18, to: 1,   start: 0.25, end: 1.25, ease: Easing.easeOutBack })(time);
+  const zOpacity  = animate({ from: 0,  to: 1,   start: 0.25, end: 0.75, ease: Easing.easeOutCubic })(time);
+  const zRotate   = animate({ from: -20, to: 0,  start: 0.25, end: 1.25, ease: Easing.easeOutBack })(time);
+  const zSkewX    = animate({ from: 12, to: 0,   start: 0.25, end: 1.25, ease: Easing.easeOutCubic })(time);
+
+  // Z + text fade out as swarm builds
+  const nameGroupOpacity = animate({ from: 1, to: 0, start: 3.2, end: 4.2, ease: Easing.easeInCubic })(time);
+
+  // ── Typewriter ──────────────────────────────────────────────────────────
+  const LETTERS    = ['a','y','d','a','n'];
+  const TYPE_START = 1.45;
+  const LETTER_DUR = 0.16;
+
+  // ── Screen flash on Z impact ─────────────────────────────────────────────
+  const flashAlpha = animate({ from: 0.55, to: 0, start: 1.1, end: 1.55, ease: Easing.easeOutCubic })(time);
+  const showFlash  = time >= 1.1 && time < 1.55;
+
+  // ── Shockwave ring ───────────────────────────────────────────────────────
+  const shockP   = animate({ from: 0, to: 1, start: 1.1, end: 1.7, ease: Easing.easeOutCubic })(time);
+  const shockAlpha = time >= 1.1 && time < 1.7 ? (1 - shockP) * 0.6 : 0;
+  const shockR   = 80 + shockP * 500;
+
+  // ── Final frame ──────────────────────────────────────────────────────────
+  const finalOpacity  = animate({ from: 0, to: 1,  start: 8.0, end: 9.8,  ease: Easing.easeOutCubic })(time);
+  const finalY        = animate({ from: 30, to: 0, start: 8.0, end: 10.0, ease: Easing.easeOutCubic })(time);
+
+  // Staggered reveal for final name parts
+  const zGoldOpacity    = animate({ from: 0, to: 1, start: 8.3, end: 9.6,  ease: Easing.easeOutCubic })(time);
+  const aydanOpacity    = animate({ from: 0, to: 1, start: 8.6, end: 9.8,  ease: Easing.easeOutCubic })(time);
+  const ruleOpacity     = animate({ from: 0, to: 1, start: 9.0, end: 10.0, ease: Easing.easeOutCubic })(time);
+  const subtitleOpacity = animate({ from: 0, to: 1, start: 9.3, end: 10.5, ease: Easing.easeOutCubic })(time);
+
+  // ── Name group visibility ────────────────────────────────────────────────
+  const nameVisible = time >= 0.2 && time < 4.5;
+
+  return (
+    <div style={{ width: '100%', height: '100%', position: 'relative', background: '#000', overflow: 'hidden' }}>
+
+      {/* Flash */}
+      {showFlash && (
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 20,
+          background: '#fff',
+          opacity: flashAlpha,
+          pointerEvents: 'none',
+        }} />
+      )}
+
+      {/* ASCII canvas */}
+      <canvas
+        ref={canvasRef}
+        width={1920}
+        height={1080}
+        style={{
+          position: 'absolute', inset: 0,
+          width: '100%', height: '100%',
+          pointerEvents: 'none',
+          zIndex: 3,
+        }}
+      />
+
+      {/* Shockwave ring */}
+      {time >= 1.1 && time < 1.7 && (
+        <div style={{
+          position: 'absolute',
+          left: 960, top: 540,
+          width: shockR * 2, height: shockR * 2,
+          marginLeft: -shockR, marginTop: -shockR,
+          borderRadius: '50%',
+          border: `2px solid rgba(245, 196, 58, ${shockAlpha})`,
+          boxShadow: `0 0 ${shockR * 0.1}px rgba(245,196,58,${shockAlpha * 0.4})`,
+          pointerEvents: 'none',
+          zIndex: 4,
+        }} />
+      )}
+
+      {/* Z + "aydan" name group */}
+      {nameVisible && (
+        <div style={{
+          position: 'absolute', inset: 0,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          opacity: time < 3.2 ? zOpacity : nameGroupOpacity,
+          zIndex: 5,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 0 }}>
+            {/* The Z */}
+            <span style={{
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontSize: 180,
+              fontWeight: 700,
+              color: '#f5c43a',
+              display: 'inline-block',
+              lineHeight: 1,
+              letterSpacing: '-0.02em',
+              transform: `scale(${zScale}) rotate(${zRotate}deg) skewX(${zSkewX}deg)`,
+              transformOrigin: 'center bottom',
+              textShadow: '0 0 60px rgba(245,196,58,0.6)',
+              willChange: 'transform',
+            }}>Z</span>
+
+            {/* "aydan" typewriter */}
+            <span style={{
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontSize: 180,
+              fontWeight: 700,
+              color: '#fff',
+              display: 'inline-block',
+              lineHeight: 1,
+              letterSpacing: '-0.02em',
+            }}>
+              {LETTERS.map((l, i) => {
+                const charTime = TYPE_START + i * LETTER_DUR;
+                const progress = clamp((time - charTime) / 0.14, 0, 1);
+                const charOpacity = progress;
+                const charY = (1 - Easing.easeOutCubic(progress)) * 18;
+                return (
+                  <span key={i} style={{
+                    opacity: charOpacity,
+                    display: 'inline-block',
+                    transform: `translateY(${charY}px)`,
+                    willChange: 'transform, opacity',
+                  }}>
+                    {l}
+                  </span>
+                );
+              })}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* ── Final frame ── */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        opacity: finalOpacity,
+        transform: `translateY(${finalY}px)`,
+        zIndex: 6,
+        pointerEvents: 'none',
+      }}>
+        {/* ZAYDAN */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'baseline',
+          fontFamily: "'Cormorant SC', 'Cormorant Garamond', Georgia, serif",
+          fontSize: 156,
+          fontWeight: 600,
+          letterSpacing: '0.18em',
+          lineHeight: 1,
+        }}>
+          <span style={{
+            color: '#f5c43a',
+            opacity: zGoldOpacity,
+            textShadow: '0 0 80px rgba(245,196,58,0.35)',
+          }}>Z</span>
+          <span style={{
+            color: '#fff',
+            opacity: aydanOpacity,
+          }}>AYDAN</span>
+        </div>
+
+        {/* Rule */}
+        <div style={{
+          width: 520,
+          height: 1,
+          marginTop: 28,
+          marginBottom: 28,
+          opacity: ruleOpacity,
+          background: 'linear-gradient(90deg, transparent 0%, rgba(245,196,58,0.55) 30%, rgba(245,196,58,0.55) 70%, transparent 100%)',
+        }} />
+
+        {/* KABIR AMANULLAH */}
+        <div style={{
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
+          fontSize: 44,
+          fontWeight: 300,
+          letterSpacing: '0.45em',
+          color: 'rgba(255,255,255,0.72)',
+          textTransform: 'uppercase',
+          lineHeight: 1,
+          opacity: subtitleOpacity,
+        }}>
+          Kabir Amanullah
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
+// ── App ─────────────────────────────────────────────────────────────────────
+function App() {
+  return (
+    <Stage
+      width={1920}
+      height={1080}
+      duration={12}
+      background="#000000"
+      loop={false}
+      autoplay={true}
+      persistKey="zaydan-intro"
+    >
+      <ZaydanScene />
+    </Stage>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

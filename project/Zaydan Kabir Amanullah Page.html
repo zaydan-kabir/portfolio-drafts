@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zaydan Kabir Amanullah</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@100;200&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'VT323';
+      src: url('uploads/VT323-Regular.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'AtlanticCruise';
+      src: url('uploads/Atlantic_Cruise-Demo.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'Pixelary';
+      src: url('uploads/Pixelary.otf') format('opentype');
+    }
+
+    :root {
+      --bg: #0a0a0a;
+      --ink: #f0f0f0;
+      --gray2: #8a8a8a;
+      --gray3: #2a2a2a;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      width: 100%; height: 100%;
+      background: var(--bg);
+      scrollbar-width: none;
+    }
+    html::-webkit-scrollbar { display: none; }
+    body {
+      width: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      /* overflow stays default so vertical scroll works */
+      cursor: none;
+    }
+    a, button { cursor: none !important; }
+
+    /* ── Grain ─────────────────────────────────────────────── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 300;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 160px 160px;
+      opacity: 0.055;
+      mix-blend-mode: overlay;
+    }
+
+    /* ── Cursor + trail ────────────────────────────────────── */
+    #cursor {
+      position: fixed; top: 0; left: 0;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #D03030;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+    }
+    #trail-canvas {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* ── Page-out overlay ──────────────────────────────────── */
+    #page-out {
+      position: fixed; inset: 0;
+      background: var(--ink);
+      z-index: 8888;
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.45s cubic-bezier(.76,0,.24,1);
+    }
+    #page-out.covering  { transform: scaleY(1); transform-origin: bottom; }
+    #page-out.revealing { transform: scaleY(0); transform-origin: top;
+      transition: transform 0.45s cubic-bezier(.76,0,.24,1) 0.05s; }
+
+    /* ── Header (fixed, always on top) ────────────────────── */
+    #header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 24px 48px 10px;
+      border-bottom: 1px solid var(--gray3);
+      background: var(--bg);
+    }
+    .h-name {
+      font-family: 'Lora', serif;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--gray2);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .h-name:hover { color: var(--ink); }
+    .h-nav { display: flex; gap: 28px; align-items: baseline; }
+    .h-link {
+      font-family: 'Lora', serif;
+      font-size: 13px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--gray2);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .h-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 1px;
+      background: var(--ink);
+      transform: scaleX(0);
+      transition: transform 0.2s ease;
+    }
+    .h-link:hover { color: var(--ink); }
+    .h-link:hover::after { transform: scaleX(1); }
+
+    /* ── Stage ─────────────────────────────────────────────── */
+    #stage {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    /* ── Track: 2 panels wide ─────────────────────────────── */
+    #track {
+      position: absolute;
+      /* sit below header */
+      top: 0; left: 0;
+      height: 100%;
+      width: 200vw;
+      will-change: transform;
+    }
+
+    .panel {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 100vw;
+      background: var(--bg);
+    }
+    #panel-1 { left: 0; }
+    #panel-2 { left: 100vw; }
+
+    /* Subtle divider between panels */
+    #divider {
+      position: absolute;
+      left: 100vw;
+      top: 12%; bottom: 12%;
+      width: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* ── ZAYDAN masthead — fixed, below header ─────────────── */
+    #masthead {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 50;
+      pointer-events: none;
+      user-select: none;
+      text-align: center;
+    }
+    #masthead-text {
+      font-family: 'AtlanticCruise', 'Bebas Neue', serif;
+      font-size: clamp(100px, 20vw, 260px);
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      line-height: 1;
+      display: block;
+      text-shadow: 0 0 80px rgba(255,255,255,0.05);
+    }
+    #masthead-guide {
+      font-family: 'VT323', monospace;
+      font-size: clamp(20px, 1.8vw, 28px);
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.3);
+      display: block;
+      margin-bottom: 16px;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ── ASCII canvases ─────────────────────────────────────── */
+    #horse-canvas {
+      position: fixed;
+      top: 58px; /* below header */
+      right: 2vw;
+      z-index: 40;
+      display: block;
+      transform-origin: top right;
+    }
+    #portrait-canvas {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      z-index: 45;
+      display: block;
+      transform-origin: bottom left;
+    }
+
+    /* ── Progress bar ───────────────────────────────────────── */
+    #progress {
+      position: fixed;
+      bottom: 0; left: 0;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      width: 0%;
+      z-index: 60;
+      pointer-events: none;
+      transition: width 0.08s linear;
+    }
+
+    /* ── Flash ──────────────────────────────────────────────── */
+    #flash {
+      position: fixed; inset: 0;
+      background: #fff;
+      opacity: 0;
+      z-index: 200;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Custom cursor ──────────────────────────────────── -->
+<div id="cursor"></div>
+<canvas id="trail-canvas"></canvas>
+<div id="page-out"></div>
+
+<!-- ── Header ─────────────────────────────────────────── -->
+<header id="header">
+  <a class="h-name" href="index.html" data-page="index.html">Zaydan Kabir Amanullah</a>
+  <nav class="h-nav">
+    <a class="h-link" href="work.html" data-page="work.html">Work</a>
+    <a class="h-link" href="archive.html" data-page="archive.html">Archive</a>
+    <a class="h-link" href="index.html" data-page="index.html">About</a>
+  </nav>
+</header>
+
+<!-- ── Stage ──────────────────────────────────────────── -->
+<div id="stage">
+  <div id="track">
+    <div class="panel" id="panel-1"></div>
+    <div class="panel" id="panel-2"></div>
+    <div id="divider"></div>
+  </div>
+</div>
+
+<!-- ── Fixed overlays ─────────────────────────────────── -->
+<div id="masthead">
+  <span id="masthead-guide">&lt;scroll down&gt;<br>to move right</span>
+  <span id="masthead-text">ZAYDAN</span>
+</div>
+
+<canvas id="horse-canvas"></canvas>
+<canvas id="portrait-canvas"></canvas>
+
+<img id="img-horse"    src="assets/horse.png"        style="display:none">
+<img id="img-portrait" src="assets/bottom-left.png"  style="display:none">
+
+<div id="progress"></div>
+
+<div id="flash"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  // ── Page-out transition ───────────────────────────────────────────
+  const overlay = document.getElementById('page-out');
+  overlay.classList.add('revealing');
+  setTimeout(() => overlay.classList.remove('revealing'), 500);
+
+  document.querySelectorAll('a[data-page]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const href = link.getAttribute('href');
+      overlay.classList.add('covering');
+      setTimeout(() => { window.location.href = href; }, 460);
+    });
+  });
+
+  // ── Scroll → horizontal translate ────────────────────────────────
+  // Body height = VH + VW so scrolling VW pixels moves the track VW left
+  const setBodyHeight = () => {
+    document.body.style.height = (window.innerHeight + window.innerWidth) + 'px';
+  };
+  setBodyHeight();
+  window.addEventListener('resize', setBodyHeight);
+
+  const track    = document.getElementById('track');
+  const progress = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const y   = window.scrollY;
+    const max = window.innerWidth;
+    const tx  = Math.min(y, max);
+    track.style.transform = `translateX(-${tx}px)`;
+    progress.style.width  = ((y / max) * 100).toFixed(2) + '%';
+  }, { passive: true });
+
+  // ── ASCII ramp ────────────────────────────────────────────────────
+  const RAMP = ' .\'`,:;-+!iIlr=*o%#&@';
+
+  // ── Luminance grid (min-lum for dark-chars-on-light-bg sources) ───
+  function toGrid(img, cols, rows) {
+    const sw = cols * 2, sh = rows * 2;
+    const tmp = document.createElement('canvas');
+    tmp.width = sw; tmp.height = sh;
+    const c = tmp.getContext('2d');
+    c.drawImage(img, 0, 0, sw, sh);
+    const px = c.getImageData(0, 0, sw, sh).data;
+    const lum2 = new Float32Array(sw * sh);
+    for (let i = 0; i < sw * sh; i++)
+      lum2[i] = (px[i*4]*0.299 + px[i*4+1]*0.587 + px[i*4+2]*0.114) / 255;
+    const g = new Float32Array(cols * rows);
+    for (let r = 0; r < rows; r++) {
+      for (let c2 = 0; c2 < cols; c2++) {
+        const r2 = r*2, c3 = c2*2;
+        g[r*cols+c2] = Math.min(
+          lum2[r2*sw+c3], lum2[r2*sw+c3+1],
+          lum2[(r2+1)*sw+c3], lum2[(r2+1)*sw+c3+1]
+        );
+      }
+    }
+    return { grid: g, cols, rows };
+  }
+
+  // ── Canvas setup ──────────────────────────────────────────────────
+  const horseEl = document.getElementById('horse-canvas');
+  const hCtx    = horseEl.getContext('2d');
+  const H_COLS = 70, H_ROWS = 62, H_CW = 6, H_CH = 6;
+  horseEl.width  = H_COLS * H_CW;
+  horseEl.height = H_ROWS * H_CH;
+
+  const portEl = document.getElementById('portrait-canvas');
+  const pCtx   = portEl.getContext('2d');
+  const P_COLS = 64, P_ROWS = 96, P_CW = 7, P_CH = 7;
+  portEl.width  = P_COLS * P_CW;
+  portEl.height = P_ROWS * P_CH;
+
+  // ── Grids ─────────────────────────────────────────────────────────
+  let horseGrid    = null;
+  let portraitGrid = null;
+
+  function initGrids() {
+    const hImg = document.getElementById('img-horse');
+    const pImg = document.getElementById('img-portrait');
+    if (hImg && hImg.naturalWidth > 0 && !horseGrid)
+      horseGrid = toGrid(hImg, H_COLS, H_ROWS);
+    if (pImg && pImg.naturalWidth > 0 && !portraitGrid)
+      portraitGrid = toGrid(pImg, P_COLS, P_ROWS);
+  }
+  initGrids();
+  window.addEventListener('load', initGrids);
+
+  // ── Render helpers ────────────────────────────────────────────────
+  function renderGrid(ctx, gridData, cw, ch, t) {
+    ctx.clearRect(0, 0, gridData.cols * cw, gridData.rows * ch);
+    if (!gridData) return;
+    const { grid, cols, rows } = gridData;
+    ctx.font = `bold ${ch}px 'Courier New', monospace`;
+
+    let minLum = 1, maxLum = 0;
+    for (let i = 0; i < grid.length; i++) {
+      if (grid[i] < minLum) minLum = grid[i];
+      if (grid[i] > maxLum) maxLum = grid[i];
+    }
+    // Adaptive threshold: skip top 30% of luminance (background)
+    const maxPass = minLum + (maxLum - minLum) * 0.70;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const lum = grid[r * cols + c];
+        if (lum > maxPass) continue;
+        const norm = 1 - (lum - minLum) / Math.max(0.01, maxPass - minLum);
+        if (norm < 0.1) continue;
+
+        const flicker = Math.sin(t * 1.1 + c * 0.38 + r * 0.22) > 0.82 ? 1 : 0;
+        const base    = Math.floor(norm * (RAMP.length - 1));
+        const ci      = Math.max(0, Math.min(RAMP.length - 1, base + flicker));
+        const char    = RAMP[ci];
+        if (!char || char === ' ') continue;
+
+        const breath = Math.sin(t * 0.55 + c * 0.18 + r * 0.09) * 0.5 + 0.5;
+        const alpha  = Math.min(0.95, norm * (0.6 + breath * 0.3));
+        ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
+        ctx.fillText(char, c * cw, (r + 1) * ch);
+      }
+    }
+  }
+
+  // ── Idle horse sway ───────────────────────────────────────────────
+  let animTime = 0, lastTs = null;
+
+  function applyHorseSway(t) {
+    const tx = Math.sin(t * 1.73) * 2.5 + Math.sin(t * 0.97) * 1.1;
+    const ty = Math.sin(t * 2.31) * 1.2 + Math.sin(t * 1.41) * 0.6;
+    const rz = Math.sin(t * 0.83) * 0.4;
+    horseEl.style.transform = `translate(${tx.toFixed(2)}px,${ty.toFixed(2)}px) rotate(${rz.toFixed(3)}deg)`;
+  }
+
+  // ── Animation loop ─────────────────────────────────────────────────
+  function tick(ts) {
+    if (!lastTs) lastTs = ts;
+    animTime += Math.min(0.05, (ts - lastTs) / 1000);
+    lastTs = ts;
+
+    if (horseGrid)    renderGrid(hCtx, horseGrid, H_CW, H_CH, animTime);
+    if (portraitGrid) renderGrid(pCtx, portraitGrid, P_CW, P_CH, animTime);
+    applyHorseSway(animTime);
+
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  // ── Cursor + red trail ────────────────────────────────────────────
+  const cursorEl    = document.getElementById('cursor');
+  const trailCanvas = document.getElementById('trail-canvas');
+  const tCtx        = trailCanvas.getContext('2d');
+
+  const resizeTrail = () => {
+    trailCanvas.width = innerWidth;
+    trailCanvas.height = innerHeight;
+  };
+  resizeTrail();
+  window.addEventListener('resize', resizeTrail);
+
+  const pts = [];
+  document.addEventListener('mousemove', e => {
+    cursorEl.style.left = e.clientX + 'px';
+    cursorEl.style.top  = e.clientY + 'px';
+    pts.push({ x: e.clientX, y: e.clientY, t: Date.now() });
+    if (pts.length > 40) pts.shift();
+  });
+
+  (function drawTrail() {
+    tCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+    const now = Date.now();
+    tCtx.lineCap = 'round'; tCtx.lineJoin = 'round';
+    for (let i = 1; i < pts.length; i++) {
+      const age = (now - pts[i].t) / 300;
+      const a = Math.max(0, 1 - age);
+      tCtx.beginPath();
+      tCtx.moveTo(pts[i-1].x, pts[i-1].y);
+      tCtx.lineTo(pts[i].x, pts[i].y);
+      tCtx.strokeStyle = `rgba(208,48,48,${(a * 0.55).toFixed(3)})`;
+      tCtx.lineWidth = (i / pts.length) * 2.5;
+      tCtx.stroke();
+    }
+    while (pts.length && now - pts[0].t > 300) pts.shift();
+    requestAnimationFrame(drawTrail);
+  })();
+
+  // ── Keyboard nav ──────────────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    const d = { ArrowDown: 200, ArrowRight: 200, ArrowUp: -200, ArrowLeft: -200 }[e.key];
+    if (d) window.scrollBy({ top: d, behavior: 'smooth' });
+  });
+
+})();
+</script>
+</body>
+</html>
