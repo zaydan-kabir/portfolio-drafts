@@ -326,9 +326,8 @@
 
     <!-- CENTER IMAGE -->
     <div class="img-col-center">
-      <div class="img-box" id="box-0" data-input="file-0">
-        <img id="img-0" alt="" />
-        <div class="img-placeholder"><svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="#555" stroke-width="1.5"/><circle cx="14" cy="16" r="3" stroke="#555" stroke-width="1.5"/><path d="M4 26l8-7 6 5 5-4 9 7" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/></svg><span>click or drag to add image</span></div>
+      <div class="img-box has-image" id="box-0">
+        <img id="img-0" alt="Camera photo" src="uploads/IMG_0104.HEIC" style="display:block" />
       </div>
     </div>
 
@@ -338,9 +337,8 @@
         <img id="img-1" alt="Community photo" src="uploads/IMG_2059.JPG" style="display:block" />
         <div class="img-placeholder"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="#555" stroke-width="1.5"/><circle cx="14" cy="16" r="3" stroke="#555" stroke-width="1.5"/><path d="M4 26l8-7 6 5 5-4 9 7" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/></svg><span>click or drag to add image</span></div>
       </div>
-      <div class="img-box" id="box-2" data-input="file-2">
-        <img id="img-2" alt="" />
-        <div class="img-placeholder"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="#555" stroke-width="1.5"/><circle cx="14" cy="16" r="3" stroke="#555" stroke-width="1.5"/><path d="M4 26l8-7 6 5 5-4 9 7" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/></svg><span>click or drag to add image</span></div>
+      <div class="img-box has-image" id="box-2">
+        <img id="img-2" alt="Hiking photo" src="uploads/IMG_3073.jpg" style="display:block" />
       </div>
     </div>
   </div>
@@ -369,9 +367,7 @@
 </div>
 
 <!-- Shared file inputs -->
-<input type="file" id="file-0" accept="image/*" />
 <input type="file" id="file-1" accept="image/*" />
-<input type="file" id="file-2" accept="image/*" />
 
 <script>
 (() => {
@@ -523,16 +519,14 @@
     };
     reader.readAsDataURL(file);
   }
-  [0,1,2].forEach(idx => {
-    const box = document.getElementById('box-'+idx);
-    const inp = document.getElementById('file-'+idx);
-    try { const s=localStorage.getItem('zaydan-img-'+idx); if(s){ document.getElementById('img-'+idx).src=s; box.classList.add('has-image'); } } catch(e){}
-    box.addEventListener('click', () => inp.click());
-    inp.addEventListener('change', e => { handleFile(e.target.files[0], idx); inp.value=''; });
-    box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('drag-over'); });
-    box.addEventListener('dragleave', () => box.classList.remove('drag-over'));
-    box.addEventListener('drop', e => { e.preventDefault(); box.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0], idx); });
-  });
+  const box1 = document.getElementById('box-1');
+  const inp1 = document.getElementById('file-1');
+  try { const s=localStorage.getItem('zaydan-img-1'); if(s){ document.getElementById('img-1').src=s; box1.classList.add('has-image'); } } catch(e){}
+  box1.addEventListener('click', () => inp1.click());
+  inp1.addEventListener('change', e => { handleFile(e.target.files[0], 1); inp1.value=''; });
+  box1.addEventListener('dragover', e => { e.preventDefault(); box1.classList.add('drag-over'); });
+  box1.addEventListener('dragleave', () => box1.classList.remove('drag-over'));
+  box1.addEventListener('drop', e => { e.preventDefault(); box1.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0], 1); });
 
   // ── ZAYDAN: scroll → horizontal translate ─────────────────────────
   const zTrack    = document.getElementById('z-track');
