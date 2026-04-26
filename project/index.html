@@ -181,6 +181,9 @@
     .img-box:hover { box-shadow:0 8px 32px rgba(0,0,0,.08); }
     .img-box img { width:100%; height:100%; object-fit:cover; display:none; }
     .img-box.has-image img { display:block; }
+    /* Center image: show full photo, dark bg fills gaps seamlessly */
+    #box-0 { background:#0a0a0a; }
+    #box-0 img { object-fit:contain; }
     .img-placeholder {
       position:absolute; inset:0;
       display:flex; flex-direction:column;
@@ -264,6 +267,102 @@
       height:1px; background:rgba(255,255,255,.1);
       width:0%; z-index:60; pointer-events:none;
       transition:width .08s linear;
+    }
+
+    /* ════════════════════════════════════════════════════════
+       RESPONSIVE
+    ════════════════════════════════════════════════════════ */
+
+    /* ── Tablet: 600–1023px ── */
+    @media (max-width:1023px) {
+      #header { padding:18px 28px 10px; }
+      .page {
+        grid-template-columns: minmax(180px, 220px) minmax(0,1fr) minmax(0,1fr);
+        padding:clamp(12px,2vw,28px);
+        gap:0 clamp(10px,2vw,20px);
+      }
+      .name { font-size:22px; }
+      .section-label { font-size:12px; }
+      .bio, .hobby { font-size:11px; }
+    }
+
+    /* ── Mobile: ≤767px — single column, scrollable ── */
+    @media (max-width:767px) {
+      /* allow the about view to scroll on mobile */
+      body { overflow-y:auto !important; }
+      body.zaydan-active { overflow-y:scroll !important; }
+
+      #header {
+        padding:14px 20px 10px;
+        flex-wrap:wrap;
+        gap:6px;
+      }
+      .h-nav { gap:16px; }
+
+      #view-about {
+        position:relative !important;
+        inset:auto;
+        overflow:visible;
+        min-height:100dvh;
+      }
+
+      .page {
+        display:flex;
+        flex-direction:column;
+        height:auto;
+        min-height:100dvh;
+        padding:16px;
+        gap:0;
+        overflow:visible;
+      }
+
+      .header-spacer { height:56px; margin-bottom:12px; }
+      .left { overflow-y:visible; min-height:0; gap:10px; }
+
+      .name { font-size:24px; }
+      .section-label { font-size:13px; }
+      .bio { font-size:12px; }
+      .hobby { font-size:12px; }
+      .exp-org { font-size:12px; }
+      .exp-role { font-size:11px; }
+      .exp-year { font-size:11px; }
+      .edu-school { font-size:12px; }
+      .edu-degree { font-size:11px; }
+
+      /* Center image: tall portrait box below left column */
+      .img-col-center {
+        height:75vw;
+        max-height:420px;
+        min-height:240px;
+        margin-top:20px;
+      }
+
+      /* Right images: side-by-side row below center image */
+      .img-col-right {
+        flex-direction:row;
+        height:44vw;
+        max-height:260px;
+        min-height:160px;
+        margin-top:12px;
+        margin-bottom:24px;
+        gap:10px;
+      }
+
+      #arrow-svg { display:none; }
+
+      /* Zaydan view: disable horizontal scroll on mobile, just show masthead */
+      #view-zaydan { min-height:100dvh; }
+      #z-stage { position:relative; height:100dvh; }
+      #z-masthead { position:absolute; }
+    }
+
+    /* ── Small phone: ≤400px ── */
+    @media (max-width:400px) {
+      .h-name { font-size:12px; }
+      .h-link { font-size:12px; }
+      .name { font-size:21px; }
+      .img-col-center { height:85vw; }
+      .img-col-right  { height:50vw; }
     }
   </style>
 </head>
