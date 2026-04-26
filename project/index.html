@@ -181,9 +181,9 @@
     .img-box:hover { box-shadow:0 8px 32px rgba(0,0,0,.08); }
     .img-box img { width:100%; height:100%; object-fit:cover; display:none; }
     .img-box.has-image img { display:block; }
-    /* Center image: show full photo, dark bg fills gaps seamlessly */
+    /* Center image: portrait photo, cover fills the cell */
     #box-0 { background:#0a0a0a; }
-    #box-0 img { object-fit:contain; }
+    #box-0 img { object-fit:cover; object-position:center top; }
     .img-placeholder {
       position:absolute; inset:0;
       display:flex; flex-direction:column;
@@ -426,7 +426,7 @@
     <!-- CENTER IMAGE -->
     <div class="img-col-center">
       <div class="img-box has-image" id="box-0">
-        <img id="img-0" alt="Camera photo" src="uploads/IMG_0104.jpg" style="display:block" />
+        <img id="img-0" alt="Portrait photo" src="uploads/0d1cbef6-b55a-4a5e-961b-bb37933b2c1a.jpg" style="display:block" />
       </div>
     </div>
 
