@@ -147,7 +147,7 @@
       margin-bottom:8px;
       border-bottom:1px solid transparent;
     }
-    .left { display:flex; flex-direction:column; gap:8px; position:relative; overflow-y:auto; min-height:0; }
+    .left { display:flex; flex-direction:column; gap:8px; position:relative; min-height:0; }
     .name { font-size:26px; font-weight:400; letter-spacing:-0.02em; color:var(--ink); }
     .name-cursor {
       display:inline-block; width:2px; height:.85em;
@@ -196,7 +196,7 @@
     input[type="file"] { display:none; }
 
     /* Arrow */
-    #arrow-svg { position:absolute;left:-44px;top:4px;width:48px;height:110px;overflow:visible;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10; }
+    #arrow-svg { position:absolute;left:-46px;top:8px;width:48px;height:60px;overflow:visible;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10; }
 
     /* ════════════════════════════════════════════════════════
        ZAYDAN VIEW
@@ -391,9 +391,9 @@
     <!-- LEFT COLUMN -->
     <div class="left">
       <div class="name" id="hey-name"></div>
-      <svg id="arrow-svg" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path id="arrow-path" d="M 44 8 C 4 8, 4 98, 44 98" stroke="#D03030" stroke-width="2" stroke-linecap="round" fill="none" style="stroke-dasharray:280;stroke-dashoffset:280;"/>
-        <path id="arrow-head" d="M 44 98 L 32 87 M 44 98 L 32 108" stroke="#D03030" stroke-width="2" stroke-linecap="round" fill="none" style="stroke-dasharray:30;stroke-dashoffset:30;"/>
+      <svg id="arrow-svg" viewBox="0 0 48 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path id="arrow-path" d="M 46 8 C 2 8, 2 48, 46 48" stroke="#D03030" stroke-width="1.8" stroke-linecap="round" fill="none" style="stroke-dasharray:150;stroke-dashoffset:150;"/>
+        <path id="arrow-head" d="M 46 48 L 36 40 M 46 48 L 36 56" stroke="#D03030" stroke-width="1.8" stroke-linecap="round" fill="none" style="stroke-dasharray:20;stroke-dashoffset:20;"/>
       </svg>
       <div class="divider"></div>
       <p class="bio">I'm based in California, but grew up in Bangladesh and Canada. I study Design and Political Science at Stanford University, where I focus on building impactful work at the intersection of systems and people. I'm driven by a commitment to uplift others and actively embodying the change I want to see in the world.</p>
