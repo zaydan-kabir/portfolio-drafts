@@ -139,6 +139,14 @@
       inset: 0;
       overflow: hidden;
     }
+    #scroll-capture {
+      position: fixed;
+      inset: 70px 0 0;
+      z-index: 70;
+      background: transparent;
+      cursor: none;
+      touch-action: none;
+    }
 
     /* ── Track: 2 panels wide ─────────────────────────────── */
     #track {
@@ -295,6 +303,7 @@
     <div class="panel" id="panel-2"></div>
   </div>
 </div>
+<div id="scroll-capture" aria-hidden="true"></div>
 
 <img id="img-horse"    src="assets/horse.png"        style="display:none">
 <img id="img-portrait" src="assets/bottom-left.png"  style="display:none">
@@ -334,6 +343,7 @@
 
   // ── Down-scroll → horizontal movement ────────────────────────────
   const track = document.getElementById('track');
+  const scrollCapture = document.getElementById('scroll-capture');
   let targetX = 0;
   let currentX = 0;
   let maxX = window.innerWidth;
@@ -354,17 +364,20 @@
   }
   window.addEventListener('resize', resizeHorizontalRange);
 
-  window.addEventListener('wheel', e => {
+  function handleWheel(e) {
     if (e.ctrlKey) return;
     e.preventDefault();
     moveHorizontal(e.deltaY || e.deltaX);
-  }, { passive: false });
+  }
 
-  window.addEventListener('touchstart', e => {
+  scrollCapture.addEventListener('wheel', handleWheel, { passive: false });
+  document.addEventListener('wheel', handleWheel, { passive: false });
+
+  scrollCapture.addEventListener('touchstart', e => {
     touchStartY = e.touches[0].clientY;
   }, { passive: true });
 
-  window.addEventListener('touchmove', e => {
+  scrollCapture.addEventListener('touchmove', e => {
     if (touchStartY === null) return;
     e.preventDefault();
     const nextY = e.touches[0].clientY;
