@@ -269,6 +269,52 @@
       transition:width .08s linear;
     }
 
+    /* ── Info / Contact buttons (Zaydan view) ─────────────── */
+    #z-info-contact {
+      position:fixed; bottom:28px; right:32px;
+      z-index:80; display:none;
+      flex-direction:column; gap:6px;
+    }
+    body.zaydan-active #z-info-contact { display:flex; }
+    .pixel-btn {
+      font-family:'VT323', monospace;
+      font-size:clamp(16px,1.4vw,22px);
+      letter-spacing:.06em;
+      color:rgba(255,255,255,.55);
+      background:none; border:none;
+      cursor:none !important; padding:0;
+      text-transform:lowercase;
+      transition:color .15s, text-shadow .15s;
+      display:block; text-align:right;
+    }
+    .pixel-btn:hover {
+      color:#fff;
+      text-shadow:0 0 8px #fff, 0 0 20px rgba(255,255,255,.7), 0 0 40px rgba(255,255,255,.4);
+    }
+    .z-popup-overlay {
+      position:fixed; inset:0; z-index:450;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.45);
+      backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    }
+    .z-popup-box {
+      background:#fff;
+      min-width:320px; max-width:460px; width:90%;
+      padding:48px 40px 40px; position:relative;
+      box-shadow:0 24px 64px rgba(0,0,0,.4);
+    }
+    .z-popup-close {
+      position:absolute; top:14px; right:20px;
+      font-family:'VT323', monospace; font-size:30px; line-height:1;
+      color:#222; background:none; border:none;
+      cursor:none !important; opacity:.35; transition:opacity .15s;
+    }
+    .z-popup-close:hover { opacity:1; }
+    .z-popup-content {
+      font-family:'Lora', Georgia, serif;
+      font-size:15px; line-height:1.75; color:#333;
+    }
+
     /* ════════════════════════════════════════════════════════
        RESPONSIVE
     ════════════════════════════════════════════════════════ */
@@ -467,6 +513,18 @@
 
 <!-- Shared file inputs -->
 <input type="file" id="file-1" accept="image/*" />
+
+<!-- ── Info / Contact (Zaydan view) ─────────────────── -->
+<div id="z-info-contact">
+  <button class="pixel-btn" id="z-btn-info">info</button>
+  <button class="pixel-btn" id="z-btn-contact">contact</button>
+</div>
+<div id="z-popup" class="z-popup-overlay" style="display:none">
+  <div class="z-popup-box">
+    <button class="z-popup-close" id="z-popup-close">X</button>
+    <div class="z-popup-content" id="z-popup-content"></div>
+  </div>
+</div>
 
 <script>
 (() => {
@@ -726,6 +784,20 @@
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
+
+  // ── Info / Contact popup ─────────────────────────────────────────
+  const zPopupEl  = document.getElementById('z-popup');
+  const zPopupTxt = document.getElementById('z-popup-content');
+  document.getElementById('z-btn-info').addEventListener('click', () => {
+    zPopupTxt.innerHTML = '<p>Info coming soon.</p>';
+    zPopupEl.style.display = 'flex';
+  });
+  document.getElementById('z-btn-contact').addEventListener('click', () => {
+    zPopupTxt.innerHTML = '<p>Contact coming soon.</p>';
+    zPopupEl.style.display = 'flex';
+  });
+  document.getElementById('z-popup-close').addEventListener('click', () => { zPopupEl.style.display = 'none'; });
+  zPopupEl.addEventListener('click', e => { if (e.target === zPopupEl) zPopupEl.style.display = 'none'; });
 
 })();
 </script>
