@@ -636,6 +636,9 @@
     el.addEventListener('mouseleave', () => { document.body.classList.remove('img-hover'); cursorLabel.textContent = ''; });
   });
 
+  document.getElementById('horse-canvas').addEventListener('mouseenter', () => { cursorLabel.textContent = 'Year of the Horse!'; document.body.classList.add('img-hover'); });
+  document.getElementById('horse-canvas').addEventListener('mouseleave', () => { document.body.classList.remove('img-hover'); cursorLabel.textContent = ''; });
+
   // ── ABOUT: typing animation ───────────────────────────────────────
   let typingDone = false;
   function startAboutTyping() {
