@@ -273,7 +273,7 @@
     #z-info-contact {
       position:fixed; bottom:28px; right:32px;
       z-index:80; display:none;
-      flex-direction:column; gap:6px;
+      flex-direction:row; gap:16px;
     }
     body.zaydan-active #z-info-contact { display:flex; }
     .pixel-btn {
@@ -518,6 +518,7 @@
 <div id="z-info-contact">
   <button class="pixel-btn" id="z-btn-info">info</button>
   <button class="pixel-btn" id="z-btn-contact">contact</button>
+  <button class="pixel-btn" id="z-btn-resume">resume</button>
 </div>
 <div id="z-popup" class="z-popup-overlay" style="display:none">
   <div class="z-popup-box">
@@ -794,6 +795,10 @@
   });
   document.getElementById('z-btn-contact').addEventListener('click', () => {
     zPopupTxt.innerHTML = '<p>Contact coming soon.</p>';
+    zPopupEl.style.display = 'flex';
+  });
+  document.getElementById('z-btn-resume').addEventListener('click', () => {
+    zPopupTxt.innerHTML = '<p>Resume coming soon.</p>';
     zPopupEl.style.display = 'flex';
   });
   document.getElementById('z-popup-close').addEventListener('click', () => { zPopupEl.style.display = 'none'; });
