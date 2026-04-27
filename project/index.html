@@ -71,7 +71,7 @@
       width:0; height:0;
       transition:width .35s cubic-bezier(.22,1,.36,1), height .35s cubic-bezier(.22,1,.36,1);
     }
-    body.img-hover #cursor-bubble { min-width:160px; height:40px; padding:0 18px; }
+    body.img-hover #cursor-bubble { min-width:230px; height:40px; padding:0 18px; }
     #cursor-label {
       font-family:'Pixelary', cursive; font-size:26px; color:#fff;
       opacity:0; transition:opacity .2s .1s; pointer-events:none;
@@ -132,14 +132,14 @@
       position:fixed; inset:0; overflow:hidden;
     }
     .page {
-      display:grid;
-      grid-template-rows:auto auto;
-      grid-template-columns:260px 1fr 1fr;
-      height:100vh;
-      padding:24px 48px;
-      gap:0 36px;
+      display: grid;
+      grid-template-columns: minmax(220px, 260px) minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: auto 1fr;
+      height: 100dvh;
+      padding: clamp(16px, 3vw, 48px);
+      gap: 0 clamp(16px, 3vw, 36px);
+      overflow: hidden;
       position:relative; z-index:2;
-      align-content:start;
     }
     .header-spacer {
       grid-column:1/-1;
@@ -147,7 +147,7 @@
       margin-bottom:8px;
       border-bottom:1px solid transparent;
     }
-    .left { display:flex; flex-direction:column; gap:8px; position:relative; }
+    .left { display:flex; flex-direction:column; gap:8px; position:relative; overflow-y:auto; min-height:0; }
     .name { font-size:26px; font-weight:400; letter-spacing:-0.02em; color:var(--ink); }
     .name-cursor {
       display:inline-block; width:2px; height:.85em;
@@ -171,8 +171,8 @@
     .edu { margin-top:2px; flex-shrink:0; display:flex; flex-direction:column; gap:4px; }
     .edu-school { font-size:11.5px; font-weight:400; color:var(--ink); line-height:1.3; }
     .edu-degree { font-size:10.5px; color:var(--gray2); font-style:italic; font-weight:300; line-height:1.35; margin-top:1px; }
-    .img-col-center { display:flex; flex-direction:column; }
-    .img-col-right { display:flex; flex-direction:column; gap:16px; }
+    .img-col-center { display:flex; flex-direction:column; min-height:0; }
+    .img-col-right { display:flex; flex-direction:column; gap:16px; min-height:0; }
     .img-box {
       position:relative; background:var(--gray);
       overflow:hidden; cursor:none; flex:1;
@@ -181,6 +181,9 @@
     .img-box:hover { box-shadow:0 8px 32px rgba(0,0,0,.08); }
     .img-box img { width:100%; height:100%; object-fit:cover; display:none; }
     .img-box.has-image img { display:block; }
+    /* Center image: portrait photo, cover fills the cell */
+    #box-0 { background:#0a0a0a; }
+    #box-0 img { object-fit:cover; object-position:center top; }
     .img-placeholder {
       position:absolute; inset:0;
       display:flex; flex-direction:column;
@@ -265,6 +268,102 @@
       width:0%; z-index:60; pointer-events:none;
       transition:width .08s linear;
     }
+
+    /* ════════════════════════════════════════════════════════
+       RESPONSIVE
+    ════════════════════════════════════════════════════════ */
+
+    /* ── Tablet: 600–1023px ── */
+    @media (max-width:1023px) {
+      #header { padding:18px 28px 10px; }
+      .page {
+        grid-template-columns: minmax(180px, 220px) minmax(0,1fr) minmax(0,1fr);
+        padding:clamp(12px,2vw,28px);
+        gap:0 clamp(10px,2vw,20px);
+      }
+      .name { font-size:22px; }
+      .section-label { font-size:12px; }
+      .bio, .hobby { font-size:11px; }
+    }
+
+    /* ── Mobile: ≤767px — single column, scrollable ── */
+    @media (max-width:767px) {
+      /* allow the about view to scroll on mobile */
+      body { overflow-y:auto !important; }
+      body.zaydan-active { overflow-y:scroll !important; }
+
+      #header {
+        padding:14px 20px 10px;
+        flex-wrap:wrap;
+        gap:6px;
+      }
+      .h-nav { gap:16px; }
+
+      #view-about {
+        position:relative !important;
+        inset:auto;
+        overflow:visible;
+        min-height:100dvh;
+      }
+
+      .page {
+        display:flex;
+        flex-direction:column;
+        height:auto;
+        min-height:100dvh;
+        padding:16px;
+        gap:0;
+        overflow:visible;
+      }
+
+      .header-spacer { height:56px; margin-bottom:12px; }
+      .left { overflow-y:visible; min-height:0; gap:10px; }
+
+      .name { font-size:24px; }
+      .section-label { font-size:13px; }
+      .bio { font-size:12px; }
+      .hobby { font-size:12px; }
+      .exp-org { font-size:12px; }
+      .exp-role { font-size:11px; }
+      .exp-year { font-size:11px; }
+      .edu-school { font-size:12px; }
+      .edu-degree { font-size:11px; }
+
+      /* Center image: tall portrait box below left column */
+      .img-col-center {
+        height:75vw;
+        max-height:420px;
+        min-height:240px;
+        margin-top:20px;
+      }
+
+      /* Right images: side-by-side row below center image */
+      .img-col-right {
+        flex-direction:row;
+        height:44vw;
+        max-height:260px;
+        min-height:160px;
+        margin-top:12px;
+        margin-bottom:24px;
+        gap:10px;
+      }
+
+      #arrow-svg { display:none; }
+
+      /* Zaydan view: disable horizontal scroll on mobile, just show masthead */
+      #view-zaydan { min-height:100dvh; }
+      #z-stage { position:relative; height:100dvh; }
+      #z-masthead { position:absolute; }
+    }
+
+    /* ── Small phone: ≤400px ── */
+    @media (max-width:400px) {
+      .h-name { font-size:12px; }
+      .h-link { font-size:12px; }
+      .name { font-size:21px; }
+      .img-col-center { height:85vw; }
+      .img-col-right  { height:50vw; }
+    }
   </style>
 </head>
 <body>
@@ -292,9 +391,9 @@
     <!-- LEFT COLUMN -->
     <div class="left">
       <div class="name" id="hey-name"></div>
-      <svg id="arrow-svg" viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path id="arrow-path" d="M 44 8 C 4 8, 4 98, 44 98" stroke="#D03030" stroke-width="2" stroke-linecap="round" fill="none" style="stroke-dasharray:280;stroke-dashoffset:280;"/>
-        <path id="arrow-head" d="M 44 98 L 32 87 M 44 98 L 32 108" stroke="#D03030" stroke-width="2" stroke-linecap="round" fill="none" style="stroke-dasharray:30;stroke-dashoffset:30;"/>
+      <svg id="arrow-svg" viewBox="0 0 48 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path id="arrow-path" d="M 22 8 C 2 8, 2 48, 22 48" stroke="#D03030" stroke-width="1.8" stroke-linecap="round" fill="none" style="stroke-dasharray:150;stroke-dashoffset:150;"/>
+        <path id="arrow-head" d="M 22 48 L 12 40 M 22 48 L 12 56" stroke="#D03030" stroke-width="1.8" stroke-linecap="round" fill="none" style="stroke-dasharray:20;stroke-dashoffset:20;"/>
       </svg>
       <div class="divider"></div>
       <p class="bio">I'm based in California, but grew up in Bangladesh and Canada. I study Design and Political Science at Stanford University, where I focus on building impactful work at the intersection of systems and people. I'm driven by a commitment to uplift others and actively embodying the change I want to see in the world.</p>
@@ -326,9 +425,8 @@
 
     <!-- CENTER IMAGE -->
     <div class="img-col-center">
-      <div class="img-box" id="box-0" data-input="file-0">
-        <img id="img-0" alt="" />
-        <div class="img-placeholder"><svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="#555" stroke-width="1.5"/><circle cx="14" cy="16" r="3" stroke="#555" stroke-width="1.5"/><path d="M4 26l8-7 6 5 5-4 9 7" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/></svg><span>click or drag to add image</span></div>
+      <div class="img-box has-image" id="box-0">
+        <img id="img-0" alt="Portrait photo" src="uploads/0d1cbef6-b55a-4a5e-961b-bb37933b2c1a.jpg" style="display:block" />
       </div>
     </div>
 
@@ -338,9 +436,8 @@
         <img id="img-1" alt="Community photo" src="uploads/IMG_2059.JPG" style="display:block" />
         <div class="img-placeholder"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="#555" stroke-width="1.5"/><circle cx="14" cy="16" r="3" stroke="#555" stroke-width="1.5"/><path d="M4 26l8-7 6 5 5-4 9 7" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/></svg><span>click or drag to add image</span></div>
       </div>
-      <div class="img-box" id="box-2" data-input="file-2">
-        <img id="img-2" alt="" />
-        <div class="img-placeholder"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="#555" stroke-width="1.5"/><circle cx="14" cy="16" r="3" stroke="#555" stroke-width="1.5"/><path d="M4 26l8-7 6 5 5-4 9 7" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/></svg><span>click or drag to add image</span></div>
+      <div class="img-box has-image" id="box-2">
+        <img id="img-2" alt="Hiking photo" src="uploads/IMG_3073.jpg" style="display:block" />
       </div>
     </div>
   </div>
@@ -369,9 +466,7 @@
 </div>
 
 <!-- Shared file inputs -->
-<input type="file" id="file-0" accept="image/*" />
 <input type="file" id="file-1" accept="image/*" />
-<input type="file" id="file-2" accept="image/*" />
 
 <script>
 (() => {
@@ -476,7 +571,7 @@
   })();
 
   // ── Img-box cursor labels ─────────────────────────────────────────
-  const imgLabels = { 'box-0': 'Phi Kappa Psi, circa 2025', 'box-1': 'Community is everything', 'box-2': 'Looking for inspiration' };
+  const imgLabels = { 'box-0': 'Magdalen College, Oxford', 'box-1': 'Community is everything', 'box-2': 'Looking for inspiration' };
   document.querySelectorAll('.img-box').forEach(el => {
     el.addEventListener('mouseenter', () => { cursorLabel.textContent = imgLabels[el.id]||''; document.body.classList.add('img-hover'); });
     el.addEventListener('mouseleave', () => { document.body.classList.remove('img-hover'); cursorLabel.textContent = ''; });
@@ -523,16 +618,14 @@
     };
     reader.readAsDataURL(file);
   }
-  [0,1,2].forEach(idx => {
-    const box = document.getElementById('box-'+idx);
-    const inp = document.getElementById('file-'+idx);
-    try { const s=localStorage.getItem('zaydan-img-'+idx); if(s){ document.getElementById('img-'+idx).src=s; box.classList.add('has-image'); } } catch(e){}
-    box.addEventListener('click', () => inp.click());
-    inp.addEventListener('change', e => { handleFile(e.target.files[0], idx); inp.value=''; });
-    box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('drag-over'); });
-    box.addEventListener('dragleave', () => box.classList.remove('drag-over'));
-    box.addEventListener('drop', e => { e.preventDefault(); box.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0], idx); });
-  });
+  const box1 = document.getElementById('box-1');
+  const inp1 = document.getElementById('file-1');
+  try { const s=localStorage.getItem('zaydan-img-1'); if(s){ document.getElementById('img-1').src=s; box1.classList.add('has-image'); } } catch(e){}
+  box1.addEventListener('click', () => inp1.click());
+  inp1.addEventListener('change', e => { handleFile(e.target.files[0], 1); inp1.value=''; });
+  box1.addEventListener('dragover', e => { e.preventDefault(); box1.classList.add('drag-over'); });
+  box1.addEventListener('dragleave', () => box1.classList.remove('drag-over'));
+  box1.addEventListener('drop', e => { e.preventDefault(); box1.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0], 1); });
 
   // ── ZAYDAN: scroll → horizontal translate ─────────────────────────
   const zTrack    = document.getElementById('z-track');
