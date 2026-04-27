@@ -542,8 +542,7 @@
     pagePopup.style.display = 'flex';
   });
   document.getElementById('page-btn-resume').addEventListener('click', () => {
-    pagePopupTxt.innerHTML = '<p>Resume coming soon.</p>';
-    pagePopup.style.display = 'flex';
+    window.open('uploads/CV-2.pdf', '_blank');
   });
   document.getElementById('page-popup-close').addEventListener('click', () => { pagePopup.style.display = 'none'; });
   pagePopup.addEventListener('click', e => { if (e.target === pagePopup) pagePopup.style.display = 'none'; });
