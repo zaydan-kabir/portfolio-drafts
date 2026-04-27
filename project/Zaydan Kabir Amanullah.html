@@ -32,13 +32,17 @@
       width: 100%; height: 100%;
       background: var(--bg);
       scrollbar-width: none;
+      overflow: hidden;
+      overscroll-behavior: none;
     }
     html::-webkit-scrollbar { display: none; }
     body {
       width: 100%;
+      height: 100%;
       background: var(--bg);
       color: var(--ink);
-      /* overflow stays default so vertical scroll works */
+      overflow: hidden;
+      overscroll-behavior: none;
       cursor: none;
     }
     a, button { cursor: none !important; }
@@ -328,21 +332,53 @@
     });
   });
 
-  // ── Scroll → horizontal translate ────────────────────────────────
-  // Body height = VH + VW so scrolling VW pixels moves the track VW left
-  const setBodyHeight = () => {
-    document.body.style.height = (window.innerHeight + window.innerWidth) + 'px';
-  };
-  setBodyHeight();
-  window.addEventListener('resize', setBodyHeight);
-
+  // ── Down-scroll → horizontal movement ────────────────────────────
   const track = document.getElementById('track');
-  window.addEventListener('scroll', () => {
-    const y   = window.scrollY;
-    const max = window.innerWidth;
-    const tx  = Math.min(y, max);
-    track.style.transform = `translateX(-${tx}px)`;
+  let targetX = 0;
+  let currentX = 0;
+  let maxX = window.innerWidth;
+  let touchStartY = null;
+
+  function clampX(value) {
+    return Math.max(0, Math.min(maxX, value));
+  }
+
+  function moveHorizontal(delta) {
+    targetX = clampX(targetX + delta);
+  }
+
+  function resizeHorizontalRange() {
+    maxX = window.innerWidth;
+    targetX = clampX(targetX);
+    currentX = clampX(currentX);
+  }
+  window.addEventListener('resize', resizeHorizontalRange);
+
+  window.addEventListener('wheel', e => {
+    if (e.ctrlKey) return;
+    e.preventDefault();
+    moveHorizontal(e.deltaY || e.deltaX);
+  }, { passive: false });
+
+  window.addEventListener('touchstart', e => {
+    touchStartY = e.touches[0].clientY;
   }, { passive: true });
+
+  window.addEventListener('touchmove', e => {
+    if (touchStartY === null) return;
+    e.preventDefault();
+    const nextY = e.touches[0].clientY;
+    moveHorizontal((touchStartY - nextY) * 1.25);
+    touchStartY = nextY;
+  }, { passive: false });
+
+  function renderHorizontalTrack() {
+    currentX += (targetX - currentX) * 0.18;
+    if (Math.abs(targetX - currentX) < 0.05) currentX = targetX;
+    track.style.transform = `translate3d(-${currentX.toFixed(2)}px,0,0)`;
+    requestAnimationFrame(renderHorizontalTrack);
+  }
+  renderHorizontalTrack();
 
   // ── ASCII ramp ────────────────────────────────────────────────────
   const RAMP = ' .\'`,:;-+!iIlr=*o%#&@';
@@ -500,7 +536,7 @@
   // ── Keyboard nav ──────────────────────────────────────────────────
   document.addEventListener('keydown', e => {
     const d = { ArrowDown: 200, ArrowRight: 200, ArrowUp: -200, ArrowLeft: -200 }[e.key];
-    if (d) window.scrollBy({ top: d, behavior: 'smooth' });
+    if (d) moveHorizontal(d);
   });
 
   // ── Info / Contact popup ──────────────────────────────────────────
