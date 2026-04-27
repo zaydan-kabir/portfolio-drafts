@@ -71,11 +71,45 @@
       pointer-events: none;
       transform: translate(-50%, -50%);
       z-index: 9999;
+      transition: opacity 0.15s;
+    }
+    #cursor-bubble {
+      position: fixed; top: 0; left: 0;
+      border-radius: 999px;
+      background: #D03030;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 9998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      white-space: nowrap;
+      width: 0;
+      height: 0;
+      transition: width 0.35s cubic-bezier(.22,1,.36,1), height 0.35s cubic-bezier(.22,1,.36,1);
+    }
+    body.img-hover #cursor { opacity: 0; }
+    body.img-hover #cursor-bubble {
+      min-width: 230px;
+      height: 40px;
+      padding: 0 18px;
+    }
+    #cursor-label {
+      font-family: 'Pixelary', cursive;
+      font-size: 26px;
+      color: #fff;
+      opacity: 0;
+      transition: opacity 0.2s 0.1s;
+      pointer-events: none;
+    }
+    body.img-hover #cursor-label {
+      opacity: 1;
     }
     #trail-canvas {
       position: fixed; inset: 0;
       pointer-events: none;
-      z-index: 9998;
+      z-index: 9997;
     }
 
     /* ── Page-out overlay ──────────────────────────────────── */
@@ -280,6 +314,7 @@
 
 <!-- ── Custom cursor ──────────────────────────────────── -->
 <div id="cursor"></div>
+<div id="cursor-bubble"><span id="cursor-label"></span></div>
 <canvas id="trail-canvas"></canvas>
 <div id="page-out"></div>
 
@@ -507,6 +542,7 @@
     if (horseGrid)    renderGrid(hCtx, horseGrid, H_CW, H_CH, animTime);
     if (portraitGrid) renderGrid(pCtx, portraitGrid, P_CW, P_CH, animTime);
     applyHorseSway(animTime);
+    updateHorseBubble();
 
     requestAnimationFrame(tick);
   }
@@ -514,8 +550,12 @@
 
   // ── Cursor + red trail ────────────────────────────────────────────
   const cursorEl    = document.getElementById('cursor');
+  const bubble      = document.getElementById('cursor-bubble');
+  const cursorLabel = document.getElementById('cursor-label');
   const trailCanvas = document.getElementById('trail-canvas');
   const tCtx        = trailCanvas.getContext('2d');
+  let pointerX = 0;
+  let pointerY = 0;
 
   const resizeTrail = () => {
     trailCanvas.width = innerWidth;
@@ -525,15 +565,38 @@
   window.addEventListener('resize', resizeTrail);
 
   const pts = [];
+  function updateHorseBubble() {
+    const rect = horseEl.getBoundingClientRect();
+    const overHorse =
+      pointerX >= rect.left && pointerX <= rect.right &&
+      pointerY >= rect.top && pointerY <= rect.bottom;
+    document.body.classList.toggle('img-hover', overHorse);
+    cursorLabel.textContent = overHorse ? 'Year of the Horse!' : '';
+  }
+
   document.addEventListener('mousemove', e => {
+    pointerX = e.clientX;
+    pointerY = e.clientY;
     cursorEl.style.left = e.clientX + 'px';
     cursorEl.style.top  = e.clientY + 'px';
+    bubble.style.left = e.clientX + 'px';
+    bubble.style.top = (e.clientY + 28) + 'px';
+    updateHorseBubble();
     pts.push({ x: e.clientX, y: e.clientY, t: Date.now() });
     if (pts.length > 40) pts.shift();
+  });
+  document.addEventListener('mouseleave', () => {
+    document.body.classList.remove('img-hover');
+    cursorLabel.textContent = '';
   });
 
   (function drawTrail() {
     tCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+    if (document.body.classList.contains('img-hover')) {
+      pts.length = 0;
+      requestAnimationFrame(drawTrail);
+      return;
+    }
     const now = Date.now();
     tCtx.lineCap = 'round'; tCtx.lineJoin = 'round';
     for (let i = 1; i < pts.length; i++) {
