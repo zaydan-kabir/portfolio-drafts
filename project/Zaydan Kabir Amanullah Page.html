@@ -238,7 +238,7 @@
     #page-info-contact {
       position: fixed; bottom: 28px; right: 32px;
       z-index: 80; display: flex;
-      flex-direction: column; gap: 6px;
+      flex-direction: row; gap: 16px;
     }
     .pixel-btn {
       font-family: 'VT323', monospace;
@@ -326,6 +326,7 @@
 <div id="page-info-contact">
   <button class="pixel-btn" id="page-btn-info">info</button>
   <button class="pixel-btn" id="page-btn-contact">contact</button>
+  <button class="pixel-btn" id="page-btn-resume">resume</button>
 </div>
 <div id="page-popup" class="p-popup-overlay" style="display:none">
   <div class="p-popup-box">
@@ -538,6 +539,10 @@
   });
   document.getElementById('page-btn-contact').addEventListener('click', () => {
     pagePopupTxt.innerHTML = '<p>Contact coming soon.</p>';
+    pagePopup.style.display = 'flex';
+  });
+  document.getElementById('page-btn-resume').addEventListener('click', () => {
+    pagePopupTxt.innerHTML = '<p>Resume coming soon.</p>';
     pagePopup.style.display = 'flex';
   });
   document.getElementById('page-popup-close').addEventListener('click', () => { pagePopup.style.display = 'none'; });
