@@ -798,8 +798,7 @@
     zPopupEl.style.display = 'flex';
   });
   document.getElementById('z-btn-resume').addEventListener('click', () => {
-    zPopupTxt.innerHTML = '<p>Resume coming soon.</p>';
-    zPopupEl.style.display = 'flex';
+    window.open('uploads/CV-2.pdf', '_blank');
   });
   document.getElementById('z-popup-close').addEventListener('click', () => { zPopupEl.style.display = 'none'; });
   zPopupEl.addEventListener('click', e => { if (e.target === zPopupEl) zPopupEl.style.display = 'none'; });
