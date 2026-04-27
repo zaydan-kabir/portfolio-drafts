@@ -667,7 +667,7 @@
           const ah  = document.getElementById('arrow-head');
           const rect = document.getElementById('hey-name').getBoundingClientRect();
           svg.style.left = (rect.left - 44) + 'px';
-          svg.style.top  = (rect.top + rect.height / 2) + 'px';
+          svg.style.top  = (rect.top - 10) + 'px';
           svg.style.opacity='1';
           ap.style.transition='stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)'; ap.style.strokeDashoffset='0';
           setTimeout(() => { ah.style.transition='stroke-dashoffset 0.4s cubic-bezier(.4,0,.2,1)'; ah.style.strokeDashoffset='0'; }, 800);
