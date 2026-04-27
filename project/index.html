@@ -440,7 +440,7 @@
     <div class="left">
       <div class="name" id="hey-name"></div>
       <svg id="arrow-svg" viewBox="0 0 48 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path id="arrow-path" d="M 22 8 C 2 8, 2 48, 32 48" stroke="#D03030" stroke-width="1.8" stroke-linecap="round" fill="none" style="stroke-dasharray:150;stroke-dashoffset:150;"/>
+        <path id="arrow-path" d="M 22 0 C 2 0, 2 48, 32 48" stroke="#D03030" stroke-width="1.8" stroke-linecap="round" fill="none" style="stroke-dasharray:150;stroke-dashoffset:150;"/>
         <path id="arrow-head" d="M 32 48 L 22 40 M 32 48 L 22 56" stroke="#D03030" stroke-width="1.8" stroke-linecap="round" fill="none" style="stroke-dasharray:20;stroke-dashoffset:20;"/>
       </svg>
       <div class="divider"></div>
@@ -455,6 +455,7 @@
       </div>
       <div class="divider"></div>
       <div class="section-label">Experience</div>
+      <div class="divider"></div>
       <div class="exp-block">
         <div class="exp-item"><div class="exp-left"><div class="exp-org">Stanford Gordian Knot Center</div><div class="exp-role">UI/UX Design</div></div><div class="exp-year">2026</div></div>
         <div class="exp-item"><div class="exp-left"><div class="exp-org">The Stimson Center</div><div class="exp-role">South Asia Intern</div></div><div class="exp-year">2026</div></div>
@@ -464,6 +465,7 @@
       </div>
       <div class="divider"></div>
       <div class="section-label">Education</div>
+      <div class="divider"></div>
       <div class="edu">
         <div class="edu-item"><div class="edu-school">Stanford University</div><div class="edu-degree">Design &amp; Political Science</div></div>
         <div class="edu-item"><div class="edu-school">University of Oxford</div><div class="edu-degree">Visiting Student, Politics, Philosophy &amp; Economics (PPE)</div></div>
@@ -665,7 +667,7 @@
           const ah  = document.getElementById('arrow-head');
           const rect = document.getElementById('hey-name').getBoundingClientRect();
           svg.style.left = (rect.left - 44) + 'px';
-          svg.style.top  = (rect.top + 4) + 'px';
+          svg.style.top  = (rect.top + rect.height / 2) + 'px';
           svg.style.opacity='1';
           ap.style.transition='stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)'; ap.style.strokeDashoffset='0';
           setTimeout(() => { ah.style.transition='stroke-dashoffset 0.4s cubic-bezier(.4,0,.2,1)'; ah.style.strokeDashoffset='0'; }, 800);
