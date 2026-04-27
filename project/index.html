@@ -147,7 +147,7 @@
       margin-bottom:8px;
       border-bottom:1px solid transparent;
     }
-    .left { display:flex; flex-direction:column; gap:8px; position:relative; min-height:0; }
+    .left { display:flex; flex-direction:column; gap:8px; position:relative; overflow-y:auto; min-height:0; }
     .name { font-size:26px; font-weight:400; letter-spacing:-0.02em; color:var(--ink); }
     .name-cursor {
       display:inline-block; width:2px; height:.85em;
@@ -196,7 +196,7 @@
     input[type="file"] { display:none; }
 
     /* Arrow */
-    #arrow-svg { position:absolute;left:-46px;top:8px;width:48px;height:60px;overflow:visible;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10; }
+    #arrow-svg { position:absolute;left:-44px;top:4px;width:48px;height:110px;overflow:visible;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10; }
 
     /* ════════════════════════════════════════════════════════
        ZAYDAN VIEW
@@ -571,7 +571,7 @@
   })();
 
   // ── Img-box cursor labels ─────────────────────────────────────────
-  const imgLabels = { 'box-0': 'Phi Kappa Psi, circa 2025', 'box-1': 'Community is everything', 'box-2': 'Looking for inspiration' };
+  const imgLabels = { 'box-0': 'Magdalen College, The University of Oxford', 'box-1': 'Community is everything', 'box-2': 'Looking for inspiration' };
   document.querySelectorAll('.img-box').forEach(el => {
     el.addEventListener('mouseenter', () => { cursorLabel.textContent = imgLabels[el.id]||''; document.body.classList.add('img-hover'); });
     el.addEventListener('mouseleave', () => { document.body.classList.remove('img-hover'); cursorLabel.textContent = ''; });
