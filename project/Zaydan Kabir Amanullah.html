@@ -151,22 +151,14 @@
       top: 0; bottom: 0;
       width: 100vw;
       background: var(--bg);
+      overflow: hidden;
     }
     #panel-1 { left: 0; }
     #panel-2 { left: 100vw; }
 
-    /* Subtle divider between panels */
-    #divider {
-      position: absolute;
-      left: 100vw;
-      top: 12%; bottom: 12%;
-      width: 1px;
-      background: rgba(255,255,255,0.06);
-    }
-
-    /* ── ZAYDAN masthead — fixed, below header ─────────────── */
+    /* ── ZAYDAN masthead — pinned to first horizontal panel ─── */
     #masthead {
-      position: fixed;
+      position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -197,7 +189,7 @@
 
     /* ── ASCII canvases ─────────────────────────────────────── */
     #horse-canvas {
-      position: fixed;
+      position: absolute;
       top: 58px; /* below header */
       right: 2vw;
       z-index: 40;
@@ -205,24 +197,12 @@
       transform-origin: top right;
     }
     #portrait-canvas {
-      position: fixed;
+      position: absolute;
       bottom: 0;
       left: 0;
       z-index: 45;
       display: block;
       transform-origin: bottom left;
-    }
-
-    /* ── Progress bar ───────────────────────────────────────── */
-    #progress {
-      position: fixed;
-      bottom: 0; left: 0;
-      height: 1px;
-      background: rgba(255,255,255,0.1);
-      width: 0%;
-      z-index: 60;
-      pointer-events: none;
-      transition: width 0.08s linear;
     }
 
     /* ── Flash ──────────────────────────────────────────────── */
@@ -231,17 +211,6 @@
       background: #fff;
       opacity: 0;
       z-index: 200;
-      pointer-events: none;
-    }
-
-    /* ── Panel-2: hide overlays ─────────────────────────────── */
-    #masthead, #horse-canvas, #portrait-canvas {
-      transition: opacity 0.4s ease;
-    }
-    body.on-panel-2 #masthead,
-    body.on-panel-2 #horse-canvas,
-    body.on-panel-2 #portrait-canvas {
-      opacity: 0;
       pointer-events: none;
     }
 
@@ -310,25 +279,21 @@
 <!-- ── Stage ──────────────────────────────────────────── -->
 <div id="stage">
   <div id="track">
-    <div class="panel" id="panel-1"></div>
+    <div class="panel" id="panel-1">
+      <div id="masthead">
+        <span id="masthead-guide">&lt;scroll down&gt;<br>to move right</span>
+        <span id="masthead-text">ZAYDAN</span>
+      </div>
+
+      <canvas id="horse-canvas"></canvas>
+      <canvas id="portrait-canvas"></canvas>
+    </div>
     <div class="panel" id="panel-2"></div>
-    <div id="divider"></div>
   </div>
 </div>
 
-<!-- ── Fixed overlays ─────────────────────────────────── -->
-<div id="masthead">
-  <span id="masthead-guide">&lt;scroll down&gt;<br>to move right</span>
-  <span id="masthead-text">ZAYDAN</span>
-</div>
-
-<canvas id="horse-canvas"></canvas>
-<canvas id="portrait-canvas"></canvas>
-
 <img id="img-horse"    src="assets/horse.png"        style="display:none">
 <img id="img-portrait" src="assets/bottom-left.png"  style="display:none">
-
-<div id="progress"></div>
 
 <div id="flash"></div>
 
@@ -371,15 +336,12 @@
   setBodyHeight();
   window.addEventListener('resize', setBodyHeight);
 
-  const track    = document.getElementById('track');
-  const progress = document.getElementById('progress');
+  const track = document.getElementById('track');
   window.addEventListener('scroll', () => {
     const y   = window.scrollY;
     const max = window.innerWidth;
     const tx  = Math.min(y, max);
     track.style.transform = `translateX(-${tx}px)`;
-    progress.style.width  = ((y / max) * 100).toFixed(2) + '%';
-    document.body.classList.toggle('on-panel-2', y >= max);
   }, { passive: true });
 
   // ── ASCII ramp ────────────────────────────────────────────────────
