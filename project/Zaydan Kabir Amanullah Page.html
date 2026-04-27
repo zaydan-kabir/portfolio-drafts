@@ -234,6 +234,17 @@
       pointer-events: none;
     }
 
+    /* ── Panel-2: hide overlays ─────────────────────────────── */
+    #masthead, #horse-canvas, #portrait-canvas {
+      transition: opacity 0.4s ease;
+    }
+    body.on-panel-2 #masthead,
+    body.on-panel-2 #horse-canvas,
+    body.on-panel-2 #portrait-canvas {
+      opacity: 0;
+      pointer-events: none;
+    }
+
     /* ── Info / Contact buttons ─────────────────────────────── */
     #page-info-contact {
       position: fixed; bottom: 28px; right: 32px;
@@ -369,6 +380,7 @@
     const tx  = Math.min(y, max);
     track.style.transform = `translateX(-${tx}px)`;
     progress.style.width  = ((y / max) * 100).toFixed(2) + '%';
+    document.body.classList.toggle('on-panel-2', y >= max);
   }, { passive: true });
 
   // ── ASCII ramp ────────────────────────────────────────────────────
