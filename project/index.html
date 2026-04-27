@@ -71,6 +71,7 @@
       width:0; height:0;
       transition:width .35s cubic-bezier(.22,1,.36,1), height .35s cubic-bezier(.22,1,.36,1);
     }
+    body.img-hover #cursor { opacity:0; transition:opacity .15s; }
     body.img-hover #cursor-bubble { min-width:230px; height:40px; padding:0 18px; }
     #cursor-label {
       font-family:'Pixelary', cursive; font-size:26px; color:#fff;
@@ -196,7 +197,7 @@
     input[type="file"] { display:none; }
 
     /* Arrow */
-    #arrow-svg { position:absolute;left:-44px;top:4px;width:48px;height:110px;overflow:visible;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10; }
+    #arrow-svg { position:fixed;width:48px;height:110px;overflow:visible;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10; }
 
     /* ════════════════════════════════════════════════════════
        ZAYDAN VIEW
@@ -658,6 +659,9 @@
           const svg = document.getElementById('arrow-svg');
           const ap  = document.getElementById('arrow-path');
           const ah  = document.getElementById('arrow-head');
+          const rect = document.getElementById('hey-name').getBoundingClientRect();
+          svg.style.left = (rect.left - 44) + 'px';
+          svg.style.top  = (rect.top + 4) + 'px';
           svg.style.opacity='1';
           ap.style.transition='stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)'; ap.style.strokeDashoffset='0';
           setTimeout(() => { ah.style.transition='stroke-dashoffset 0.4s cubic-bezier(.4,0,.2,1)'; ah.style.strokeDashoffset='0'; }, 800);
