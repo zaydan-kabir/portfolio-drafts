@@ -20,15 +20,18 @@
       font-family: 'VT323', monospace;
       font-size: clamp(16px, 1.4vw, 22px);
       letter-spacing: .06em;
-      color: rgba(255,255,255,.28);
+      color: #ffffff;
       background: none; border: none;
       cursor: pointer; padding: 0;
       text-transform: lowercase;
-      transition: color .15s;
+      transition: color .15s, text-shadow .15s;
       display: block;
       text-align: left;
     }
-    .pixel-btn:hover { color: rgba(255,255,255,.75); }
+    .pixel-btn:hover {
+      color: #ffffff;
+      text-shadow: 0 0 8px #fff, 0 0 20px rgba(255,255,255,0.7), 0 0 40px rgba(255,255,255,0.4);
+    }
 
     .popup-overlay {
       position: fixed; inset: 0; z-index: 500;
