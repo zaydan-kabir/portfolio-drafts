@@ -174,7 +174,12 @@
       animation: upcoming-scroll 22s linear infinite;
       will-change: transform;
     }
-    .upcoming-track span {
+    .upcoming-group {
+      display: flex;
+      flex: 0 0 auto;
+      min-width: max-content;
+    }
+    .upcoming-group span {
       flex: 0 0 auto;
       padding: 6px 44px 7px 0;
       font-family: 'VT323', monospace;
@@ -233,8 +238,8 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 50;
-      pointer-events: none;
+      z-index: 85;
+      pointer-events: auto;
       user-select: none;
       text-align: center;
       width: min(94vw, 1320px);
@@ -401,8 +406,16 @@
 
 <div id="upcoming-ticker" aria-label="Upcoming announcement">
   <div class="upcoming-track" aria-hidden="true">
-    <span>UPCOMING - Zaydan Kabir Amanullah will be in New York for the summer</span>
-    <span>UPCOMING - Zaydan Kabir Amanullah will be in New York for the summer</span>
+    <div class="upcoming-group">
+      <span>UPCOMING - Zaydan Kabir Amanullah will be in New York for the summer</span>
+      <span>UPCOMING - Zaydan Kabir Amanullah will be in New York for the summer</span>
+      <span>UPCOMING - Zaydan Kabir Amanullah will be in New York for the summer</span>
+    </div>
+    <div class="upcoming-group">
+      <span>UPCOMING - Zaydan Kabir Amanullah will be in New York for the summer</span>
+      <span>UPCOMING - Zaydan Kabir Amanullah will be in New York for the summer</span>
+      <span>UPCOMING - Zaydan Kabir Amanullah will be in New York for the summer</span>
+    </div>
   </div>
 </div>
 
@@ -410,7 +423,7 @@
 <div id="stage">
   <div id="track">
     <div class="panel" id="panel-1">
-      <div id="masthead">
+      <div id="masthead" role="button" tabindex="0" aria-label="Replay Zaydan masthead animation">
         <span id="masthead-guide">&lt;scroll down&gt;<br>to move right</span>
         <span id="masthead-text" data-text="Zaydan">Zaydan</span>
         <img id="masthead-reference" src="uploads/zaydan-screenshot-wordmark.png" alt="" aria-hidden="true">
@@ -456,9 +469,11 @@
     'font-cloister'
   ];
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let mastheadTimers = [];
 
   function setMastheadFont(fontClass) {
     masthead.classList.remove('wordmark-landed');
+    masthead.dataset.replayState = 'rolling';
     mastheadText.classList.remove(...fontRoll, 'font-snap');
     mastheadText.classList.add(fontClass, 'font-snap');
     window.setTimeout(() => mastheadText.classList.remove('font-snap'), 130);
@@ -467,16 +482,43 @@
   function landMastheadWordmark() {
     mastheadText.classList.remove(...fontRoll, 'font-snap');
     masthead.classList.add('wordmark-landed');
+    masthead.dataset.replayState = 'landed';
   }
 
-  if (reduceMotion) {
-    landMastheadWordmark();
-  } else {
+  function playMastheadRoll(forceMotion = false) {
+    mastheadTimers.forEach(timer => window.clearTimeout(timer));
+    mastheadTimers = [];
+
+    if (reduceMotion && !forceMotion) {
+      landMastheadWordmark();
+      return;
+    }
+
     fontRoll.forEach((fontClass, index) => {
-      window.setTimeout(() => setMastheadFont(fontClass), 120 + index * 170);
+      if (index === 0) {
+        setMastheadFont(fontClass);
+        return;
+      }
+      mastheadTimers.push(window.setTimeout(() => setMastheadFont(fontClass), index * 170));
     });
-    window.setTimeout(landMastheadWordmark, 120 + fontRoll.length * 170);
+    mastheadTimers.push(window.setTimeout(landMastheadWordmark, fontRoll.length * 170));
   }
+
+  function isInsideMasthead(x, y) {
+    const rect = masthead.getBoundingClientRect();
+    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+  }
+
+  document.addEventListener('click', e => {
+    if (isInsideMasthead(e.clientX, e.clientY)) playMastheadRoll(true);
+  });
+  masthead.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    playMastheadRoll(true);
+  });
+
+  playMastheadRoll();
 
   // ── Page-out transition ───────────────────────────────────────────
   const overlay = document.getElementById('page-out');
