@@ -16,7 +16,7 @@
       position: fixed; top: 0; left: 0;
       width: 8px; height: 8px;
       border-radius: 50%;
-      background: #D03030;
+      background: #fff;
       pointer-events: none;
       transform: translate(-50%, -50%);
       z-index: 9999;
@@ -97,7 +97,7 @@
         const age = (now - pts[i].t) / 300;
         const a = Math.max(0, 1 - age);
         ctx.beginPath(); ctx.moveTo(pts[i-1].x, pts[i-1].y); ctx.lineTo(pts[i].x, pts[i].y);
-        ctx.strokeStyle = `rgba(208,48,48,${a * 0.55})`; ctx.lineWidth = (i / pts.length) * 2.5; ctx.stroke();
+        ctx.strokeStyle = `rgba(255,255,255,${a * 0.55})`; ctx.lineWidth = (i / pts.length) * 2.5; ctx.stroke();
       }
       while (pts.length && now - pts[0].t > 300) pts.shift();
       requestAnimationFrame(drawTrail);
