@@ -84,7 +84,7 @@
       position: fixed; top: 0; left: 0;
       width: 8px; height: 8px;
       border-radius: 50%;
-      background: #D03030;
+      background: #fff;
       pointer-events: none;
       transform: translate(-50%, -50%);
       z-index: 9999;
@@ -706,7 +706,7 @@
   }
   requestAnimationFrame(tick);
 
-  // ── Cursor + red trail ────────────────────────────────────────────
+  // ── Cursor + white trail ──────────────────────────────────────────
   const cursorEl    = document.getElementById('cursor');
   const trailCanvas = document.getElementById('trail-canvas');
   const tCtx        = trailCanvas.getContext('2d');
@@ -736,7 +736,7 @@
       tCtx.beginPath();
       tCtx.moveTo(pts[i-1].x, pts[i-1].y);
       tCtx.lineTo(pts[i].x, pts[i].y);
-      tCtx.strokeStyle = `rgba(208,48,48,${(a * 0.55).toFixed(3)})`;
+      tCtx.strokeStyle = `rgba(255,255,255,${(a * 0.55).toFixed(3)})`;
       tCtx.lineWidth = (i / pts.length) * 2.5;
       tCtx.stroke();
     }
