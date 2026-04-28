@@ -9,7 +9,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --bg: #0a0a0a; --ink: #f0f0f0; --gray: #2a2a2a; --gray2: #8a8a8a; --gray3: #2a2a2a; }
 
-    html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'Lora', serif; color: var(--ink); overflow: hidden; cursor: none; }
+    html, body { width: 100%; min-height: 100%; background: var(--bg); font-family: 'Lora', serif; color: var(--ink); overflow: hidden; cursor: none; }
     a, a:hover, a:active, button, button:hover { cursor: none !important; }
 
     #cursor {
@@ -37,16 +37,218 @@
     .nav-link.active { color: var(--ink); }
     .nav-link.active::after { transform: scaleX(1); }
 
-    .placeholder {
+    .work-shell {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(190px, 260px) minmax(0, 1fr);
+      gap: 28px;
+      padding-top: 14px;
+      overflow: hidden;
+    }
+    .work-intro {
       display: flex;
       flex-direction: column;
+      min-height: 0;
+      border-right: 1px solid var(--gray3);
+      padding-right: 24px;
+    }
+    .work-kicker {
+      font-size: 12px;
+      color: var(--gray2);
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+    .work-title {
+      font-size: clamp(34px, 5vw, 74px);
+      font-weight: 400;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      color: var(--ink);
+    }
+    .work-copy {
+      margin-top: auto;
+      padding-top: 24px;
+      font-size: 11px;
+      line-height: 1.55;
+      font-style: italic;
+      color: var(--gray2);
+      max-width: 230px;
+    }
+    .portfolio-grid {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-auto-rows: minmax(126px, 1fr);
+      gap: 12px;
+    }
+    .project-card {
+      position: relative;
+      display: block;
+      min-height: 126px;
+      overflow: hidden;
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid var(--gray3);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.055), rgba(255,255,255,.012)),
+        var(--bg);
+      isolation: isolate;
+    }
+    .project-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: var(--project-image);
+      background-size: cover;
+      background-position: center;
+      filter: grayscale(1) contrast(.95);
+      opacity: .24;
+      transform: scale(1.02);
+      transition: opacity .35s ease, transform .45s ease, filter .35s ease;
+      z-index: -2;
+    }
+    .project-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(10,10,10,.05), rgba(10,10,10,.86));
+      opacity: .28;
+      transition: opacity .3s ease;
+      z-index: -1;
+    }
+    .project-card:hover::before,
+    .project-card:focus-visible::before {
+      opacity: .58;
+      filter: grayscale(.55) contrast(1.08);
+      transform: scale(1.08);
+    }
+    .project-card:hover::after,
+    .project-card:focus-visible::after { opacity: .82; }
+    .project-card.featured { grid-row: span 2; }
+    .project-card.wide { grid-column: span 2; }
+    .project-meta {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 14px;
+      transform: translateY(18px);
+      opacity: 0;
+      transition: transform .28s ease, opacity .28s ease;
+    }
+    .project-card:hover .project-meta,
+    .project-card:focus-visible .project-meta {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .project-name {
+      display: block;
+      font-size: clamp(18px, 2.2vw, 32px);
+      font-weight: 400;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+    .project-desc {
+      display: block;
+      margin-top: 8px;
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--gray2);
+      font-style: italic;
+      max-width: 340px;
+    }
+    .project-year {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      font-size: 10px;
+      color: rgba(240,240,240,.46);
+      font-style: italic;
+      letter-spacing: .02em;
+    }
+    .project-detail {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      display: none;
       align-items: center;
       justify-content: center;
-      height: 100%;
-      gap: 16px;
+      padding: 24px;
+      background: rgba(0,0,0,.52);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
     }
-    .placeholder-title { font-size: 48px; font-weight: 400; letter-spacing: -0.03em; color: var(--ink); }
-    .placeholder-sub { font-size: 13px; font-style: italic; color: var(--gray2); font-weight: 400; }
+    .project-detail:target { display: flex; }
+    .detail-panel {
+      position: relative;
+      width: min(560px, 100%);
+      background: var(--ink);
+      color: #181818;
+      padding: 38px 36px 34px;
+      box-shadow: 0 24px 64px rgba(0,0,0,.42);
+    }
+    .detail-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      color: #181818;
+      text-decoration: none;
+      font-size: 28px;
+      line-height: 1;
+      opacity: .42;
+      transition: opacity .15s;
+    }
+    .detail-close:hover { opacity: 1; }
+    .detail-year {
+      font-size: 11px;
+      font-style: italic;
+      color: #777;
+      margin-bottom: 14px;
+    }
+    .detail-title {
+      font-size: clamp(30px, 5vw, 48px);
+      font-weight: 400;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .detail-body {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #303030;
+      margin-bottom: 24px;
+    }
+    .detail-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .detail-tag {
+      border-top: 1px solid #cfcfcf;
+      padding-top: 6px;
+      font-size: 11px;
+      color: #666;
+      font-style: italic;
+    }
+
+    @media (max-width: 900px) {
+      html, body { overflow-y: auto; }
+      .page { height: auto; min-height: 100vh; overflow: visible; padding: 18px 24px 28px; }
+      .header { margin-left: -24px; margin-right: -24px; padding-left: 24px; padding-right: 24px; }
+      .work-shell { grid-template-columns: 1fr; overflow: visible; }
+      .work-intro { border-right: none; border-bottom: 1px solid var(--gray3); padding-right: 0; padding-bottom: 18px; }
+      .work-copy { margin-top: 16px; max-width: 460px; }
+      .portfolio-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 180px; }
+      .project-card.featured { grid-row: span 1; }
+      .project-card.wide { grid-column: span 1; }
+      .project-meta { transform: translateY(0); opacity: 1; }
+    }
+
+    @media (max-width: 560px) {
+      .header { flex-wrap: wrap; gap: 8px; }
+      .nav-links { gap: 16px; }
+      .portfolio-grid { grid-template-columns: 1fr; grid-auto-rows: 190px; }
+      .detail-panel { padding: 34px 26px 28px; }
+    }
   </style>
 </head>
 <body>
@@ -62,11 +264,102 @@
         <a class="nav-link" href="index.html" data-page="index.html">About</a>
       </nav>
     </div>
-    <div class="placeholder">
-      <div class="placeholder-title">Work</div>
-      <div class="placeholder-sub">coming soon —</div>
+    <div class="work-shell">
+      <aside class="work-intro">
+        <div class="work-kicker">selected portfolio -</div>
+        <h1 class="work-title">Work</h1>
+        <p class="work-copy">A quiet index of research, design, and policy work. Hover for the name and note; click into each piece for a closer look.</p>
+      </aside>
+
+      <main class="portfolio-grid" aria-label="Portfolio projects">
+        <a class="project-card featured" href="#gordian-knot" style="--project-image:url('uploads/Screenshot%202026-04-25%20at%2012.33.21%20PM.png')">
+          <span class="project-year">2026</span>
+          <span class="project-meta">
+            <span class="project-name">Gordian Knot Center</span>
+            <span class="project-desc">UI/UX systems for national security innovation at Stanford.</span>
+          </span>
+        </a>
+        <a class="project-card" href="#stimson" style="--project-image:url('uploads/IMG_2059.JPG')">
+          <span class="project-year">2026</span>
+          <span class="project-meta">
+            <span class="project-name">The Stimson Center</span>
+            <span class="project-desc">South Asia research shaped for policy audiences.</span>
+          </span>
+        </a>
+        <a class="project-card" href="#impact-labs" style="--project-image:url('uploads/IMG_3073.jpg')">
+          <span class="project-year">2026</span>
+          <span class="project-meta">
+            <span class="project-name">Stanford Impact Labs</span>
+            <span class="project-desc">Research support for civic and social impact work.</span>
+          </span>
+        </a>
+        <a class="project-card wide" href="#hoover" style="--project-image:url('uploads/0d1cbef6-b55a-4a5e-961b-bb37933b2c1a.jpg')">
+          <span class="project-year">2025</span>
+          <span class="project-meta">
+            <span class="project-name">The Hoover Institution</span>
+            <span class="project-desc">Policy research with an eye toward systems, governance, and public consequence.</span>
+          </span>
+        </a>
+        <a class="project-card" href="#pwc" style="--project-image:url('uploads/IMG_0104.jpg')">
+          <span class="project-year">2024</span>
+          <span class="project-meta">
+            <span class="project-name">PwC</span>
+            <span class="project-desc">Tax audit internship across financial review and client-facing process work.</span>
+          </span>
+        </a>
+      </main>
     </div>
   </div>
+
+  <section class="project-detail" id="gordian-knot" aria-label="Gordian Knot Center project detail">
+    <div class="detail-panel">
+      <a class="detail-close" href="#" aria-label="Close project detail">&times;</a>
+      <div class="detail-year">2026</div>
+      <h2 class="detail-title">Gordian Knot Center</h2>
+      <p class="detail-body">UI/UX design work for Stanford's Gordian Knot Center for National Security Innovation, focused on making complex systems clearer, more navigable, and more useful for the people working inside them.</p>
+      <div class="detail-tags"><span class="detail-tag">UI/UX Design</span><span class="detail-tag">Systems Thinking</span><span class="detail-tag">National Security Innovation</span></div>
+    </div>
+  </section>
+
+  <section class="project-detail" id="stimson" aria-label="The Stimson Center project detail">
+    <div class="detail-panel">
+      <a class="detail-close" href="#" aria-label="Close project detail">&times;</a>
+      <div class="detail-year">2026</div>
+      <h2 class="detail-title">The Stimson Center</h2>
+      <p class="detail-body">South Asia internship work at a policy research center, translating research, regional context, and strategic questions into materials that can support clearer public decision-making.</p>
+      <div class="detail-tags"><span class="detail-tag">Policy Research</span><span class="detail-tag">South Asia</span><span class="detail-tag">Writing</span></div>
+    </div>
+  </section>
+
+  <section class="project-detail" id="impact-labs" aria-label="Stanford Impact Labs project detail">
+    <div class="detail-panel">
+      <a class="detail-close" href="#" aria-label="Close project detail">&times;</a>
+      <div class="detail-year">2026</div>
+      <h2 class="detail-title">Stanford Impact Labs</h2>
+      <p class="detail-body">Research assistant work supporting applied projects at the intersection of institutions, communities, and measurable social impact.</p>
+      <div class="detail-tags"><span class="detail-tag">Research</span><span class="detail-tag">Social Impact</span><span class="detail-tag">Civic Systems</span></div>
+    </div>
+  </section>
+
+  <section class="project-detail" id="hoover" aria-label="The Hoover Institution project detail">
+    <div class="detail-panel">
+      <a class="detail-close" href="#" aria-label="Close project detail">&times;</a>
+      <div class="detail-year">2025</div>
+      <h2 class="detail-title">The Hoover Institution</h2>
+      <p class="detail-body">Research work focused on public institutions and policy questions, with attention to how ideas travel from analysis into civic life.</p>
+      <div class="detail-tags"><span class="detail-tag">Research</span><span class="detail-tag">Governance</span><span class="detail-tag">Public Policy</span></div>
+    </div>
+  </section>
+
+  <section class="project-detail" id="pwc" aria-label="PwC project detail">
+    <div class="detail-panel">
+      <a class="detail-close" href="#" aria-label="Close project detail">&times;</a>
+      <div class="detail-year">2024</div>
+      <h2 class="detail-title">PwC</h2>
+      <p class="detail-body">Tax audit internship experience that built fluency in review processes, documentation, and the operational side of client work.</p>
+      <div class="detail-tags"><span class="detail-tag">Tax Audit</span><span class="detail-tag">Process</span><span class="detail-tag">Client Work</span></div>
+    </div>
+  </section>
 
   <script>
     const overlay = document.getElementById('page-out');
