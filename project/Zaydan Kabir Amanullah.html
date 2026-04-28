@@ -171,7 +171,7 @@
     .upcoming-track {
       display: flex;
       width: max-content;
-      animation: upcoming-scroll 22s linear infinite;
+      animation: upcoming-scroll 56s linear infinite;
       will-change: transform;
     }
     .upcoming-group {
@@ -190,8 +190,8 @@
       white-space: nowrap;
     }
     @keyframes upcoming-scroll {
-      from { transform: translate3d(0, 0, 0); }
-      to { transform: translate3d(-50%, 0, 0); }
+      from { transform: translate3d(100vw, 0, 0); }
+      to { transform: translate3d(-100%, 0, 0); }
     }
     @media (prefers-reduced-motion: reduce) {
       .upcoming-track { animation: none; }
@@ -246,7 +246,7 @@
     }
     #masthead-text {
       font-family: 'AtlanticCruise', 'Bebas Neue', serif;
-      font-size: clamp(76px, 15.5vw, 220px);
+      font-size: clamp(62px, 12.5vw, 180px);
       letter-spacing: 0.05em;
       color: var(--ink);
       line-height: 1;
@@ -261,7 +261,7 @@
       position: absolute;
       left: 50%;
       top: calc(100% - 12px);
-      width: min(91vw, 1080px);
+      width: min(78vw, 900px);
       height: auto;
       opacity: 0;
       transform: translate(-50%, -50%) scale(0.96);
