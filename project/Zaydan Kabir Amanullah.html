@@ -252,6 +252,27 @@
       transition: font-family 0.01s linear, letter-spacing 0.08s ease, filter 0.08s ease, transform 0.08s ease;
       white-space: nowrap;
     }
+    #masthead-reference {
+      position: absolute;
+      left: 50%;
+      top: calc(100% - 12px);
+      width: min(91vw, 1080px);
+      height: auto;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.96);
+      filter: drop-shadow(0 0 22px rgba(255,255,255,0.14));
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      will-change: opacity, transform;
+    }
+    #masthead.wordmark-landed #masthead-text {
+      opacity: 0;
+      transform: scaleX(0.98);
+      transition: opacity 0.12s ease, transform 0.12s ease;
+    }
+    #masthead.wordmark-landed #masthead-reference {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
     #masthead-text.font-unifraktur {
       font-family: 'UnifrakturCook', 'Lora', serif;
       letter-spacing: 0.015em;
@@ -270,34 +291,6 @@
       font-family: 'CloisterBlack', 'FetteUNZFraktur', serif;
       letter-spacing: 0.02em;
       transform: scaleX(1.06);
-    }
-    #masthead-text.font-reference {
-      font-family: 'CloisterBlack', 'FetteUNZFraktur', 'UnifrakturCook', serif;
-      letter-spacing: -0.01em;
-      transform: scaleX(1.08) skewX(-7deg);
-      filter: contrast(1.35) drop-shadow(0 0 1px rgba(255,255,255,0.95));
-      text-shadow:
-        -0.035em 0.02em 0 rgba(255,255,255,0.18),
-        0.035em -0.015em 0 rgba(255,255,255,0.14),
-        0 0 60px rgba(255,255,255,0.1);
-    }
-    #masthead-text.font-reference::before,
-    #masthead-text.font-reference::after {
-      content: attr(data-text);
-      position: absolute;
-      inset: 0;
-      color: var(--ink);
-      pointer-events: none;
-    }
-    #masthead-text.font-reference::before {
-      transform: translate(-0.075em, 0.025em) skewX(-12deg) scaleX(1.08);
-      clip-path: polygon(0 18%, 18% 0, 31% 32%, 48% 0, 60% 42%, 78% 2%, 100% 22%, 100% 45%, 0 52%);
-      opacity: 0.62;
-    }
-    #masthead-text.font-reference::after {
-      transform: translate(0.06em, -0.015em) skewX(10deg) scaleX(1.06);
-      clip-path: polygon(0 54%, 16% 100%, 31% 66%, 50% 100%, 61% 60%, 80% 100%, 100% 55%, 100% 100%, 0 100%);
-      opacity: 0.58;
     }
     #masthead-text.font-snap {
       animation: masthead-snap 0.12s steps(2, end);
@@ -420,6 +413,7 @@
       <div id="masthead">
         <span id="masthead-guide">&lt;scroll down&gt;<br>to move right</span>
         <span id="masthead-text" data-text="Zaydan">Zaydan</span>
+        <img id="masthead-reference" src="uploads/zaydan-screenshot-wordmark.png" alt="" aria-hidden="true">
       </div>
 
       <canvas id="horse-canvas"></canvas>
@@ -454,27 +448,34 @@
 
   // ── Zaydan font roll ─────────────────────────────────────────────
   const mastheadText = document.getElementById('masthead-text');
+  const masthead = document.getElementById('masthead');
   const fontRoll = [
     'font-unifraktur',
     'font-old-english',
     'font-fette',
-    'font-cloister',
-    'font-reference'
+    'font-cloister'
   ];
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function setMastheadFont(fontClass) {
+    masthead.classList.remove('wordmark-landed');
     mastheadText.classList.remove(...fontRoll, 'font-snap');
     mastheadText.classList.add(fontClass, 'font-snap');
     window.setTimeout(() => mastheadText.classList.remove('font-snap'), 130);
   }
 
+  function landMastheadWordmark() {
+    mastheadText.classList.remove(...fontRoll, 'font-snap');
+    masthead.classList.add('wordmark-landed');
+  }
+
   if (reduceMotion) {
-    setMastheadFont('font-reference');
+    landMastheadWordmark();
   } else {
     fontRoll.forEach((fontClass, index) => {
       window.setTimeout(() => setMastheadFont(fontClass), 120 + index * 170);
     });
+    window.setTimeout(landMastheadWordmark, 120 + fontRoll.length * 170);
   }
 
   // ── Page-out transition ───────────────────────────────────────────
