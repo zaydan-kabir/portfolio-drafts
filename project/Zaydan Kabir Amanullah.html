@@ -137,6 +137,44 @@
     .h-link:hover { color: var(--ink); }
     .h-link:hover::after { transform: scaleX(1); }
 
+    /* ── Upcoming ticker ───────────────────────────────────── */
+    #upcoming-ticker {
+      position: fixed;
+      top: 62px;
+      left: 0;
+      right: 0;
+      z-index: 90;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      background: rgba(10,10,10,0.82);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      pointer-events: none;
+    }
+    .upcoming-track {
+      display: flex;
+      width: max-content;
+      animation: upcoming-scroll 22s linear infinite;
+      will-change: transform;
+    }
+    .upcoming-track span {
+      flex: 0 0 auto;
+      padding: 6px 44px 7px 0;
+      font-family: 'VT323', monospace;
+      font-size: clamp(18px, 1.6vw, 24px);
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.76);
+      text-shadow: 0 0 10px rgba(255,255,255,0.16);
+      white-space: nowrap;
+    }
+    @keyframes upcoming-scroll {
+      from { transform: translate3d(0, 0, 0); }
+      to { transform: translate3d(-50%, 0, 0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .upcoming-track { animation: none; }
+    }
+
     /* ── Stage ─────────────────────────────────────────────── */
     #stage {
       position: fixed;
@@ -291,6 +329,13 @@
     <a class="h-link" href="index.html" data-page="index.html">About</a>
   </nav>
 </header>
+
+<div id="upcoming-ticker" aria-label="Upcoming announcement">
+  <div class="upcoming-track" aria-hidden="true">
+    <span>UPCOMING - Zaydan Kabir Amanullah will be in New York for the summer</span>
+    <span>UPCOMING - Zaydan Kabir Amanullah will be in New York for the summer</span>
+  </div>
+</div>
 
 <!-- ── Stage ──────────────────────────────────────────── -->
 <div id="stage">
