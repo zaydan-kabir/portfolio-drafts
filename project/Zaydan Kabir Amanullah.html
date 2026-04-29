@@ -95,16 +95,43 @@
       z-index: 9997;
     }
 
-    /* ── Intro overlay ────────────────────────────────────── */
-    #intro-overlay {
+    /* ── Intro screen ────────────────────────────────────── */
+    #intro-screen {
       position: fixed; inset: 0;
       background: #0a0a0a;
       z-index: 9500;
+      display: flex; align-items: center; justify-content: center;
       transition: opacity 0.85s ease;
     }
-    #intro-overlay iframe {
-      width: 100%; height: 100%;
-      border: none; display: block;
+    #intro-grain {
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 160px 160px;
+      opacity: 0.055; mix-blend-mode: overlay; pointer-events: none;
+    }
+    #intro-title {
+      position: relative;
+      font-family: 'AtlanticCruise', serif;
+      font-size: clamp(62px, 12.5vw, 180px);
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      line-height: 1; white-space: nowrap;
+      text-shadow: 0 0 80px rgba(255,255,255,0.05);
+      opacity: 0;
+      transform: translateY(18px);
+      /* font/transform transitions match the page masthead exactly */
+      transition: opacity 0.7s ease, transform 0.7s ease,
+                  font-family 0.01s linear, letter-spacing 0.08s ease,
+                  filter 0.08s ease;
+    }
+    #intro-title.font-unifraktur  { font-family: 'UnifrakturCook','Lora',serif; letter-spacing:0.015em; }
+    #intro-title.font-old-english { font-family: 'OldEnglishTextMT','Lora',serif; letter-spacing:0.01em; transform:scaleX(1.04); }
+    #intro-title.font-fette       { font-family: 'FetteUNZFraktur','Lora',serif; letter-spacing:0.005em; transform:scaleX(1.08); }
+    #intro-title.font-cloister    { font-family: 'CloisterBlack',serif; letter-spacing:0.02em; transform:scaleX(1.06); }
+    #intro-title.font-snap        { animation: intro-snap 0.12s steps(2,end); }
+    @keyframes intro-snap {
+      0%   { opacity:0.45; filter:blur(1px) contrast(1.8); }
+      100% { opacity:1; }
     }
 
     /* ── Page-out overlay ──────────────────────────────────── */
@@ -423,8 +450,9 @@
 <body>
 
 <!-- ── Intro overlay ──────────────────────────────────── -->
-<div id="intro-overlay">
-  <iframe src="intro/index.html" title="Intro animation" allowtransparency="true"></iframe>
+<div id="intro-screen">
+  <div id="intro-grain"></div>
+  <div id="intro-title">Zaydan</div>
 </div>
 
 <!-- ── Custom cursor ──────────────────────────────────── -->
@@ -813,36 +841,47 @@
 
 })();
 
-// ── Intro overlay dismissal ───────────────────────────────────────
+// ── Intro screen ─────────────────────────────────────────────────
 (function () {
-  const overlay = document.getElementById('intro-overlay');
-  if (!overlay) return;
+  const screen  = document.getElementById('intro-screen');
+  const title   = document.getElementById('intro-title');
+  const classes = ['font-unifraktur','font-old-english','font-fette','font-cloister'];
 
-  function dismiss() {
-    if (overlay._gone) return;
-    overlay._gone = true;
-    overlay.style.opacity = '0';
-    setTimeout(() => { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 900);
+  function setFont(cls) {
+    title.classList.remove(...classes, 'font-snap');
+    title.classList.add(cls, 'font-snap');
+    setTimeout(() => title.classList.remove('font-snap'), 130);
   }
 
-  // Dismissed by iframe postMessage when composition ends
-  window.addEventListener('message', function (e) {
-    if (e.data && e.data.type === 'intro-complete') dismiss();
-  });
+  function dismiss() {
+    if (screen._gone) return;
+    screen._gone = true;
+    screen.style.opacity = '0';
+    setTimeout(() => { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 900);
+  }
 
-  // Click anywhere to skip
-  overlay.addEventListener('click', dismiss);
+  // Fade name in, then roll fonts, then hold on CloisterBlack, then dismiss
+  setTimeout(() => {
+    title.style.opacity = '1';
+    title.style.transform = 'translateY(0)';
+  }, 120);
 
-  // Escape / Space / Enter to skip
+  setTimeout(() => {
+    setFont(classes[0]);
+    classes.slice(1).forEach((cls, i) =>
+      setTimeout(() => setFont(cls), (i + 1) * 170)
+    );
+    // Hold on CloisterBlack ~1.8s then fade out
+    setTimeout(dismiss, classes.length * 170 + 1800);
+  }, 1000);
+
+  // Skip on click or key
+  screen.addEventListener('click', dismiss);
   document.addEventListener('keydown', function skip(e) {
     if (e.key === 'Escape' || e.key === ' ' || e.key === 'Enter') {
-      dismiss();
-      document.removeEventListener('keydown', skip);
+      dismiss(); document.removeEventListener('keydown', skip);
     }
   });
-
-  // Hard fallback
-  setTimeout(dismiss, 10500);
 })();
 </script>
 </body>
