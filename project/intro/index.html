@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zaydan — Intro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,300&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'AtlanticCruise';
+      src: url('../uploads/Atlantic_Cruise-Demo.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'VT323';
+      src: url('../uploads/VT323-Regular.ttf') format('truetype');
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #0a0a0a;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    /* Composition fills viewport */
+    [data-composition-id="zaydan-intro"] {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #0a0a0a;
+      overflow: hidden;
+    }
+
+    /* Clips fill the composition area */
+    #clip-bg, #clip-content {
+      position: absolute;
+      inset: 0;
+    }
+
+    /* Radial glow behind text */
+    #intro-glow {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70vw;
+      height: 70vw;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(240,240,240,0.045) 0%, transparent 68%);
+      opacity: 0.03;
+      pointer-events: none;
+    }
+
+    /* Grain — identical to page */
+    #intro-grain {
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 160px 160px;
+      opacity: 0.055;
+      mix-blend-mode: overlay;
+      pointer-events: none;
+    }
+
+    /* Content: centred column layout — end-state (fully visible frame) */
+    .scene-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      padding: clamp(24px, 5vw, 80px);
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    #intro-label-top {
+      font-family: 'VT323', monospace;
+      font-size: clamp(14px, 1.4vw, 22px);
+      letter-spacing: 0.14em;
+      color: #8a8a8a;
+      margin-bottom: clamp(14px, 2vh, 28px);
+    }
+
+    #intro-rule-1 {
+      width: clamp(80px, 14vw, 260px);
+      height: 1px;
+      background: #2a2a2a;
+      flex-shrink: 0;
+      margin-bottom: clamp(14px, 2.5vh, 36px);
+    }
+
+    /* Hero text — same font as page masthead, slightly larger for full-screen impact */
+    #intro-name {
+      font-family: 'AtlanticCruise', serif;
+      font-size: clamp(80px, 15vw, 220px);
+      letter-spacing: 0.05em;
+      color: #f0f0f0;
+      line-height: 1;
+      white-space: nowrap;
+      text-shadow: 0 0 80px rgba(255,255,255,0.05);
+    }
+
+    #intro-rule-2 {
+      width: clamp(80px, 14vw, 260px);
+      height: 1px;
+      background: #2a2a2a;
+      flex-shrink: 0;
+      margin-top: clamp(14px, 2.5vh, 36px);
+      margin-bottom: clamp(12px, 1.8vh, 24px);
+    }
+
+    #intro-sub {
+      font-family: 'Lora', Georgia, serif;
+      font-size: clamp(11px, 1.2vw, 18px);
+      font-weight: 300;
+      font-style: italic;
+      letter-spacing: 0.1em;
+      color: #8a8a8a;
+      margin-bottom: clamp(8px, 1.2vh, 16px);
+    }
+
+    #intro-label-bottom {
+      font-family: 'VT323', monospace;
+      font-size: clamp(13px, 1.2vw, 20px);
+      letter-spacing: 0.12em;
+      color: #4a4a4a;
+    }
+  </style>
+</head>
+<body>
+
+<div data-composition-id="zaydan-intro" data-width="1920" data-height="1080">
+
+  <!-- Track 0: background decoratives -->
+  <div id="clip-bg" data-start="0" data-duration="9" data-track-index="0">
+    <div id="intro-glow" data-layout-ignore></div>
+    <div id="intro-grain" data-layout-ignore></div>
+  </div>
+
+  <!-- Track 1: text content -->
+  <div id="clip-content" data-start="0" data-duration="9" data-track-index="1">
+    <div id="intro-content-wrap" class="scene-content">
+      <div id="intro-label-top">CALIFORNIA &middot; STANFORD &middot; 2026</div>
+      <div id="intro-rule-1"></div>
+      <div id="intro-name">ZAYDAN</div>
+      <div id="intro-rule-2"></div>
+      <div id="intro-sub">Kabir Amanullah</div>
+      <div id="intro-label-bottom">DESIGN &middot; POLITICAL SCIENCE</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <script>
+    window.__timelines = window.__timelines || {};
+
+    const tl = gsap.timeline({ paused: true });
+
+    // Ambient glow breathing — deterministic, 4s cycle, covers visible 7s
+    // duration: 2s forward, yoyo: true (2s back), repeat: 3 → 4 half-cycles × 2s = 8s
+    tl.to('#intro-glow', {
+      scale: 1.35, opacity: 0.07, duration: 2,
+      ease: 'sine.inOut', yoyo: true,
+      repeat: 3
+    }, 0);
+
+    // Label top
+    tl.from('#intro-label-top', { opacity: 0, y: 8, duration: 0.9, ease: 'power2.out' }, 0.3);
+
+    // Rule 1 extends from centre
+    tl.from('#intro-rule-1', {
+      scaleX: 0, duration: 0.8, ease: 'expo.out', transformOrigin: 'center center'
+    }, 0.55);
+
+    // ZAYDAN — hero entrance (staggered from rule so name feels like it arrives into a frame)
+    tl.from('#intro-name', { y: 24, opacity: 0, duration: 1.8, ease: 'power3.out' }, 0.4);
+
+    // Rule 2 extends from centre
+    tl.from('#intro-rule-2', {
+      scaleX: 0, duration: 0.7, ease: 'expo.out', transformOrigin: 'center center'
+    }, 1.25);
+
+    // Subtitle
+    tl.from('#intro-sub', { opacity: 0, duration: 1.2, ease: 'power2.out' }, 1.45);
+
+    // Label bottom
+    tl.from('#intro-label-bottom', { opacity: 0, duration: 0.9, ease: 'power2.out' }, 1.8);
+
+    // Final exit — single scene, exit animations permitted
+    tl.to('#intro-content-wrap', { opacity: 0, duration: 1.4, ease: 'power1.in' }, 6.8);
+
+    window.__timelines['zaydan-intro'] = tl;
+  </script>
+</div>
+
+<!-- Auto-play when not driven by the HyperFrames render/preview CLI -->
+<script>
+  if (!window.__hyperframes) {
+    document.addEventListener('DOMContentLoaded', function () {
+      setTimeout(function () {
+        var t = window.__timelines && window.__timelines['zaydan-intro'];
+        if (t) t.play();
+      }, 60);
+      setTimeout(function () {
+        try { window.parent.postMessage({ type: 'intro-complete' }, '*'); } catch (e) {}
+      }, 8600);
+    });
+  }
+</script>
+
+</body>
+</html>
