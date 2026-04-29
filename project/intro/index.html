@@ -14,6 +14,23 @@
       font-family: 'VT323';
       src: url('../uploads/VT323-Regular.ttf') format('truetype');
     }
+    @font-face {
+      font-family: 'UnifrakturCook';
+      src: url('../uploads/UnifrakturCook-Bold.ttf') format('truetype');
+      font-weight: 700;
+    }
+    @font-face {
+      font-family: 'OldEnglishTextMT';
+      src: url('../uploads/oldenglishtextmt.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'FetteUNZFraktur';
+      src: url('../uploads/FetteUNZFraktur.ttf') format('truetype');
+    }
+    @font-face {
+      font-family: 'CloisterBlack';
+      src: url('../uploads/CloisterBlack.ttf') format('truetype');
+    }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -24,38 +41,31 @@
       cursor: none;
     }
 
-    /* Composition fills viewport */
     [data-composition-id="zaydan-intro"] {
       position: relative;
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       background: #0a0a0a;
       overflow: hidden;
     }
 
-    /* Clips fill the composition area */
     #clip-bg, #clip-content {
       position: absolute;
       inset: 0;
     }
 
-    /* Radial glow behind text */
     #intro-glow {
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      width: 70vw;
-      height: 70vw;
+      width: 70vw; height: 70vw;
       border-radius: 50%;
       background: radial-gradient(circle, rgba(240,240,240,0.045) 0%, transparent 68%);
       opacity: 0.03;
       pointer-events: none;
     }
 
-    /* Grain — identical to page */
     #intro-grain {
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       background-size: 160px 160px;
       opacity: 0.055;
@@ -63,14 +73,13 @@
       pointer-events: none;
     }
 
-    /* Content: centred column layout — end-state (fully visible frame) */
+    /* End-state layout: fully-visible hero frame */
     .scene-content {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       padding: clamp(24px, 5vw, 80px);
       box-sizing: border-box;
       text-align: center;
@@ -92,7 +101,7 @@
       margin-bottom: clamp(14px, 2.5vh, 36px);
     }
 
-    /* Hero text — same font as page masthead, slightly larger for full-screen impact */
+    /* Hero — same font as page masthead */
     #intro-name {
       font-family: 'AtlanticCruise', serif;
       font-size: clamp(80px, 15vw, 220px);
@@ -101,6 +110,8 @@
       line-height: 1;
       white-space: nowrap;
       text-shadow: 0 0 80px rgba(255,255,255,0.05);
+      /* transition matches the page's masthead transition */
+      transition: font-family 0.01s linear, letter-spacing 0.06s ease;
     }
 
     #intro-rule-2 {
@@ -145,7 +156,7 @@
     <div id="intro-content-wrap" class="scene-content">
       <div id="intro-label-top">CALIFORNIA &middot; STANFORD &middot; 2026</div>
       <div id="intro-rule-1"></div>
-      <div id="intro-name">ZAYDAN</div>
+      <div id="intro-name">Zaydan</div>
       <div id="intro-rule-2"></div>
       <div id="intro-sub">Kabir Amanullah</div>
       <div id="intro-label-bottom">DESIGN &middot; POLITICAL SCIENCE</div>
@@ -156,46 +167,76 @@
   <script>
     window.__timelines = window.__timelines || {};
 
-    const tl = gsap.timeline({ paused: true });
+    // Font roll — matches the page's playMastheadRoll() sequence exactly,
+    // then snaps back to AtlanticCruise. Deterministic; no Math.random().
+    var FONTS = [
+      { family: "'UnifrakturCook', 'Lora', serif",    ls: '0.015em', sx: 1.00 },
+      { family: "'OldEnglishTextMT', 'Lora', serif",  ls: '0.010em', sx: 1.04 },
+      { family: "'FetteUNZFraktur', 'Lora', serif",   ls: '0.005em', sx: 1.08 },
+      { family: "'CloisterBlack', serif",              ls: '0.020em', sx: 1.06 },
+      { family: "'AtlanticCruise', serif",             ls: '0.050em', sx: 1.00 }, // settle
+    ];
 
-    // Ambient glow breathing — deterministic, 4s cycle, covers visible 7s
-    // duration: 2s forward, yoyo: true (2s back), repeat: 3 → 4 half-cycles × 2s = 8s
+    // The roll fires faster on the first few steps and decelerates into the landing,
+    // simulating a slot machine slowing to a stop — more dynamic than fixed 170ms.
+    var ROLL_DELAYS = [0, 0.13, 0.24, 0.33, 0.40]; // cumulative offsets in seconds
+
+    var ROLL_START = 1.05; // name fully visible before roll fires
+
+    var tl = gsap.timeline({ paused: true });
+
+    // Ambient glow breathing — 4s period, 4 half-cycles × 2s = 8s total coverage
     tl.to('#intro-glow', {
-      scale: 1.35, opacity: 0.07, duration: 2,
-      ease: 'sine.inOut', yoyo: true,
-      repeat: 3
+      scale: 1.35, opacity: 0.07,
+      duration: 2, ease: 'sine.inOut', yoyo: true, repeat: 3
     }, 0);
 
     // Label top
-    tl.from('#intro-label-top', { opacity: 0, y: 8, duration: 0.9, ease: 'power2.out' }, 0.3);
+    tl.from('#intro-label-top', { opacity: 0, y: 6, duration: 0.7, ease: 'power2.out' }, 0.2);
 
-    // Rule 1 extends from centre
-    tl.from('#intro-rule-1', {
-      scaleX: 0, duration: 0.8, ease: 'expo.out', transformOrigin: 'center center'
-    }, 0.55);
+    // ZAYDAN entrance — arrives fully by t ≈ 1.0s so roll can fire cleanly
+    tl.from('#intro-name', { y: 28, opacity: 0, duration: 0.75, ease: 'power2.out' }, 0.3);
 
-    // ZAYDAN — hero entrance (staggered from rule so name feels like it arrives into a frame)
-    tl.from('#intro-name', { y: 24, opacity: 0, duration: 1.8, ease: 'power3.out' }, 0.4);
+    // Rule 1
+    tl.from('#intro-rule-1', { scaleX: 0, duration: 0.6, ease: 'expo.out', transformOrigin: 'center center' }, 0.5);
 
-    // Rule 2 extends from centre
-    tl.from('#intro-rule-2', {
-      scaleX: 0, duration: 0.7, ease: 'expo.out', transformOrigin: 'center center'
-    }, 1.25);
+    // ── Font roll (slot machine, decelerating) ──────────────────────
+    FONTS.forEach(function(step, i) {
+      var t = ROLL_START + ROLL_DELAYS[i];
+
+      // Snap font and letter-spacing at this timestamp
+      tl.set('#intro-name', {
+        fontFamily: step.family,
+        letterSpacing: step.ls,
+        scaleX: step.sx
+      }, t);
+
+      // Brief opacity/blur flash replicating the page's masthead-snap keyframe
+      tl.fromTo('#intro-name',
+        { opacity: 0.35, filter: 'blur(0.8px)' },
+        { opacity: 1,    filter: 'blur(0px)',   duration: 0.09, ease: 'power1.out' },
+        t
+      );
+    });
+    // ── End font roll ───────────────────────────────────────────────
+
+    // Rule 2 (appears after roll settles)
+    tl.from('#intro-rule-2', { scaleX: 0, duration: 0.6, ease: 'expo.out', transformOrigin: 'center center' }, 1.65);
 
     // Subtitle
-    tl.from('#intro-sub', { opacity: 0, duration: 1.2, ease: 'power2.out' }, 1.45);
+    tl.from('#intro-sub', { opacity: 0, duration: 1.0, ease: 'power2.out' }, 1.85);
 
     // Label bottom
-    tl.from('#intro-label-bottom', { opacity: 0, duration: 0.9, ease: 'power2.out' }, 1.8);
+    tl.from('#intro-label-bottom', { opacity: 0, duration: 0.8, ease: 'power2.out' }, 2.15);
 
-    // Final exit — single scene, exit animations permitted
+    // Final exit — single scene, exit animation permitted
     tl.to('#intro-content-wrap', { opacity: 0, duration: 1.4, ease: 'power1.in' }, 6.8);
 
     window.__timelines['zaydan-intro'] = tl;
   </script>
 </div>
 
-<!-- Auto-play when not driven by the HyperFrames render/preview CLI -->
+<!-- Auto-play for iframe embed (bypassed when HyperFrames player is active) -->
 <script>
   if (!window.__hyperframes) {
     document.addEventListener('DOMContentLoaded', function () {
