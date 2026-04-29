@@ -101,7 +101,7 @@
       background: #0a0a0a;
       z-index: 9500;
       display: flex; align-items: center; justify-content: center;
-      transition: opacity 0.55s ease;
+      transition: opacity 0.75s ease;
     }
     #intro-grain {
       position: absolute; inset: 0;
@@ -881,14 +881,14 @@
     title.classList.remove(...classes, 'font-snap');
     screen.classList.add('wordmark-landed');
     // Hold on wordmark image, then fade the whole screen out
-    setTimeout(dismiss, 900);
+    setTimeout(dismiss, 1400);
   }
 
   // Fade name in, then roll fonts, then land on wordmark image, then dismiss
   setTimeout(() => {
     title.style.opacity = '1';
     title.style.transform = 'translateY(0)';
-  }, 80);
+  }, 120);
 
   setTimeout(() => {
     setFont(classes[0]);
@@ -897,7 +897,7 @@
     );
     // Land on wordmark after roll completes
     setTimeout(landWordmark, classes.length * 170);
-  }, 600);
+  }, 850);
 
   // Skip on click or key
   screen.addEventListener('click', dismiss);
