@@ -886,20 +886,17 @@
     setTimeout(dismiss, 1400);
   }
 
-  // Fade name in, then roll fonts, then land on wordmark image, then dismiss
+  // Fade in already showing UnifrakturCook (same as page masthead's first font),
+  // then roll through the remaining fonts exactly as the page does
   setTimeout(() => {
     title.style.opacity = '1';
     title.style.transform = 'translateY(0)';
-  }, 120);
-
-  setTimeout(() => {
     setFont(classes[0]);
     classes.slice(1).forEach((cls, i) =>
       setTimeout(() => setFont(cls), (i + 1) * 170)
     );
-    // Land on wordmark after roll completes
     setTimeout(landWordmark, classes.length * 170);
-  }, 850);
+  }, 150);
 
   // Skip on click or key
   screen.addEventListener('click', dismiss);
