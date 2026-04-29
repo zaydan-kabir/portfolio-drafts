@@ -101,7 +101,7 @@
       background: #0a0a0a;
       z-index: 9500;
       display: flex; align-items: center; justify-content: center;
-      transition: opacity 0.85s ease;
+      transition: opacity 0.55s ease;
     }
     #intro-grain {
       position: absolute; inset: 0;
@@ -142,20 +142,7 @@
       filter: drop-shadow(0 0 22px rgba(255,255,255,0.14));
       transition: opacity 0.22s ease, transform 0.22s ease;
     }
-    #intro-skip {
-      position: absolute;
-      bottom: clamp(20px, 4vh, 40px);
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'VT323', monospace;
-      font-size: clamp(14px, 1.3vw, 20px);
-      letter-spacing: 0.12em;
-      color: rgba(255,255,255,0.28);
-      white-space: nowrap;
-      transition: color 0.15s;
-    }
-    #intro-skip:hover { color: rgba(255,255,255,0.6); }
-    #intro-screen.wordmark-landed #intro-title {
+#intro-screen.wordmark-landed #intro-title {
       display: none;
     }
     #intro-screen.wordmark-landed #intro-wordmark {
@@ -483,7 +470,6 @@
   <div id="intro-grain"></div>
   <div id="intro-title">Zaydan</div>
   <img id="intro-wordmark" src="uploads/zaydan-screenshot-wordmark.png" alt="" aria-hidden="true">
-  <div id="intro-skip">[ click to skip ]</div>
 </div>
 
 <!-- ── Custom cursor ──────────────────────────────────── -->
@@ -888,21 +874,21 @@
     if (screen._gone) return;
     screen._gone = true;
     screen.style.opacity = '0';
-    setTimeout(() => { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 900);
+    setTimeout(() => { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 600);
   }
 
   function landWordmark() {
     title.classList.remove(...classes, 'font-snap');
     screen.classList.add('wordmark-landed');
     // Hold on wordmark image, then fade the whole screen out
-    setTimeout(dismiss, 1800);
+    setTimeout(dismiss, 900);
   }
 
   // Fade name in, then roll fonts, then land on wordmark image, then dismiss
   setTimeout(() => {
     title.style.opacity = '1';
     title.style.transform = 'translateY(0)';
-  }, 120);
+  }, 80);
 
   setTimeout(() => {
     setFont(classes[0]);
@@ -911,7 +897,7 @@
     );
     // Land on wordmark after roll completes
     setTimeout(landWordmark, classes.length * 170);
-  }, 1000);
+  }, 600);
 
   // Skip on click or key
   screen.addEventListener('click', dismiss);
