@@ -133,6 +133,23 @@
       0%   { opacity:0.45; filter:blur(1px) contrast(1.8); }
       100% { opacity:1; }
     }
+    #intro-wordmark {
+      position: absolute;
+      left: 50%; top: 50%;
+      width: min(64vw, 720px); height: auto;
+      opacity: 0;
+      transform: translate(-50%,-50%) scale(0.98);
+      filter: drop-shadow(0 0 22px rgba(255,255,255,0.14));
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+    #intro-screen.wordmark-landed #intro-title {
+      opacity: 0;
+      transition: opacity 0.12s ease, transform 0.12s ease;
+    }
+    #intro-screen.wordmark-landed #intro-wordmark {
+      opacity: 1;
+      transform: translate(-50%,-50%) scale(1);
+    }
 
     /* ── Page-out overlay ──────────────────────────────────── */
     #page-out {
@@ -453,6 +470,7 @@
 <div id="intro-screen">
   <div id="intro-grain"></div>
   <div id="intro-title">Zaydan</div>
+  <img id="intro-wordmark" src="uploads/zaydan-screenshot-wordmark.png" alt="" aria-hidden="true">
 </div>
 
 <!-- ── Custom cursor ──────────────────────────────────── -->
@@ -860,7 +878,14 @@
     setTimeout(() => { if (screen.parentNode) screen.parentNode.removeChild(screen); }, 900);
   }
 
-  // Fade name in, then roll fonts, then hold on CloisterBlack, then dismiss
+  function landWordmark() {
+    title.classList.remove(...classes, 'font-snap');
+    screen.classList.add('wordmark-landed');
+    // Hold on wordmark image, then fade the whole screen out
+    setTimeout(dismiss, 1800);
+  }
+
+  // Fade name in, then roll fonts, then land on wordmark image, then dismiss
   setTimeout(() => {
     title.style.opacity = '1';
     title.style.transform = 'translateY(0)';
@@ -871,8 +896,8 @@
     classes.slice(1).forEach((cls, i) =>
       setTimeout(() => setFont(cls), (i + 1) * 170)
     );
-    // Hold on CloisterBlack ~1.8s then fade out
-    setTimeout(dismiss, classes.length * 170 + 1800);
+    // Land on wordmark after roll completes
+    setTimeout(landWordmark, classes.length * 170);
   }, 1000);
 
   // Skip on click or key
