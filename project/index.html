@@ -34,6 +34,8 @@
       color:var(--ink);
       overflow:hidden; /* default: about view = no scroll */
       cursor:none;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
     /* when zaydan view is active, body becomes scrollable */
     body.zaydan-active { overflow-y:scroll; overflow-x:hidden; }
@@ -137,7 +139,7 @@
       display: grid;
       grid-template-columns: minmax(220px, 260px) minmax(0, 1fr) minmax(0, 1fr);
       grid-template-rows: auto 1fr;
-      height: 100dvh;
+      height: 100vh; height: 100dvh;
       padding: clamp(16px, 3vw, 48px);
       gap: 0 clamp(16px, 3vw, 36px);
       overflow: hidden;
@@ -351,14 +353,14 @@
         position:relative !important;
         inset:auto;
         overflow:visible;
-        min-height:100dvh;
+        min-height:100vh; min-height:100dvh;
       }
 
       .page {
         display:flex;
         flex-direction:column;
         height:auto;
-        min-height:100dvh;
+        min-height:100vh; min-height:100dvh;
         padding:16px;
         gap:0;
         overflow:visible;
@@ -399,8 +401,8 @@
       #arrow-svg { display:block; }
 
       /* Zaydan view: disable horizontal scroll on mobile, just show masthead */
-      #view-zaydan { min-height:100dvh; }
-      #z-stage { position:relative; height:100dvh; }
+      #view-zaydan { min-height:100vh; min-height:100dvh; }
+      #z-stage { position:relative; height:100vh; height:100dvh; }
       #z-masthead { position:absolute; }
     }
 

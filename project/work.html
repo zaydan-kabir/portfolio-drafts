@@ -9,7 +9,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --bg: #0a0a0a; --ink: #f0f0f0; --gray: #2a2a2a; --gray2: #8a8a8a; --gray3: #2a2a2a; }
 
-    html, body { width: 100%; min-height: 100%; background: var(--bg); font-family: 'Lora', serif; color: var(--ink); overflow-x: hidden; overflow-y: auto; cursor: none; }
+    html, body { width: 100%; min-height: 100%; background: var(--bg); font-family: 'Lora', serif; color: var(--ink); overflow-x: hidden; overflow-y: auto; cursor: none; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
     a, a:hover, a:active, button, button:hover { cursor: none !important; }
 
     #cursor {
@@ -102,6 +102,7 @@
       opacity: .46;
       transform: scale(1.01);
       transition: opacity .35s ease, transform .55s ease, filter .35s ease;
+      will-change: filter, opacity, transform;
       z-index: -1;
     }
     .project-media::after {
