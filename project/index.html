@@ -181,8 +181,9 @@
       transition:box-shadow .3s;
     }
     .img-box:hover { box-shadow:0 8px 32px rgba(0,0,0,.08); }
-    .img-box img { width:100%; height:100%; object-fit:cover; display:none; }
+    .img-box img { width:100%; height:100%; object-fit:cover; display:none; filter:grayscale(100%); transition:filter .4s ease; }
     .img-box.has-image img { display:block; }
+    .img-box:hover img { filter:grayscale(0%); }
     /* Center image: portrait photo, cover fills the cell */
     #box-0 { background:#0a0a0a; }
     #box-0 img { object-fit:cover; object-position:center top; }
