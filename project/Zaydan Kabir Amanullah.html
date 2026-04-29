@@ -319,6 +319,20 @@
       line-height: 1.35;
       white-space: nowrap;
     }
+    #masthead-replay {
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 48px);
+      transform: translateX(-50%);
+      font-family: 'VT323', monospace;
+      font-size: clamp(14px, 1.15vw, 18px);
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.24);
+      display: block;
+      text-align: center;
+      line-height: 1.35;
+      white-space: nowrap;
+    }
 
     /* ── ASCII canvases ─────────────────────────────────────── */
     #horse-canvas {
@@ -432,6 +446,7 @@
         <span id="masthead-guide">&lt;scroll down&gt;<br>to move right</span>
         <span id="masthead-text" data-text="Zaydan">Zaydan</span>
         <img id="masthead-reference" src="uploads/zaydan-screenshot-wordmark.png" alt="" aria-hidden="true">
+        <span id="masthead-replay">&lt;click&gt;<br>to replay animation</span>
       </div>
 
       <canvas id="horse-canvas"></canvas>
