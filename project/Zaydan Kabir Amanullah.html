@@ -595,6 +595,7 @@
   }
 
   document.addEventListener('click', e => {
+    if (document.getElementById('page-popup').style.display === 'flex') return;
     if (isInsideMasthead(e.clientX, e.clientY)) playMastheadRoll(true);
   });
   masthead.addEventListener('keydown', e => {
