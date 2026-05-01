@@ -1,7 +1,7 @@
 (function () {
   var storageKey = 'zaydan-theme';
   var root = document.documentElement;
-  var themes = ['dark', 'light', 'synthwave'];
+  var themes = ['dark', 'light'];
 
   function normalizeTheme(theme) {
     return themes.indexOf(theme) === -1 ? 'dark' : theme;
@@ -28,15 +28,13 @@
     root.dataset.theme = theme;
     var meta = document.querySelector('meta[name="theme-color"]');
     if (meta) {
-      meta.setAttribute('content', theme === 'light' ? '#f0f0f0' : theme === 'synthwave' ? '#381859' : '#0a0a0a');
+      meta.setAttribute('content', theme === 'light' ? '#f0f0f0' : '#0a0a0a');
     }
     var wordmarkFilter = theme === 'light'
       ? 'invert(1) drop-shadow(0 0 22px rgba(0,0,0,0.08))'
-      : theme === 'synthwave'
-        ? 'drop-shadow(0 0 18px rgba(241,15,181,0.7)) drop-shadow(0 0 34px rgba(241,151,39,0.36))'
-        : 'none';
-    var textColor = theme === 'light' ? '#0a0a0a' : theme === 'synthwave' ? '#FDFDFD' : '#f0f0f0';
-    var guideColor = theme === 'light' ? 'rgba(10,10,10,.42)' : theme === 'synthwave' ? 'rgba(247,205,172,.82)' : 'rgba(255,255,255,.24)';
+      : 'none';
+    var textColor = theme === 'light' ? '#0a0a0a' : '#f0f0f0';
+    var guideColor = theme === 'light' ? 'rgba(10,10,10,.42)' : 'rgba(255,255,255,.24)';
     document.querySelectorAll('#intro-wordmark, #masthead-reference').forEach(function (img) {
       img.style.filter = wordmarkFilter;
     });
