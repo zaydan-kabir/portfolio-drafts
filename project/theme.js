@@ -1,6 +1,11 @@
 (function () {
   var storageKey = 'zaydan-theme';
   var root = document.documentElement;
+  var themes = ['dark', 'light', 'vaporwave'];
+
+  function normalizeTheme(theme) {
+    return themes.indexOf(theme) === -1 ? 'dark' : theme;
+  }
 
   function getStoredTheme() {
     try {
@@ -16,48 +21,65 @@
     } catch (err) {}
   }
 
-  root.dataset.theme = getStoredTheme() || 'dark';
+  root.dataset.theme = normalizeTheme(getStoredTheme());
 
   function applyTheme(theme) {
+    theme = normalizeTheme(theme);
     root.dataset.theme = theme;
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', theme === 'light' ? '#f0f0f0' : '#0a0a0a');
-    document.querySelectorAll('#intro-wordmark, #masthead-reference').forEach(function (img) {
-      img.style.filter = theme === 'light'
-        ? 'invert(1) drop-shadow(0 0 22px rgba(0,0,0,0.08))'
+    if (meta) {
+      meta.setAttribute('content', theme === 'light' ? '#f0f0f0' : theme === 'vaporwave' ? '#0A06BB' : '#0a0a0a');
+    }
+    var wordmarkFilter = theme === 'light'
+      ? 'invert(1) drop-shadow(0 0 22px rgba(0,0,0,0.08))'
+      : theme === 'vaporwave'
+        ? 'drop-shadow(0 0 18px rgba(228,137,242,0.7)) drop-shadow(0 0 34px rgba(3,190,137,0.35))'
         : 'none';
+    var textColor = theme === 'light' ? '#0a0a0a' : theme === 'vaporwave' ? '#FDFDFD' : '#f0f0f0';
+    var guideColor = theme === 'light' ? 'rgba(10,10,10,.42)' : theme === 'vaporwave' ? 'rgba(166,232,213,.78)' : 'rgba(255,255,255,.24)';
+    document.querySelectorAll('#intro-wordmark, #masthead-reference').forEach(function (img) {
+      img.style.filter = wordmarkFilter;
     });
     document.querySelectorAll('#intro-title, #intro-name, #masthead-text, #z-masthead-text').forEach(function (el) {
-      el.style.color = theme === 'light' ? '#0a0a0a' : '#f0f0f0';
+      el.style.color = textColor;
     });
     document.querySelectorAll('#masthead-guide, #masthead-replay').forEach(function (el) {
-      el.style.color = theme === 'light' ? 'rgba(10,10,10,.42)' : 'rgba(255,255,255,.24)';
+      el.style.color = guideColor;
     });
     var toggle = document.getElementById('theme-toggle');
     if (toggle) {
-      toggle.textContent = theme === 'light' ? 'dark' : 'light';
-      toggle.setAttribute('aria-label', 'Switch to ' + (theme === 'light' ? 'dark' : 'light') + ' mode');
-      toggle.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+      toggle.querySelectorAll('button[data-theme-option]').forEach(function (button) {
+        var active = button.dataset.themeOption === theme;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
     }
   }
 
   function initThemeToggle() {
-    var theme = getStoredTheme() || 'dark';
+    var theme = normalizeTheme(getStoredTheme());
     applyTheme(theme);
 
     if (document.getElementById('theme-toggle')) return;
 
-    var toggle = document.createElement('button');
+    var toggle = document.createElement('div');
     toggle.id = 'theme-toggle';
-    toggle.type = 'button';
+    toggle.setAttribute('role', 'group');
+    toggle.setAttribute('aria-label', 'Theme');
+    themes.forEach(function (themeName) {
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.themeOption = themeName;
+      button.textContent = themeName;
+      button.addEventListener('click', function () {
+        theme = themeName;
+        setStoredTheme(theme);
+        applyTheme(theme);
+      });
+      toggle.appendChild(button);
+    });
     document.body.appendChild(toggle);
     applyTheme(theme);
-
-    toggle.addEventListener('click', function () {
-      theme = root.dataset.theme === 'light' ? 'dark' : 'light';
-      setStoredTheme(theme);
-      applyTheme(theme);
-    });
   }
 
   if (document.body) initThemeToggle();
