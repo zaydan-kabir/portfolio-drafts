@@ -34,6 +34,14 @@ html[data-theme="light"] [data-composition-id="zaydan-intro"] {
   color: var(--ink);
 }
 
+html,
+body,
+body *,
+body *::before,
+body *::after {
+  cursor: none !important;
+}
+
 #theme-toggle {
   position: fixed;
   top: auto !important;
@@ -240,10 +248,4 @@ html[data-theme="light"] .archive-item {
   border-color: rgba(10,10,10,.2);
   background: rgba(242,242,242,.9);
   box-shadow: 0 18px 44px rgba(0,0,0,.14);
-}
-
-@media (pointer: coarse) {
-  #theme-toggle {
-    cursor: auto;
-  }
 }
