@@ -494,7 +494,8 @@
       .p-popup-content { font-size: 14px; }
       #masthead-guide { font-size: 13px; }
       #masthead-replay { font-size: 13px; }
-      #horse-canvas { top: 46px; }
+      #horse-canvas { top: 90px; }
+      #portrait-canvas { transform: scale(0.5); transform-origin: bottom left; }
     }
   </style>
 </head>
@@ -749,10 +750,7 @@
 
   const portEl = document.getElementById('portrait-canvas');
   const pCtx   = portEl.getContext('2d');
-  const P_COLS = isMobile ? 32 : 64;
-  const P_ROWS = isMobile ? 48 : 96;
-  const P_CW   = isMobile ? 5  : 7;
-  const P_CH   = isMobile ? 5  : 7;
+  const P_COLS = 64, P_ROWS = 96, P_CW = 7, P_CH = 7;
   portEl.width  = P_COLS * P_CW;
   portEl.height = P_ROWS * P_CH;
 
