@@ -229,13 +229,21 @@
       background: #0a0a0a;
       pointer-events: none;
       transform: translateZ(0);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      contain: paint;
     }
+    #upcoming-ticker.ticker-ready { opacity: 1; }
     .upcoming-track {
       display: flex;
       width: max-content;
-      animation: upcoming-scroll 42s linear infinite;
+      animation: upcoming-scroll 46s linear infinite;
+      animation-play-state: paused;
       will-change: transform;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
     }
+    #upcoming-ticker.ticker-ready .upcoming-track { animation-play-state: running; }
     .upcoming-group {
       display: flex;
       flex: 0 0 auto;
@@ -256,6 +264,7 @@
       to   { transform: translate3d(-50%, 0, 0); }
     }
     @media (prefers-reduced-motion: reduce) {
+      #upcoming-ticker { opacity: 1; }
       .upcoming-track { animation: none; }
     }
 
@@ -693,6 +702,29 @@ const zaydanAnimationReady = (() => {
   });
 
   zaydanAnimationReady.then(() => playMastheadRoll());
+
+  function revealUpcomingTicker() {
+    const ticker = document.getElementById('upcoming-ticker');
+    const track = ticker && ticker.querySelector('.upcoming-track');
+    if (!ticker || !track) return;
+
+    track.style.animation = 'none';
+    track.style.transform = 'translate3d(0,0,0)';
+    void track.offsetWidth;
+    track.style.animation = '';
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => ticker.classList.add('ticker-ready'));
+    });
+  }
+
+  const tickerReady = document.fonts
+    ? Promise.race([
+        document.fonts.load('1em VT323').then(() => document.fonts.ready),
+        new Promise(resolve => setTimeout(resolve, 3000))
+      ])
+    : Promise.resolve();
+  tickerReady.then(() => setTimeout(revealUpcomingTicker, 250));
 
   // ── Page-out transition ───────────────────────────────────────────
   const overlay = document.getElementById('page-out');
