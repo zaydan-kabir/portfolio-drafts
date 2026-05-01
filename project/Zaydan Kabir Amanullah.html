@@ -899,16 +899,21 @@ const zaydanAnimationReady = (() => {
   else wordmarkImg.addEventListener('load', buildWordmarkMask, { once: true });
 
   function isOverZaydanLetter(x, y) {
-    if (!wordmarkMaskReady || !masthead.classList.contains('wordmark-landed')) return false;
+    if (wordmarkMaskReady) {
+      const rect = wordmarkImg.getBoundingClientRect();
+      if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+        const px = Math.max(0, Math.min(wordmarkMask.width - 1, Math.floor(((x - rect.left) / rect.width) * wordmarkMask.width)));
+        const py = Math.max(0, Math.min(wordmarkMask.height - 1, Math.floor(((y - rect.top) / rect.height) * wordmarkMask.height)));
+        const data = wordmarkCtx.getImageData(px, py, 1, 1).data;
+        const luminance = data[0] * 0.299 + data[1] * 0.587 + data[2] * 0.114;
+        return data[3] > 24 && luminance > 96;
+      }
+    }
 
-    const rect = wordmarkImg.getBoundingClientRect();
-    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) return false;
+    if (masthead.classList.contains('wordmark-landed')) return false;
 
-    const px = Math.max(0, Math.min(wordmarkMask.width - 1, Math.floor(((x - rect.left) / rect.width) * wordmarkMask.width)));
-    const py = Math.max(0, Math.min(wordmarkMask.height - 1, Math.floor(((y - rect.top) / rect.height) * wordmarkMask.height)));
-    const data = wordmarkCtx.getImageData(px, py, 1, 1).data;
-    const luminance = data[0] * 0.299 + data[1] * 0.587 + data[2] * 0.114;
-    return data[3] > 24 && luminance > 96;
+    const textRect = mastheadText.getBoundingClientRect();
+    return x >= textRect.left && x <= textRect.right && y >= textRect.top && y <= textRect.bottom;
   }
 
   function isOverPopup(x, y) {
