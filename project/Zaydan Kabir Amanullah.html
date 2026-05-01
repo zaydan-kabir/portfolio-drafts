@@ -739,15 +739,23 @@
   }
 
   // ── Canvas setup ──────────────────────────────────────────────────
+  const isMobile = window.innerWidth < 600;
+
   const horseEl = document.getElementById('horse-canvas');
   const hCtx    = horseEl.getContext('2d');
-  const H_COLS = 70, H_ROWS = 62, H_CW = 6, H_CH = 6;
+  const H_COLS = isMobile ? 36 : 70;
+  const H_ROWS = isMobile ? 32 : 62;
+  const H_CW   = isMobile ? 5  : 6;
+  const H_CH   = isMobile ? 5  : 6;
   horseEl.width  = H_COLS * H_CW;
   horseEl.height = H_ROWS * H_CH;
 
   const portEl = document.getElementById('portrait-canvas');
   const pCtx   = portEl.getContext('2d');
-  const P_COLS = 64, P_ROWS = 96, P_CW = 7, P_CH = 7;
+  const P_COLS = isMobile ? 32 : 64;
+  const P_ROWS = isMobile ? 48 : 96;
+  const P_CW   = isMobile ? 5  : 7;
+  const P_CH   = isMobile ? 5  : 7;
   portEl.width  = P_COLS * P_CW;
   portEl.height = P_ROWS * P_CH;
 
