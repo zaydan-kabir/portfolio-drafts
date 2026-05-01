@@ -863,12 +863,10 @@
     const now = Date.now();
     tCtx.lineCap = 'round'; tCtx.lineJoin = 'round';
     for (let i = 1; i < pts.length; i++) {
-      const age = (now - pts[i].t) / 300;
-      const a = Math.max(0, 1 - age);
       tCtx.beginPath();
       tCtx.moveTo(pts[i-1].x, pts[i-1].y);
       tCtx.lineTo(pts[i].x, pts[i].y);
-      tCtx.strokeStyle = `rgba(255,255,255,${(a * 0.55).toFixed(3)})`;
+      tCtx.strokeStyle = '#fff';
       tCtx.lineWidth = (i / pts.length) * 2.5;
       tCtx.stroke();
     }
