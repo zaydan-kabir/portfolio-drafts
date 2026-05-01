@@ -76,12 +76,6 @@
       });
       toggle.appendChild(button);
     });
-    toggle.addEventListener('mouseenter', function () {
-      document.body.classList.add('theme-picker-hover');
-    });
-    toggle.addEventListener('mouseleave', function () {
-      document.body.classList.remove('theme-picker-hover');
-    });
     document.body.appendChild(toggle);
     applyTheme(theme);
   }

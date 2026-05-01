@@ -72,19 +72,6 @@ body *::after {
   padding: 5px 7px 6px;
 }
 
-#theme-toggle,
-#theme-toggle *,
-#theme-toggle button,
-#theme-toggle button:hover,
-#theme-toggle button:active,
-#theme-toggle button:focus-visible {
-  cursor: auto !important;
-}
-
-#theme-toggle button {
-  cursor: pointer !important;
-}
-
 #theme-toggle button.active {
   background: var(--ink);
   color: var(--bg);
@@ -92,12 +79,6 @@ body *::after {
 
 #theme-toggle:hover {
   border-color: var(--ink);
-}
-
-body.theme-picker-hover #cursor,
-body.theme-picker-hover #cursor-bubble,
-body.theme-picker-hover #trail-canvas {
-  opacity: 0 !important;
 }
 
 html[data-theme="light"] #cursor {
