@@ -466,6 +466,15 @@
       font-family: 'Lora', Georgia, serif;
       font-size: 15px; line-height: 1.75; color: #333;
     }
+    .p-popup-content .contact-label {
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #999; margin-top: 20px; margin-bottom: 2px;
+    }
+    .p-popup-content .contact-label:first-child { margin-top: 0; }
+    .p-popup-content a {
+      color: #111; text-decoration: none; border-bottom: 1px solid #ccc;
+    }
+    .p-popup-content a:hover { border-bottom-color: #111; }
   </style>
 </head>
 <body>
@@ -853,7 +862,16 @@
     pagePopup.style.display = 'flex';
   });
   document.getElementById('page-btn-contact').addEventListener('click', () => {
-    pagePopupTxt.innerHTML = '<p>Contact coming soon.</p>';
+    pagePopupTxt.innerHTML = `
+      <p class="contact-label">General Inquiries</p>
+      <p><a href="mailto:zaydan1234@gmail.com">zaydan1234@gmail.com</a></p>
+      <p class="contact-label">LinkedIn</p>
+      <p>Zaydan Kabir Amanullah</p>
+      <p class="contact-label">Instagram</p>
+      <p><a href="https://instagram.com/zaydan_kabir" target="_blank">@zaydan_kabir</a></p>
+      <p class="contact-label">Substack</p>
+      <p><a href="https://zaydanamanullah.substack.com" target="_blank">zaydanamanullah</a></p>
+    `;
     pagePopup.style.display = 'flex';
   });
   document.getElementById('page-btn-resume').addEventListener('click', () => {
