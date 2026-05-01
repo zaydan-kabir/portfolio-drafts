@@ -406,6 +406,12 @@
       #z-masthead { position:absolute; }
     }
 
+    @media (pointer: coarse) {
+      body { cursor: auto; }
+      a, button, a:hover, button:hover { cursor: auto !important; }
+      #cursor, #cursor-bubble, #trail-canvas { display: none; }
+    }
+
     /* ── Small phone: ≤400px ── */
     @media (max-width:400px) {
       .h-name { font-size:12px; }

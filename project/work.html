@@ -61,7 +61,7 @@
     }
     .work-copy {
       justify-self: end;
-      font-size: clamp(13px, 1.6vw, 20px);
+      font-size: clamp(15px, 4vw, 20px);
       line-height: 1.45;
       font-style: italic;
       color: var(--gray2);
@@ -145,7 +145,7 @@
     .project-desc {
       display: block;
       margin-top: 14px;
-      font-size: clamp(13px, 1.4vw, 18px);
+      font-size: clamp(14px, 4vw, 18px);
       line-height: 1.5;
       color: var(--gray2);
       font-style: italic;
@@ -194,6 +194,11 @@
       .project-meta { min-height: 0; }
     }
 
+    @media (pointer: coarse) {
+      body { cursor: auto; }
+      a, button, a:hover, button:hover { cursor: auto !important; }
+      #cursor, #trail-canvas { display: none; }
+    }
     @media (max-width: 560px) {
       .header { flex-wrap: wrap; gap: 8px; }
       .nav-links { gap: 16px; }

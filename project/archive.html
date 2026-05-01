@@ -238,6 +238,11 @@
       .archive-item:nth-child(5) { --mobile-x: 40vw; --mobile-y: 28vh; }
       .archive-item:nth-child(6) { --mobile-x: 22vw; --mobile-y: 76vh; }
     }
+    @media (pointer: coarse) {
+      body { cursor: auto; }
+      a, button, a:hover, button:hover { cursor: auto !important; }
+      #cursor, #trail-canvas { display: none; }
+    }
   </style>
 </head>
 <body>

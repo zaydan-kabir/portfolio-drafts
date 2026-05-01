@@ -451,9 +451,10 @@
     }
     .p-popup-box {
       background: #fff;
-      min-width: 320px; max-width: 460px; width: 90%;
+      min-width: 280px; max-width: 460px; width: 90%;
       padding: 48px 40px 40px; position: relative;
       box-shadow: 0 24px 64px rgba(0,0,0,.4);
+      max-height: 90vh; overflow-y: auto;
     }
     .p-popup-close {
       position: absolute; top: 14px; right: 20px;
@@ -476,6 +477,25 @@
       color: #111; text-decoration: none; border-bottom: 1px solid #ccc;
     }
     .p-popup-content a:hover { border-bottom-color: #111; }
+
+    /* ── Mobile ─────────────────────────────────────────────── */
+    @media (pointer: coarse) {
+      body { cursor: auto; }
+      a, button, a:hover, button:hover, .pixel-btn { cursor: auto !important; }
+      #cursor, #trail-canvas { display: none; }
+      .pixel-btn:hover { color: rgba(255,255,255,.55); text-shadow: none; }
+    }
+    @media (max-width: 600px) {
+      #header { padding: 14px 20px 8px; }
+      #upcoming-ticker { top: 46px; }
+      #scroll-capture { inset: 58px 0 0; }
+      #page-info-contact { bottom: 20px; right: 16px; gap: 10px; }
+      .p-popup-box { padding: 36px 24px 28px; width: 94%; }
+      .p-popup-content { font-size: 14px; }
+      #masthead-guide { font-size: 13px; }
+      #masthead-replay { font-size: 13px; }
+      #horse-canvas { top: 46px; }
+    }
   </style>
 </head>
 <body>
@@ -665,16 +685,22 @@
   scrollCapture.addEventListener('wheel', handleWheel, { passive: false });
   document.addEventListener('wheel', handleWheel, { passive: false });
 
+  let touchStartX = null;
   scrollCapture.addEventListener('touchstart', e => {
     touchStartY = e.touches[0].clientY;
+    touchStartX = e.touches[0].clientX;
   }, { passive: true });
 
   scrollCapture.addEventListener('touchmove', e => {
     if (touchStartY === null) return;
     e.preventDefault();
     const nextY = e.touches[0].clientY;
-    moveHorizontal((touchStartY - nextY) * 1.25);
+    const nextX = e.touches[0].clientX;
+    const dy = touchStartY - nextY;
+    const dx = touchStartX - nextX;
+    moveHorizontal((dy + dx) * 1.25);
     touchStartY = nextY;
+    touchStartX = nextX;
   }, { passive: false });
 
   function renderHorizontalTrack() {
