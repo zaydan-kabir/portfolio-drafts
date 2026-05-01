@@ -1,10 +1,21 @@
 (function () {
   var storageKey = 'zaydan-theme';
   var root = document.documentElement;
-  var themes = ['light', 'dark'];
+
+  function isMobileViewport() {
+    return window.matchMedia && window.matchMedia('(max-width: 600px)').matches;
+  }
+
+  function getThemeOrder() {
+    return isMobileViewport() ? ['light', 'dark'] : ['dark', 'light'];
+  }
+
+  function getDefaultTheme() {
+    return isMobileViewport() ? 'light' : 'dark';
+  }
 
   function normalizeTheme(theme) {
-    return themes.indexOf(theme) === -1 ? 'light' : theme;
+    return theme === 'light' || theme === 'dark' ? theme : getDefaultTheme();
   }
 
   function getStoredTheme() {
@@ -64,7 +75,7 @@
     toggle.id = 'theme-toggle';
     toggle.setAttribute('role', 'group');
     toggle.setAttribute('aria-label', 'Theme');
-    themes.forEach(function (themeName) {
+    getThemeOrder().forEach(function (themeName) {
       var button = document.createElement('button');
       button.type = 'button';
       button.dataset.themeOption = themeName;
