@@ -786,7 +786,8 @@
       const char=RAMP[ci]; if(!char||char===' ') continue;
       const breath=Math.sin(t*.55+c*.18+r*.09)*.5+.5;
       const alpha=Math.min(.95,norm*(.6+breath*.3));
-      ctx.fillStyle=`rgba(255,255,255,${alpha.toFixed(3)})`;
+      const asciiColor=document.documentElement.dataset.theme==='light'?'10,10,10':'255,255,255';
+      ctx.fillStyle=`rgba(${asciiColor},${alpha.toFixed(3)})`;
       ctx.fillText(char,c*cw,(r+1)*ch);
     }
   }

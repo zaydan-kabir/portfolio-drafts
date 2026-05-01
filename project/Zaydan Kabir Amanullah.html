@@ -848,7 +848,8 @@ const zaydanAnimationReady = (() => {
 
         const breath = Math.sin(t * 0.55 + c * 0.18 + r * 0.09) * 0.5 + 0.5;
         const alpha  = Math.min(0.95, norm * (0.6 + breath * 0.3));
-        ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
+        const asciiColor = document.documentElement.dataset.theme === 'light' ? '10,10,10' : '255,255,255';
+        ctx.fillStyle = `rgba(${asciiColor},${alpha.toFixed(3)})`;
         ctx.fillText(char, c * cw, (r + 1) * ch);
       }
     }
