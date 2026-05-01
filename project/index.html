@@ -29,6 +29,15 @@
     }
     html::-webkit-scrollbar { display:none; }
 
+    #safe-area-top {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: env(safe-area-inset-top, 0px);
+      background: var(--bg);
+      z-index: 9999;
+      pointer-events: none;
+    }
+
     body {
       width:100%; min-height:100%;
       background:var(--bg);
@@ -335,7 +344,7 @@
       body.zaydan-active { overflow-y:scroll !important; }
 
       #header {
-        padding:calc(env(safe-area-inset-top) + 14px) 20px 10px;
+        padding:calc(env(safe-area-inset-top, 0px) + 14px) 20px 10px;
         flex-wrap:wrap;
         gap:6px;
       }
@@ -358,7 +367,7 @@
         overflow:visible;
       }
 
-      .header-spacer { height:calc(56px + env(safe-area-inset-top)); margin-bottom:12px; }
+      .header-spacer { height:calc(56px + env(safe-area-inset-top, 0px)); margin-bottom:12px; }
       .left { overflow-y:visible; min-height:0; gap:10px; }
 
       .name { font-size:24px; }
@@ -429,6 +438,7 @@
 </head>
 <body>
 
+<div id="safe-area-top"></div>
 <div id="cursor"></div>
 <div id="cursor-bubble"><span id="cursor-label"></span></div>
 <canvas id="trail-canvas"></canvas>
