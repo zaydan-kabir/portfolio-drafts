@@ -229,7 +229,7 @@
       background: #0a0a0a;
       pointer-events: none;
       transform: translateZ(0);
-      height: 35px;
+      height: 30px;
       opacity: 0;
       transition: opacity 0.35s ease;
       contain: paint;
@@ -259,7 +259,7 @@
       display: flex;
       align-items: center;
       height: 100%;
-      padding: 0 56px 1px 0;
+      padding: 0 56px 0 0;
       font-family: 'VT323', monospace;
       font-size: clamp(18px, 1.6vw, 24px);
       line-height: 1;
@@ -267,6 +267,7 @@
       color: rgba(255,255,255,0.76);
       text-shadow: 0 0 10px rgba(255,255,255,0.16);
       white-space: nowrap;
+      transform: translateY(-2px);
     }
     @keyframes upcoming-scroll {
       from { transform: translate3d(0, 0, 0); }
