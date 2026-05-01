@@ -437,12 +437,11 @@
       background: none; border: none;
       cursor: none !important; padding: 0;
       text-transform: lowercase;
-      transition: color .15s, text-shadow .15s;
+      transition: color .15s;
       display: block; text-align: right;
     }
     .pixel-btn:hover {
       color: #fff;
-      text-shadow: 0 0 8px #fff, 0 0 20px rgba(255,255,255,.7), 0 0 40px rgba(255,255,255,.4);
     }
     .p-popup-overlay {
       position: fixed; inset: 0; z-index: 350;
@@ -912,6 +911,18 @@ const zaydanAnimationReady = (() => {
     return data[3] > 24 && luminance > 96;
   }
 
+  function isOverPopup(x, y) {
+    const popup = document.querySelector('.p-popup-box');
+    if (!popup || getComputedStyle(popup.parentElement).display === 'none') return false;
+
+    const rect = popup.getBoundingClientRect();
+    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+  }
+
+  function cursorColorAt(x, y) {
+    return isOverPopup(x, y) || isOverZaydanLetter(x, y) ? '#000' : '#fff';
+  }
+
   const resizeTrail = () => {
     trailCanvas.width = innerWidth;
     trailCanvas.height = innerHeight;
@@ -923,7 +934,7 @@ const zaydanAnimationReady = (() => {
   document.addEventListener('mousemove', e => {
     cursorEl.style.left = e.clientX + 'px';
     cursorEl.style.top  = e.clientY + 'px';
-    cursorEl.style.background = isOverZaydanLetter(e.clientX, e.clientY) ? '#000' : '#fff';
+    cursorEl.style.background = cursorColorAt(e.clientX, e.clientY);
     pts.push({ x: e.clientX, y: e.clientY, t: Date.now() });
     if (pts.length > 40) pts.shift();
   });
@@ -952,7 +963,7 @@ const zaydanAnimationReady = (() => {
         tCtx.beginPath();
         tCtx.moveTo(x1, y1);
         tCtx.lineTo(x2, y2);
-        tCtx.strokeStyle = isOverZaydanLetter(mx, my) ? '#000' : '#fff';
+        tCtx.strokeStyle = cursorColorAt(mx, my);
         tCtx.stroke();
       }
     }
