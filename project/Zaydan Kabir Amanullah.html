@@ -229,7 +229,7 @@
       background: #0a0a0a;
       pointer-events: none;
       transform: translateZ(0);
-      height: 30px;
+      height: 32px;
       opacity: 0;
       transition: opacity 0.35s ease;
       contain: paint;
@@ -256,8 +256,8 @@
     }
     .upcoming-group span {
       flex: 0 0 auto;
-      display: flex;
-      align-items: center;
+      display: grid;
+      place-items: center;
       height: 100%;
       padding: 0 56px 0 0;
       font-family: 'VT323', monospace;
@@ -267,7 +267,7 @@
       color: rgba(255,255,255,0.76);
       text-shadow: 0 0 10px rgba(255,255,255,0.16);
       white-space: nowrap;
-      transform: translateY(-3px);
+      transform: translateY(-0.08em);
     }
     @keyframes upcoming-scroll {
       from { transform: translate3d(0, 0, 0); }
