@@ -233,8 +233,7 @@
     .upcoming-track {
       display: flex;
       width: max-content;
-      transform: translate3d(100vw, 0, 0);
-      animation: upcoming-scroll 56s linear infinite;
+      animation: upcoming-scroll 42s linear infinite;
       will-change: transform;
     }
     .upcoming-group {
@@ -244,7 +243,7 @@
     }
     .upcoming-group span {
       flex: 0 0 auto;
-      padding: 6px 44px 7px 0;
+      padding: 6px 56px 7px 0;
       font-family: 'VT323', monospace;
       font-size: clamp(18px, 1.6vw, 24px);
       letter-spacing: 0.08em;
@@ -253,8 +252,8 @@
       white-space: nowrap;
     }
     @keyframes upcoming-scroll {
-      from { transform: translate3d(100vw, 0, 0); }
-      to { transform: translate3d(-100%, 0, 0); }
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(-50%, 0, 0); }
     }
     @media (prefers-reduced-motion: reduce) {
       .upcoming-track { animation: none; }
