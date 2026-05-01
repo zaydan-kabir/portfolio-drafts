@@ -498,6 +498,8 @@
       #portrait-canvas { transform: scale(0.5); transform-origin: bottom left; left: -40px; }
     }
   </style>
+  <script src="theme.js"></script>
+  <link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
@@ -927,7 +929,9 @@ const zaydanAnimationReady = (() => {
   }
 
   function cursorColorAt(x, y) {
-    return isOverPopup(x, y) || isOverZaydanLetter(x, y) ? '#000' : '#fff';
+    const overInvertedSurface = isOverPopup(x, y) || isOverZaydanLetter(x, y);
+    const lightMode = document.documentElement.dataset.theme === 'light';
+    return overInvertedSurface === lightMode ? '#fff' : '#000';
   }
 
   const resizeTrail = () => {
