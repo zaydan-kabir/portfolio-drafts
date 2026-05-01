@@ -137,7 +137,7 @@ html[data-theme="light"] #masthead-reference {
 
 html[data-theme="dark"] #intro-wordmark,
 html[data-theme="dark"] #masthead-reference {
-  filter: drop-shadow(0 0 22px rgba(255,255,255,0.14)) !important;
+  filter: none !important;
 }
 
 html[data-theme="light"] #z-masthead-guide {

@@ -25,7 +25,7 @@
     document.querySelectorAll('#intro-wordmark, #masthead-reference').forEach(function (img) {
       img.style.filter = theme === 'light'
         ? 'invert(1) drop-shadow(0 0 22px rgba(0,0,0,0.08))'
-        : 'drop-shadow(0 0 22px rgba(255,255,255,0.14))';
+        : 'none';
     });
     document.querySelectorAll('#intro-title, #intro-name, #masthead-text, #z-masthead-text').forEach(function (el) {
       el.style.color = theme === 'light' ? '#0a0a0a' : '#f0f0f0';

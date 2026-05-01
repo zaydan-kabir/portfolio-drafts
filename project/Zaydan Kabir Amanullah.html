@@ -498,8 +498,18 @@
       #portrait-canvas { transform: scale(0.5); transform-origin: bottom left; left: -40px; }
     }
   </style>
-  <script src="theme.js"></script>
-  <link rel="stylesheet" href="theme.css">
+  <script src="theme.js?v=20260501-theme-fix"></script>
+  <link rel="stylesheet" href="theme.css?v=20260501-theme-fix">
+  <style>
+    html[data-theme="light"] #masthead-guide,
+    html[data-theme="light"] #masthead-replay { color: rgba(10,10,10,.42) !important; }
+    html[data-theme="dark"] #masthead-guide,
+    html[data-theme="dark"] #masthead-replay { color: rgba(255,255,255,.24) !important; }
+    html[data-theme="light"] #intro-wordmark,
+    html[data-theme="light"] #masthead-reference { filter: invert(1) drop-shadow(0 0 22px rgba(0,0,0,.08)) !important; }
+    html[data-theme="dark"] #intro-wordmark,
+    html[data-theme="dark"] #masthead-reference { filter: none !important; }
+  </style>
 </head>
 <body>
 
