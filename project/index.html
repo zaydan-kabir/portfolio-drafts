@@ -369,23 +369,37 @@
       .edu-school { font-size:12px; }
       .edu-degree { font-size:11px; }
 
-      /* Center image: tall portrait box below left column */
+      /* Center portrait: full width, show full image uncropped */
       .img-col-center {
-        height:90vw;
-        max-height:520px;
-        min-height:280px;
+        height:auto;
+        max-height:none;
+        min-height:0;
         margin-top:20px;
       }
+      .img-col-center .img-box {
+        flex:none;
+        height:auto;
+      }
+      .img-col-center .img-box img {
+        height:auto !important;
+        object-fit:contain !important;
+        object-position:center center;
+      }
 
-      /* Right images: side-by-side row below center image */
+      /* Right images: stacked full-width landscape panels */
       .img-col-right {
-        flex-direction:row;
-        height:56vw;
-        max-height:320px;
-        min-height:180px;
+        flex-direction:column;
+        height:auto;
+        max-height:none;
+        min-height:0;
         margin-top:14px;
         margin-bottom:28px;
-        gap:10px;
+        gap:12px;
+      }
+      .img-col-right .img-box {
+        flex:none;
+        width:100%;
+        height:58vw;
       }
 
       #arrow-svg { display:block; }
@@ -407,8 +421,7 @@
       .h-name { font-size:12px; }
       .h-link { font-size:12px; }
       .name { font-size:21px; }
-      .img-col-center { height:94vw; }
-      .img-col-right  { height:60vw; }
+      .img-col-right .img-box { height:62vw; }
     }
   </style>
 </head>
