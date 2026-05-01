@@ -1,10 +1,10 @@
 (function () {
   var storageKey = 'zaydan-theme';
   var root = document.documentElement;
-  var themes = ['dark', 'light'];
+  var themes = ['light', 'dark'];
 
   function normalizeTheme(theme) {
-    return themes.indexOf(theme) === -1 ? 'dark' : theme;
+    return themes.indexOf(theme) === -1 ? 'light' : theme;
   }
 
   function getStoredTheme() {
