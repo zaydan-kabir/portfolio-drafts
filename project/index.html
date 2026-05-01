@@ -111,6 +111,10 @@
       position:fixed; top:0; left:0; right:0; z-index:200;
       display:flex; align-items:baseline; justify-content:space-between;
       padding:24px 48px 10px;
+      /* Shift header up into the iOS status bar zone so its black
+         background covers battery/time/wifi — env() is 0 on non-iOS */
+      top: calc(-1 * env(safe-area-inset-top, 0px));
+      padding-top: calc(env(safe-area-inset-top, 0px) + 24px);
       border-bottom:1px solid var(--gray3);
       background:var(--bg);
     }
@@ -346,6 +350,7 @@
       body.zaydan-active { overflow-y:scroll !important; }
 
       #header {
+        top: calc(-1 * env(safe-area-inset-top, 0px));
         padding:calc(env(safe-area-inset-top, 0px) + 14px) 20px 10px;
         flex-wrap:wrap;
         gap:6px;
@@ -369,7 +374,7 @@
         overflow:visible;
       }
 
-      .header-spacer { height:calc(56px + env(safe-area-inset-top, 0px)); margin-bottom:12px; }
+      .header-spacer { height:56px; margin-bottom:12px; }
       .left { overflow-y:visible; min-height:0; gap:10px; }
 
       .name { font-size:24px; }
@@ -815,18 +820,29 @@
   document.getElementById('z-popup-close').addEventListener('click', () => { zPopupEl.style.display = 'none'; });
   zPopupEl.addEventListener('click', e => { if (e.target === zPopupEl) zPopupEl.style.display = 'none'; });
 
-  // Guarantee safe-area-top height: read the real computed env() value via a probe element,
-  // then set it explicitly so it can't silently evaluate to 0.
+  // JS fallback: read the real computed env(safe-area-inset-top) and apply the
+  // header shift explicitly, so it works even if CSS env() didn't evaluate at parse time.
   (function() {
-    const cover = document.getElementById('safe-area-top');
-    if (!cover) return;
+    const header = document.getElementById('header');
+    if (!header) return;
     const probe = document.createElement('div');
-    probe.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;visibility:hidden;' +
-      'height:constant(safe-area-inset-top);height:env(safe-area-inset-top)';
+    probe.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;' +
+      'visibility:hidden;height:env(safe-area-inset-top,0px)';
     document.documentElement.appendChild(probe);
-    const h = probe.getBoundingClientRect().height;
+    const sat = probe.getBoundingClientRect().height;
     document.documentElement.removeChild(probe);
-    if (h > 0) cover.style.height = h + 'px';
+    if (sat > 0) {
+      header.style.top = (-sat) + 'px';
+      const padSide = window.innerWidth <= 767 ? '20px' : '48px';
+      const padBase = window.innerWidth <= 767 ? 14 : 24;
+      header.style.paddingTop = (sat + padBase) + 'px';
+    }
+    // safe-area-top cover: shift it up the same amount
+    const cover = document.getElementById('safe-area-top');
+    if (cover && sat > 0) {
+      cover.style.top = (-sat) + 'px';
+      cover.style.height = (sat * 2) + 'px';
+    }
   })();
 
 })();
