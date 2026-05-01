@@ -26,18 +26,22 @@
       width:100%; height:100%;
       background:var(--bg);
       scrollbar-width:none;
+      /* Prevent rubber-band overscroll from pulling content above the header */
+      overscroll-behavior-y: none;
     }
     html::-webkit-scrollbar { display:none; }
 
     #safe-area-top {
       position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 0;                             /* base: hidden */
-      height: constant(safe-area-inset-top); /* iOS 11.0 */
-      height: env(safe-area-inset-top);      /* iOS 11.1+ */
+      left: 0; right: 0;
+      /* Sit at the physical screen top (above CSS top:0) */
+      top: calc(-1 * env(safe-area-inset-top, 0px));
+      height: calc(env(safe-area-inset-top, 0px) * 2);
       background: #0a0a0a;
-      z-index: 10000;
+      z-index: 2000;
       pointer-events: none;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
     }
 
     body {
@@ -108,15 +112,17 @@
 
     /* ── Header ──────────────────────────────────────────── */
     #header {
-      position:fixed; top:0; left:0; right:0; z-index:200;
+      position:fixed; left:0; right:0; z-index:1000;
       display:flex; align-items:baseline; justify-content:space-between;
-      padding:24px 48px 10px;
-      /* Shift header up into the iOS status bar zone so its black
-         background covers battery/time/wifi — env() is 0 on non-iOS */
-      top: calc(-1 * env(safe-area-inset-top, 0px));
-      padding-top: calc(env(safe-area-inset-top, 0px) + 24px);
       border-bottom:1px solid var(--gray3);
-      background:var(--bg);
+      background:#0a0a0a;
+      /* GPU compositing layer — prevents iOS scroll-momentum flicker */
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      will-change: transform;
+      /* Extend up into the iOS status bar zone; env() = 0 on non-iOS */
+      top: calc(-1 * env(safe-area-inset-top, 0px));
+      padding: calc(env(safe-area-inset-top, 0px) + 24px) 48px 10px;
     }
     .h-name {
       font-family:'Lora', serif; font-size:14px; font-weight:400;
@@ -351,7 +357,7 @@
 
       #header {
         top: calc(-1 * env(safe-area-inset-top, 0px));
-        padding:calc(env(safe-area-inset-top, 0px) + 14px) 20px 10px;
+        padding: calc(env(safe-area-inset-top, 0px) + 14px) 20px 10px;
         flex-wrap:wrap;
         gap:6px;
       }
