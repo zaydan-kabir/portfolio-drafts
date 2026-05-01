@@ -91,14 +91,12 @@
       width: 8px; height: 8px;
       border-radius: 50%;
       background: #fff;
-      mix-blend-mode: difference;
       pointer-events: none;
       transform: translate(-50%, -50%);
       z-index: 9999;
     }
     #trail-canvas {
       position: fixed; inset: 0;
-      mix-blend-mode: difference;
       pointer-events: none;
       z-index: 9997;
     }
@@ -838,10 +836,39 @@
   }
   requestAnimationFrame(tick);
 
-  // ── Cursor + color-inverting trail ────────────────────────────────
+  // ── Cursor + trail ────────────────────────────────────────────────
   const cursorEl    = document.getElementById('cursor');
   const trailCanvas = document.getElementById('trail-canvas');
   const tCtx        = trailCanvas.getContext('2d');
+  const wordmarkImg  = document.getElementById('masthead-reference');
+  const wordmarkMask = document.createElement('canvas');
+  const wordmarkCtx  = wordmarkMask.getContext('2d', { willReadFrequently: true });
+  let wordmarkMaskReady = false;
+
+  function buildWordmarkMask() {
+    if (!wordmarkImg.complete || !wordmarkImg.naturalWidth) return;
+    wordmarkMask.width = wordmarkImg.naturalWidth;
+    wordmarkMask.height = wordmarkImg.naturalHeight;
+    wordmarkCtx.clearRect(0, 0, wordmarkMask.width, wordmarkMask.height);
+    wordmarkCtx.drawImage(wordmarkImg, 0, 0);
+    wordmarkMaskReady = true;
+  }
+
+  if (wordmarkImg.complete) buildWordmarkMask();
+  else wordmarkImg.addEventListener('load', buildWordmarkMask, { once: true });
+
+  function isOverZaydanLetter(x, y) {
+    if (!wordmarkMaskReady || !masthead.classList.contains('wordmark-landed')) return false;
+
+    const rect = wordmarkImg.getBoundingClientRect();
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) return false;
+
+    const px = Math.max(0, Math.min(wordmarkMask.width - 1, Math.floor(((x - rect.left) / rect.width) * wordmarkMask.width)));
+    const py = Math.max(0, Math.min(wordmarkMask.height - 1, Math.floor(((y - rect.top) / rect.height) * wordmarkMask.height)));
+    const data = wordmarkCtx.getImageData(px, py, 1, 1).data;
+    const luminance = data[0] * 0.299 + data[1] * 0.587 + data[2] * 0.114;
+    return data[3] > 24 && luminance > 96;
+  }
 
   const resizeTrail = () => {
     trailCanvas.width = innerWidth;
@@ -854,6 +881,7 @@
   document.addEventListener('mousemove', e => {
     cursorEl.style.left = e.clientX + 'px';
     cursorEl.style.top  = e.clientY + 'px';
+    cursorEl.style.background = isOverZaydanLetter(e.clientX, e.clientY) ? '#000' : '#fff';
     pts.push({ x: e.clientX, y: e.clientY, t: Date.now() });
     if (pts.length > 40) pts.shift();
   });
@@ -863,12 +891,28 @@
     const now = Date.now();
     tCtx.lineCap = 'round'; tCtx.lineJoin = 'round';
     for (let i = 1; i < pts.length; i++) {
-      tCtx.beginPath();
-      tCtx.moveTo(pts[i-1].x, pts[i-1].y);
-      tCtx.lineTo(pts[i].x, pts[i].y);
-      tCtx.strokeStyle = '#fff';
       tCtx.lineWidth = (i / pts.length) * 2.5;
-      tCtx.stroke();
+      const a = pts[i - 1];
+      const b = pts[i];
+      const distance = Math.hypot(b.x - a.x, b.y - a.y);
+      const steps = Math.max(1, Math.ceil(distance / 4));
+
+      for (let step = 0; step < steps; step++) {
+        const start = step / steps;
+        const end = (step + 1) / steps;
+        const x1 = a.x + (b.x - a.x) * start;
+        const y1 = a.y + (b.y - a.y) * start;
+        const x2 = a.x + (b.x - a.x) * end;
+        const y2 = a.y + (b.y - a.y) * end;
+        const mx = (x1 + x2) / 2;
+        const my = (y1 + y2) / 2;
+
+        tCtx.beginPath();
+        tCtx.moveTo(x1, y1);
+        tCtx.lineTo(x2, y2);
+        tCtx.strokeStyle = isOverZaydanLetter(mx, my) ? '#000' : '#fff';
+        tCtx.stroke();
+      }
     }
     while (pts.length && now - pts[0].t > 300) pts.shift();
     requestAnimationFrame(drawTrail);
