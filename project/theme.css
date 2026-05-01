@@ -144,6 +144,16 @@ html[data-theme="light"] #z-masthead-guide {
   color: rgba(10,10,10,.38);
 }
 
+html[data-theme="light"] #masthead-guide,
+html[data-theme="light"] #masthead-replay {
+  color: rgba(10,10,10,.42) !important;
+}
+
+html[data-theme="dark"] #masthead-guide,
+html[data-theme="dark"] #masthead-replay {
+  color: rgba(255,255,255,.24) !important;
+}
+
 html[data-theme="light"] #z-divider,
 html[data-theme="light"] #z-progress {
   background: rgba(10,10,10,.14);

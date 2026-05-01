@@ -22,6 +22,17 @@
     root.dataset.theme = theme;
     var meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.setAttribute('content', theme === 'light' ? '#f0f0f0' : '#0a0a0a');
+    document.querySelectorAll('#intro-wordmark, #masthead-reference').forEach(function (img) {
+      img.style.filter = theme === 'light'
+        ? 'invert(1) drop-shadow(0 0 22px rgba(0,0,0,0.08))'
+        : 'drop-shadow(0 0 22px rgba(255,255,255,0.14))';
+    });
+    document.querySelectorAll('#intro-title, #intro-name, #masthead-text, #z-masthead-text').forEach(function (el) {
+      el.style.color = theme === 'light' ? '#0a0a0a' : '#f0f0f0';
+    });
+    document.querySelectorAll('#masthead-guide, #masthead-replay').forEach(function (el) {
+      el.style.color = theme === 'light' ? 'rgba(10,10,10,.42)' : 'rgba(255,255,255,.24)';
+    });
     var toggle = document.getElementById('theme-toggle');
     if (toggle) {
       toggle.textContent = theme === 'light' ? 'dark' : 'light';
