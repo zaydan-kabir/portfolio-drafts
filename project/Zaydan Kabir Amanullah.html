@@ -649,7 +649,7 @@
   function handleWheel(e) {
     if (e.ctrlKey) return;
     e.preventDefault();
-    moveHorizontal(-(e.deltaY || e.deltaX));
+    moveHorizontal(e.deltaX - e.deltaY);
   }
 
   scrollCapture.addEventListener('wheel', handleWheel, { passive: false });
