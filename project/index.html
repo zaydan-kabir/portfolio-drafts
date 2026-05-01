@@ -448,8 +448,8 @@
       .img-col-right .img-box { height:62vw; }
     }
   </style>
-  <script src="theme.js?v=20260501-vaporwave"></script>
-  <link rel="stylesheet" href="theme.css?v=20260501-vaporwave">
+  <script src="theme.js?v=20260501-synthwave"></script>
+  <link rel="stylesheet" href="theme.css?v=20260501-synthwave">
 </head>
 <body>
 
@@ -787,7 +787,7 @@
       const breath=Math.sin(t*.55+c*.18+r*.09)*.5+.5;
       const theme=document.documentElement.dataset.theme;
       const alpha=Math.min(1,norm*(theme==='light'?1.2:.6+breath*.3));
-      const asciiColor=theme==='light'?'0,0,0':theme==='vaporwave'?'166,232,213':'255,255,255';
+      const asciiColor=theme==='light'?'0,0,0':theme==='synthwave'?'247,205,172':'255,255,255';
       ctx.fillStyle=`rgba(${asciiColor},${alpha.toFixed(3)})`;
       ctx.fillText(char,c*cw,(r+1)*ch);
     }

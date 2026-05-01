@@ -507,19 +507,19 @@
       #portrait-canvas { transform: scale(0.5); transform-origin: bottom left; left: -40px; }
     }
   </style>
-  <script src="theme.js?v=20260501-vaporwave"></script>
-  <link rel="stylesheet" href="theme.css?v=20260501-vaporwave">
+  <script src="theme.js?v=20260501-synthwave"></script>
+  <link rel="stylesheet" href="theme.css?v=20260501-synthwave">
   <style>
     html[data-theme="light"] #masthead-guide,
     html[data-theme="light"] #masthead-replay { color: rgba(10,10,10,.42) !important; }
-    html[data-theme="vaporwave"] #masthead-guide,
-    html[data-theme="vaporwave"] #masthead-replay { color: rgba(166,232,213,.78) !important; text-shadow: 0 0 10px rgba(166,232,213,.28); }
+    html[data-theme="synthwave"] #masthead-guide,
+    html[data-theme="synthwave"] #masthead-replay { color: rgba(247,205,172,.82) !important; text-shadow: 0 0 10px rgba(247,205,172,.3); }
     html[data-theme="dark"] #masthead-guide,
     html[data-theme="dark"] #masthead-replay { color: rgba(255,255,255,.24) !important; }
     html[data-theme="light"] #intro-wordmark,
     html[data-theme="light"] #masthead-reference { filter: invert(1) drop-shadow(0 0 22px rgba(0,0,0,.08)) !important; }
-    html[data-theme="vaporwave"] #intro-wordmark,
-    html[data-theme="vaporwave"] #masthead-reference { filter: drop-shadow(0 0 18px rgba(228,137,242,.7)) drop-shadow(0 0 34px rgba(3,190,137,.35)) !important; }
+    html[data-theme="synthwave"] #intro-wordmark,
+    html[data-theme="synthwave"] #masthead-reference { filter: drop-shadow(0 0 18px rgba(241,15,181,.7)) drop-shadow(0 0 34px rgba(241,151,39,.36)) !important; }
     html[data-theme="dark"] #intro-wordmark,
     html[data-theme="dark"] #masthead-reference { filter: none !important; }
   </style>
@@ -895,7 +895,7 @@ const zaydanAnimationReady = (() => {
         const breath = Math.sin(t * 0.55 + c * 0.18 + r * 0.09) * 0.5 + 0.5;
         const theme = document.documentElement.dataset.theme;
         const alpha  = Math.min(1, norm * (theme === 'light' ? 1.2 : 0.6 + breath * 0.3));
-        const asciiColor = theme === 'light' ? '0,0,0' : theme === 'vaporwave' ? '166,232,213' : '255,255,255';
+        const asciiColor = theme === 'light' ? '0,0,0' : theme === 'synthwave' ? '247,205,172' : '255,255,255';
         ctx.fillStyle = `rgba(${asciiColor},${alpha.toFixed(3)})`;
         ctx.fillText(char, c * cw, (r + 1) * ch);
       }
@@ -979,7 +979,7 @@ const zaydanAnimationReady = (() => {
   function cursorColorAt(x, y) {
     const overInvertedSurface = isOverPopup(x, y) || isOverZaydanLetter(x, y);
     const theme = document.documentElement.dataset.theme;
-    if (theme === 'vaporwave') return overInvertedSurface ? '#E489F2' : '#A6E8D5';
+    if (theme === 'synthwave') return overInvertedSurface ? '#F10FB5' : '#F7CDAC';
     return overInvertedSurface === (theme === 'light') ? '#fff' : '#000';
   }
 
