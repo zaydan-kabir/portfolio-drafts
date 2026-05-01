@@ -739,8 +739,8 @@ const zaydanAnimationReady = (() => {
     e.preventDefault();
     const nextY = e.touches[0].clientY;
     const nextX = e.touches[0].clientX;
-    const dx = nextX - touchStartX;   // positive = swipe right = move right
-    moveHorizontal(dx * 1.25);
+    const dx = nextX - touchStartX;   // negative = swipe left = move right
+    moveHorizontal(dx * -1.25);
     touchStartY = nextY;
     touchStartX = nextX;
   }, { passive: false });
@@ -784,7 +784,7 @@ const zaydanAnimationReady = (() => {
   const isMobile = window.innerWidth < 600;
   if (isMobile) {
     const guide = document.getElementById('masthead-guide');
-    if (guide) guide.innerHTML = '&lt;swipe right&gt;<br>to move forward';
+    if (guide) guide.innerHTML = '&lt;swipe left&gt;<br>to move forward';
     const replay = document.getElementById('masthead-replay');
     if (replay) replay.innerHTML = '&lt;tap&gt;<br>to replay animation';
   }
