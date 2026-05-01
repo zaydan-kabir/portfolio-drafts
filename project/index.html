@@ -188,16 +188,6 @@
     /* Center image: portrait photo, cover fills the cell */
     #box-0 { background:#0a0a0a; }
     #box-0 img { object-fit:cover; object-position:center top; }
-    .img-placeholder {
-      position:absolute; inset:0;
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      gap:8px; pointer-events:none;
-    }
-    .img-placeholder svg { opacity:.3; }
-    .img-placeholder span { font-size:11px; font-style:italic; color:#aaa; letter-spacing:.02em; }
-    .img-box.has-image .img-placeholder { display:none; }
-    input[type="file"] { display:none; }
 
     /* Arrow */
     #arrow-svg { position:fixed;width:48px;height:110px;overflow:visible;opacity:0;transition:opacity .2s;pointer-events:none;z-index:10; }
@@ -488,9 +478,8 @@
 
     <!-- RIGHT IMAGES -->
     <div class="img-col-right">
-      <div class="img-box has-image" id="box-1" data-input="file-1">
+      <div class="img-box has-image" id="box-1">
         <img id="img-1" alt="Community photo" src="uploads/IMG_2059.JPG" style="display:block" />
-        <div class="img-placeholder"><svg width="32" height="32" viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="#555" stroke-width="1.5"/><circle cx="14" cy="16" r="3" stroke="#555" stroke-width="1.5"/><path d="M4 26l8-7 6 5 5-4 9 7" stroke="#555" stroke-width="1.5" stroke-linejoin="round"/></svg><span>click or drag to add image</span></div>
       </div>
       <div class="img-box has-image" id="box-2">
         <img id="img-2" alt="Hiking photo" src="uploads/IMG_3073.jpg" style="display:block" />
@@ -520,9 +509,6 @@
   <img id="img-portrait" src="assets/bottom-left.png" style="display:none">
   <div id="z-progress"></div>
 </div>
-
-<!-- Shared file inputs -->
-<input type="file" id="file-1" accept="image/*" />
 
 <!-- ── Info / Contact (Zaydan view) ─────────────────── -->
 <div id="z-info-contact">
@@ -684,27 +670,6 @@
     setTimeout(type, 300);
   }
   startAboutTyping();
-
-  // ── ABOUT: image upload ───────────────────────────────────────────
-  function handleFile(file, idx) {
-    if (!file || !file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const box = document.getElementById('box-'+idx);
-      const img = document.getElementById('img-'+idx);
-      img.src = ev.target.result; box.classList.add('has-image');
-      try { localStorage.setItem('zaydan-img-'+idx, ev.target.result); } catch(e) {}
-    };
-    reader.readAsDataURL(file);
-  }
-  const box1 = document.getElementById('box-1');
-  const inp1 = document.getElementById('file-1');
-  try { const s=localStorage.getItem('zaydan-img-1'); if(s){ document.getElementById('img-1').src=s; box1.classList.add('has-image'); } } catch(e){}
-  box1.addEventListener('click', () => inp1.click());
-  inp1.addEventListener('change', e => { handleFile(e.target.files[0], 1); inp1.value=''; });
-  box1.addEventListener('dragover', e => { e.preventDefault(); box1.classList.add('drag-over'); });
-  box1.addEventListener('dragleave', () => box1.classList.remove('drag-over'));
-  box1.addEventListener('drop', e => { e.preventDefault(); box1.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0], 1); });
 
   // ── ZAYDAN: scroll → horizontal translate ─────────────────────────
   const zTrack    = document.getElementById('z-track');
