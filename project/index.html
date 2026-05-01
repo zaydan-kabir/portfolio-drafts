@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="theme-color" content="#0a0a0a">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Zaydan — Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
@@ -32,9 +32,11 @@
     #safe-area-top {
       position: fixed;
       top: 0; left: 0; right: 0;
-      height: env(safe-area-inset-top, 0px);
-      background: var(--bg);
-      z-index: 9999;
+      height: 0;                             /* base: hidden */
+      height: constant(safe-area-inset-top); /* iOS 11.0 */
+      height: env(safe-area-inset-top);      /* iOS 11.1+ */
+      background: #0a0a0a;
+      z-index: 10000;
       pointer-events: none;
     }
 
@@ -812,6 +814,20 @@
   });
   document.getElementById('z-popup-close').addEventListener('click', () => { zPopupEl.style.display = 'none'; });
   zPopupEl.addEventListener('click', e => { if (e.target === zPopupEl) zPopupEl.style.display = 'none'; });
+
+  // Guarantee safe-area-top height: read the real computed env() value via a probe element,
+  // then set it explicitly so it can't silently evaluate to 0.
+  (function() {
+    const cover = document.getElementById('safe-area-top');
+    if (!cover) return;
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;top:0;left:0;pointer-events:none;visibility:hidden;' +
+      'height:constant(safe-area-inset-top);height:env(safe-area-inset-top)';
+    document.documentElement.appendChild(probe);
+    const h = probe.getBoundingClientRect().height;
+    document.documentElement.removeChild(probe);
+    if (h > 0) cover.style.height = h + 'px';
+  })();
 
 })();
 </script>
