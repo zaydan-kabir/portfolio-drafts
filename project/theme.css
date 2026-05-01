@@ -81,6 +81,18 @@ body *::after {
   border-color: var(--ink);
 }
 
+#cursor {
+  z-index: 10003 !important;
+}
+
+#cursor-bubble {
+  z-index: 10002 !important;
+}
+
+#trail-canvas {
+  z-index: 10001 !important;
+}
+
 html[data-theme="light"] #cursor {
   background: var(--theme-cursor);
 }
