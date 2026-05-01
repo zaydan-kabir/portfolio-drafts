@@ -335,7 +335,7 @@
       body.zaydan-active { overflow-y:scroll !important; }
 
       #header {
-        padding:14px 20px 10px;
+        padding:calc(env(safe-area-inset-top) + 14px) 20px 10px;
         flex-wrap:wrap;
         gap:6px;
       }
@@ -358,7 +358,7 @@
         overflow:visible;
       }
 
-      .header-spacer { height:56px; margin-bottom:12px; }
+      .header-spacer { height:calc(56px + env(safe-area-inset-top)); margin-bottom:12px; }
       .left { overflow-y:visible; min-height:0; gap:10px; }
 
       .name { font-size:24px; }
