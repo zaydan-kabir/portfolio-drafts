@@ -576,6 +576,48 @@
 </div>
 
 <script>
+const zaydanAnimationReady = (() => {
+  const maxWait = 15000;
+  const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  function waitForImage(img) {
+    if (!img) return Promise.resolve();
+    if (img.complete && img.naturalWidth) return Promise.resolve();
+
+    const loaded = img.decode
+      ? img.decode().catch(() => {})
+      : new Promise(resolve => {
+          img.addEventListener('load', resolve, { once: true });
+          img.addEventListener('error', resolve, { once: true });
+        });
+
+    return Promise.race([loaded, timeout(maxWait)]);
+  }
+
+  function waitForFonts() {
+    if (!document.fonts) return Promise.resolve();
+
+    const fonts = [
+      document.fonts.load('1em AtlanticCruise'),
+      document.fonts.load('1em UnifrakturCook'),
+      document.fonts.load('1em OldEnglishTextMT'),
+      document.fonts.load('1em FetteUNZFraktur'),
+      document.fonts.load('1em CloisterBlack')
+    ];
+
+    return Promise.race([
+      Promise.allSettled(fonts).then(() => document.fonts.ready),
+      timeout(maxWait)
+    ]);
+  }
+
+  return Promise.allSettled([
+    waitForFonts(),
+    waitForImage(document.getElementById('intro-wordmark')),
+    waitForImage(document.getElementById('masthead-reference'))
+  ]);
+})();
+
 (() => {
   'use strict';
 
@@ -639,7 +681,7 @@
     playMastheadRoll(true);
   });
 
-  playMastheadRoll();
+  zaydanAnimationReady.then(() => playMastheadRoll());
 
   // ── Page-out transition ───────────────────────────────────────────
   const overlay = document.getElementById('page-out');
@@ -854,7 +896,7 @@
     wordmarkMaskReady = true;
   }
 
-  if (wordmarkImg.complete) buildWordmarkMask();
+  if (wordmarkImg.complete && wordmarkImg.naturalWidth) buildWordmarkMask();
   else wordmarkImg.addEventListener('load', buildWordmarkMask, { once: true });
 
   function isOverZaydanLetter(x, y) {
@@ -982,9 +1024,8 @@
     setTimeout(dismiss, 1400);
   }
 
-  // Fade in already showing UnifrakturCook (same as page masthead's first font),
-  // then roll through the remaining fonts exactly as the page does
-  setTimeout(() => {
+  function playIntro() {
+    if (screen._gone) return;
     title.style.opacity = '1';
     title.style.transform = 'translateY(0)';
     setFont(classes[0]);
@@ -992,7 +1033,11 @@
       setTimeout(() => setFont(cls), (i + 1) * 170)
     );
     setTimeout(landWordmark, classes.length * 170);
-  }, 150);
+  }
+
+  // Fade in after the wordmark image and custom fonts are ready, so slow loads
+  // do not let the final logo moment happen before the assets exist.
+  zaydanAnimationReady.then(() => setTimeout(playIntro, 150));
 
   // Skip on click or key
   screen.addEventListener('click', dismiss);
