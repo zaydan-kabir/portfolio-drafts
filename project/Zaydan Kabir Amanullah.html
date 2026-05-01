@@ -698,9 +698,8 @@
     e.preventDefault();
     const nextY = e.touches[0].clientY;
     const nextX = e.touches[0].clientX;
-    const dy = touchStartY - nextY;
-    const dx = touchStartX - nextX;
-    moveHorizontal((dy + dx) * 1.25);
+    const dx = nextX - touchStartX;   // positive = swipe right = move right
+    moveHorizontal(dx * 1.25);
     touchStartY = nextY;
     touchStartX = nextX;
   }, { passive: false });
@@ -742,6 +741,10 @@
 
   // ── Canvas setup ──────────────────────────────────────────────────
   const isMobile = window.innerWidth < 600;
+  if (isMobile) {
+    const guide = document.getElementById('masthead-guide');
+    if (guide) guide.innerHTML = '&lt;swipe right&gt;<br>to move forward';
+  }
 
   const horseEl = document.getElementById('horse-canvas');
   const hCtx    = horseEl.getContext('2d');
