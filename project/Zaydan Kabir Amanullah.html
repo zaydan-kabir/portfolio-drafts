@@ -881,6 +881,8 @@ const zaydanAnimationReady = (() => {
   const cursorEl    = document.getElementById('cursor');
   const trailCanvas = document.getElementById('trail-canvas');
   const tCtx        = trailCanvas.getContext('2d');
+  const trailOverlay = document.createElement('canvas');
+  const overlayCtx   = trailOverlay.getContext('2d');
   const wordmarkImg  = document.getElementById('masthead-reference');
   const wordmarkMask = document.createElement('canvas');
   const wordmarkCtx  = wordmarkMask.getContext('2d', { willReadFrequently: true });
@@ -931,6 +933,8 @@ const zaydanAnimationReady = (() => {
   const resizeTrail = () => {
     trailCanvas.width = innerWidth;
     trailCanvas.height = innerHeight;
+    trailOverlay.width = innerWidth;
+    trailOverlay.height = innerHeight;
   };
   resizeTrail();
   window.addEventListener('resize', resizeTrail);
@@ -944,34 +948,50 @@ const zaydanAnimationReady = (() => {
     if (pts.length > 40) pts.shift();
   });
 
+  function drawTrailPath(ctx, color) {
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    for (let i = 1; i < pts.length; i++) {
+      ctx.beginPath();
+      ctx.moveTo(pts[i - 1].x, pts[i - 1].y);
+      ctx.lineTo(pts[i].x, pts[i].y);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = (i / pts.length) * 2.5;
+      ctx.stroke();
+    }
+  }
+
+  function drawBlackTrailOverZaydan() {
+    if (!wordmarkMaskReady) return;
+
+    const rect = wordmarkImg.getBoundingClientRect();
+    overlayCtx.clearRect(0, 0, trailOverlay.width, trailOverlay.height);
+    drawTrailPath(overlayCtx, '#000');
+    overlayCtx.globalCompositeOperation = 'destination-in';
+    overlayCtx.drawImage(wordmarkMask, rect.left, rect.top, rect.width, rect.height);
+    overlayCtx.globalCompositeOperation = 'source-over';
+    tCtx.drawImage(trailOverlay, 0, 0);
+  }
+
+  function drawBlackTrailOverPopup() {
+    const popup = document.querySelector('.p-popup-box');
+    if (!popup || getComputedStyle(popup.parentElement).display === 'none') return;
+
+    const rect = popup.getBoundingClientRect();
+    tCtx.save();
+    tCtx.beginPath();
+    tCtx.rect(rect.left, rect.top, rect.width, rect.height);
+    tCtx.clip();
+    drawTrailPath(tCtx, '#000');
+    tCtx.restore();
+  }
+
   (function drawTrail() {
     tCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
     const now = Date.now();
-    tCtx.lineCap = 'round'; tCtx.lineJoin = 'round';
-    for (let i = 1; i < pts.length; i++) {
-      tCtx.lineWidth = (i / pts.length) * 2.5;
-      const a = pts[i - 1];
-      const b = pts[i];
-      const distance = Math.hypot(b.x - a.x, b.y - a.y);
-      const steps = Math.max(1, Math.ceil(distance / 4));
-
-      for (let step = 0; step < steps; step++) {
-        const start = step / steps;
-        const end = (step + 1) / steps;
-        const x1 = a.x + (b.x - a.x) * start;
-        const y1 = a.y + (b.y - a.y) * start;
-        const x2 = a.x + (b.x - a.x) * end;
-        const y2 = a.y + (b.y - a.y) * end;
-        const mx = (x1 + x2) / 2;
-        const my = (y1 + y2) / 2;
-
-        tCtx.beginPath();
-        tCtx.moveTo(x1, y1);
-        tCtx.lineTo(x2, y2);
-        tCtx.strokeStyle = cursorColorAt(mx, my);
-        tCtx.stroke();
-      }
-    }
+    drawTrailPath(tCtx, '#fff');
+    drawBlackTrailOverZaydan();
+    drawBlackTrailOverPopup();
     while (pts.length && now - pts[0].t > 300) pts.shift();
     requestAnimationFrame(drawTrail);
   })();
