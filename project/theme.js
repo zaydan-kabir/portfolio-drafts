@@ -2,16 +2,12 @@
   var storageKey = 'zaydan-theme';
   var root = document.documentElement;
 
-  function isMobileViewport() {
-    return window.matchMedia && window.matchMedia('(max-width: 600px)').matches;
-  }
-
   function getThemeOrder() {
-    return isMobileViewport() ? ['light', 'dark'] : ['dark', 'light'];
+    return ['light', 'dark'];
   }
 
   function getDefaultTheme() {
-    return isMobileViewport() ? 'light' : 'dark';
+    return 'light';
   }
 
   function normalizeTheme(theme) {
