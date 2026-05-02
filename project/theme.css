@@ -109,6 +109,11 @@ html[data-theme="light"] #trail-canvas {
   filter: invert(1);
 }
 
+html[data-theme="light"] #arrow-path,
+html[data-theme="light"] #arrow-head {
+  stroke: #0a0a0a !important;
+}
+
 html[data-theme="dark"] #trail-canvas {
   filter: none !important;
 }
