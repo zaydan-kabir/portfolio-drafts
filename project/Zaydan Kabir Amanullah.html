@@ -516,6 +516,155 @@
       #horse-canvas { top: 90px; }
       #portrait-canvas { transform: scale(0.5); transform-origin: bottom left; left: -40px; }
     }
+
+    /* ── Panel 2 — about / work ──────────────────────────────── */
+    #panel-2-inner {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
+      padding: clamp(48px, 6vw, 88px) clamp(32px, 5vw, 72px);
+      padding-top: calc(clamp(48px, 6vw, 88px) + 64px); /* header clearance */
+      gap: 0 clamp(32px, 4vw, 64px);
+      overflow: hidden;
+    }
+    .p2-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .p2-col-right {
+      border-left: 1px solid var(--gray3);
+      padding-left: clamp(32px, 4vw, 64px);
+      justify-content: flex-start;
+      padding-top: 2px;
+    }
+    /* kicker label */
+    .p2-kicker {
+      font-family: 'VT323', monospace;
+      font-size: clamp(12px, 1.1vw, 16px);
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      margin-bottom: clamp(12px, 1.6vw, 22px);
+      display: block;
+    }
+    /* large display name */
+    .p2-name {
+      font-family: 'AtlanticCruise', serif;
+      font-size: clamp(52px, 9vw, 130px);
+      letter-spacing: 0.04em;
+      line-height: 0.92;
+      color: var(--ink);
+      margin-bottom: clamp(20px, 2.4vw, 36px);
+    }
+    /* body copy */
+    .p2-bio {
+      font-family: 'Lora', serif;
+      font-size: clamp(13px, 1.15vw, 17px);
+      line-height: 1.65;
+      color: var(--gray2);
+      font-style: italic;
+      max-width: 480px;
+      margin-bottom: clamp(24px, 2.8vw, 40px);
+    }
+    /* divider */
+    .p2-rule {
+      width: 100%;
+      height: 1px;
+      background: var(--gray3);
+      margin-bottom: clamp(20px, 2.4vw, 32px);
+    }
+    /* tag row */
+    .p2-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+    }
+    .p2-tag {
+      font-family: 'VT323', monospace;
+      font-size: clamp(11px, 1vw, 14px);
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.22);
+      border: 1px solid var(--gray3);
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+    /* work list */
+    .p2-work-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      flex: 1;
+      min-height: 0;
+    }
+    .p2-work-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+      gap: 12px;
+      padding: clamp(10px, 1.4vw, 18px) 0;
+      border-bottom: 1px solid var(--gray3);
+    }
+    .p2-work-item:first-child { border-top: 1px solid var(--gray3); }
+    .p2-work-org {
+      font-family: 'Lora', serif;
+      font-size: clamp(13px, 1.1vw, 16px);
+      font-weight: 400;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .p2-work-role {
+      font-family: 'Lora', serif;
+      font-size: clamp(11px, 0.95vw, 13px);
+      font-style: italic;
+      color: var(--gray2);
+      margin-top: 3px;
+    }
+    .p2-work-year {
+      font-family: 'VT323', monospace;
+      font-size: clamp(11px, 1vw, 14px);
+      letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.28);
+      white-space: nowrap;
+    }
+    /* contact row at bottom of right col */
+    .p2-contact {
+      margin-top: auto;
+      padding-top: clamp(20px, 2.4vw, 32px);
+      display: flex;
+      gap: clamp(16px, 2vw, 28px);
+      flex-wrap: wrap;
+    }
+    .p2-contact a {
+      font-family: 'VT323', monospace;
+      font-size: clamp(13px, 1.1vw, 17px);
+      letter-spacing: 0.07em;
+      color: rgba(255,255,255,0.38);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .p2-contact a:hover { color: var(--ink); }
+
+    @media (max-width: 600px) {
+      #panel-2-inner {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        overflow-y: auto;
+        padding: 72px 24px 40px;
+        gap: 32px 0;
+      }
+      .p2-col-right {
+        border-left: none;
+        border-top: 1px solid var(--gray3);
+        padding-left: 0;
+        padding-top: 24px;
+      }
+    }
   </style>
   <script src="theme.js?v=20260501-light-first-all"></script>
   <link rel="stylesheet" href="theme.css?v=20260501-light-first-all">
@@ -582,7 +731,76 @@
       <canvas id="horse-canvas"></canvas>
       <canvas id="portrait-canvas"></canvas>
     </div>
-    <div class="panel" id="panel-2"></div>
+    <div class="panel" id="panel-2">
+      <div id="panel-2-inner">
+
+        <!-- Left col — bio -->
+        <div class="p2-col">
+          <span class="p2-kicker">01 — about</span>
+          <div class="p2-name">Zaydan<br>Kabir</div>
+          <p class="p2-bio">Raised between Bangladesh and Canada, now based in California. I study Design and Political Science at Stanford — building at the intersection of systems, people, and social change.</p>
+          <p class="p2-bio" style="margin-top:-16px">My work is driven by a commitment to uplift others and to embody the change I want to see in the world.</p>
+          <div class="p2-rule"></div>
+          <div class="p2-tags">
+            <span class="p2-tag">UI/UX design</span>
+            <span class="p2-tag">systems thinking</span>
+            <span class="p2-tag">policy research</span>
+            <span class="p2-tag">social impact</span>
+            <span class="p2-tag">Stanford '26</span>
+          </div>
+        </div>
+
+        <!-- Right col — work + contact -->
+        <div class="p2-col p2-col-right">
+          <span class="p2-kicker">02 — selected work</span>
+          <div class="p2-work-list">
+            <div class="p2-work-item">
+              <div>
+                <div class="p2-work-org">Gordian Knot Center</div>
+                <div class="p2-work-role">UI/UX design, national security innovation</div>
+              </div>
+              <span class="p2-work-year">2026</span>
+            </div>
+            <div class="p2-work-item">
+              <div>
+                <div class="p2-work-org">The Stimson Center</div>
+                <div class="p2-work-role">South Asia policy research &amp; writing</div>
+              </div>
+              <span class="p2-work-year">2026</span>
+            </div>
+            <div class="p2-work-item">
+              <div>
+                <div class="p2-work-org">Stanford Impact Labs</div>
+                <div class="p2-work-role">Civic systems, applied research</div>
+              </div>
+              <span class="p2-work-year">2026</span>
+            </div>
+            <div class="p2-work-item">
+              <div>
+                <div class="p2-work-org">The Hoover Institution</div>
+                <div class="p2-work-role">Governance &amp; public policy research</div>
+              </div>
+              <span class="p2-work-year">2025</span>
+            </div>
+            <div class="p2-work-item">
+              <div>
+                <div class="p2-work-org">PwC</div>
+                <div class="p2-work-role">Tax audit internship</div>
+              </div>
+              <span class="p2-work-year">2024</span>
+            </div>
+          </div>
+          <div class="p2-contact">
+            <a href="mailto:zaydan1234@gmail.com">email</a>
+            <a href="https://www.linkedin.com/in/zaydanka" target="_blank">linkedin</a>
+            <a href="https://instagram.com/zaydan_kabir" target="_blank">instagram</a>
+            <a href="https://zaydanamanullah.substack.com" target="_blank">substack</a>
+            <a href="uploads/CV-3.pdf" target="_blank">résumé</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>
 <div id="scroll-capture" aria-hidden="true"></div>
@@ -756,10 +974,13 @@ const zaydanAnimationReady = (() => {
   let targetX = 0;
   let currentX = 0;
   let maxX = window.innerWidth;
-  let touchStartY = null;
 
   function clampX(value) {
     return Math.max(0, Math.min(maxX, value));
+  }
+
+  function snapToNearest() {
+    targetX = targetX > maxX / 2 ? maxX : 0;
   }
 
   function moveHorizontal(delta) {
@@ -768,7 +989,7 @@ const zaydanAnimationReady = (() => {
 
   function resizeHorizontalRange() {
     maxX = window.innerWidth;
-    targetX = clampX(targetX);
+    targetX = targetX > 0 ? maxX : 0;
     currentX = clampX(currentX);
   }
   window.addEventListener('resize', resizeHorizontalRange);
@@ -782,25 +1003,52 @@ const zaydanAnimationReady = (() => {
   scrollCapture.addEventListener('wheel', handleWheel, { passive: false });
   document.addEventListener('wheel', handleWheel, { passive: false });
 
-  let touchStartX = null;
+  // Touch: direct finger tracking + velocity snap on release
+  let isDragging = false;
+  let dragStartClientX = 0;
+  let dragStartTargetX = 0;
+  let swipeVelocity = 0;
+  let lastClientX = 0;
+  let lastClientTime = 0;
+
   scrollCapture.addEventListener('touchstart', e => {
-    touchStartY = e.touches[0].clientY;
-    touchStartX = e.touches[0].clientX;
+    isDragging = true;
+    dragStartClientX = e.touches[0].clientX;
+    dragStartTargetX = targetX;
+    lastClientX = dragStartClientX;
+    lastClientTime = Date.now();
+    swipeVelocity = 0;
   }, { passive: true });
 
   scrollCapture.addEventListener('touchmove', e => {
-    if (touchStartY === null) return;
+    if (!isDragging) return;
     e.preventDefault();
-    const nextY = e.touches[0].clientY;
-    const nextX = e.touches[0].clientX;
-    const dx = nextX - touchStartX;   // negative = swipe left = move right
-    moveHorizontal(dx * -1.25);
-    touchStartY = nextY;
-    touchStartX = nextX;
+    const x = e.touches[0].clientX;
+    const now = Date.now();
+    const dt = now - lastClientTime;
+    if (dt > 0) swipeVelocity = (x - lastClientX) / dt;
+    lastClientX = x;
+    lastClientTime = now;
+    // swipe right (x > start) → targetX increases → moves toward panel 2
+    targetX = clampX(dragStartTargetX + (x - dragStartClientX));
   }, { passive: false });
 
+  scrollCapture.addEventListener('touchend', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    const SNAP_VEL = 0.25; // px/ms threshold for flick
+    if (swipeVelocity > SNAP_VEL) {
+      targetX = maxX; // flick right → panel 2
+    } else if (swipeVelocity < -SNAP_VEL) {
+      targetX = 0;    // flick left → panel 1
+    } else {
+      snapToNearest();
+    }
+  }, { passive: true });
+
   function renderHorizontalTrack() {
-    currentX += (targetX - currentX) * 0.18;
+    const lerpFactor = isDragging ? 1 : 0.12;
+    currentX += (targetX - currentX) * lerpFactor;
     if (Math.abs(targetX - currentX) < 0.05) currentX = targetX;
     track.style.transform = `translate3d(-${currentX.toFixed(2)}px,0,0)`;
     requestAnimationFrame(renderHorizontalTrack);
@@ -838,7 +1086,7 @@ const zaydanAnimationReady = (() => {
   const isMobile = window.innerWidth < 600;
   if (isMobile) {
     const guide = document.getElementById('masthead-guide');
-    if (guide) guide.innerHTML = '&lt;swipe left&gt;<br>to move forward';
+    if (guide) guide.innerHTML = '&lt;swipe right&gt;<br>to move forward';
     const replay = document.getElementById('masthead-replay');
     if (replay) replay.innerHTML = '&lt;tap&gt;<br>to replay animation';
   }
