@@ -98,10 +98,10 @@
     var style = document.createElement('style');
     style.textContent = [
       '#panel-2-inner{display:block!important;padding:0!important;overflow:hidden!important;}',
-      '#panel-2-manuscript{position:absolute;inset:clamp(96px,12vh,140px) clamp(28px,7vw,120px) clamp(64px,8vh,100px);z-index:1;display:block;}',
+      '#panel-2-manuscript{position:absolute;z-index:1;display:block;pointer-events:none;}',
       '#panel-2 .p2-quote-wrap{display:none!important;}',
       '#panel-2-fig{left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;width:clamp(118px,15vw,230px)!important;z-index:4!important;transform:translate(-50%,-50%)!important;filter:drop-shadow(0 14px 28px rgba(0,0,0,.32));will-change:left,top;}',
-      '@media(max-width:600px){#panel-2-manuscript{inset:96px 22px 54px;}#panel-2-fig{width:clamp(92px,32vw,132px)!important;}}'
+      '@media(max-width:600px){#panel-2-fig{width:clamp(92px,32vw,132px)!important;}}'
     ].join('\n');
     document.head.appendChild(style);
 
@@ -164,7 +164,26 @@
       }
     }, { passive: true });
 
+    function layoutCanvas() {
+      var panelWidth = Math.max(1, panel.clientWidth || window.innerWidth);
+      var panelHeight = Math.max(1, panel.clientHeight || window.innerHeight);
+      var side = window.innerWidth < 600
+        ? 22
+        : Math.max(28, Math.min(120, panelWidth * 0.07));
+      var top = window.innerWidth < 600
+        ? 96
+        : Math.max(96, Math.min(140, panelHeight * 0.12));
+      var bottom = window.innerWidth < 600
+        ? 54
+        : Math.max(64, Math.min(100, panelHeight * 0.08));
+      canvas.style.left = side + 'px';
+      canvas.style.top = top + 'px';
+      canvas.style.width = Math.max(1, panelWidth - side * 2) + 'px';
+      canvas.style.height = Math.max(1, panelHeight - top - bottom) + 'px';
+    }
+
     function resizeCanvas() {
+      layoutCanvas();
       var rect = canvas.getBoundingClientRect();
       var dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
       var width = Math.max(1, Math.round(rect.width * dpr));
@@ -190,8 +209,8 @@
       var rect = resizeCanvas();
       figX += (targetX - figX) * 0.14;
       figY += (targetY - figY) * 0.14;
-      fig.style.left = figX.toFixed(1) + 'px';
-      fig.style.top = figY.toFixed(1) + 'px';
+      fig.style.setProperty('left', figX.toFixed(1) + 'px', 'important');
+      fig.style.setProperty('top', figY.toFixed(1) + 'px', 'important');
 
       var figRect = fig.getBoundingClientRect();
       var figCenterX = figRect.left - rect.left + figRect.width / 2;
@@ -206,8 +225,8 @@
       };
 
       var theme = root.dataset.theme;
-      var textColor = theme === 'light' ? 'rgba(10,10,10,.72)' : 'rgba(240,240,240,.68)';
-      var attrColor = theme === 'light' ? 'rgba(10,10,10,.38)' : 'rgba(240,240,240,.34)';
+      var textColor = theme === 'light' ? 'rgba(10,10,10,.9)' : 'rgba(240,240,240,.84)';
+      var attrColor = theme === 'light' ? 'rgba(10,10,10,.56)' : 'rgba(240,240,240,.5)';
       var fontSize = Math.max(13, Math.min(18, rect.width * (isMobile ? 0.043 : 0.018)));
       var lineHeight = fontSize * 1.68;
       var font = 'italic 400 ' + fontSize + 'px Lora, Georgia, serif';
