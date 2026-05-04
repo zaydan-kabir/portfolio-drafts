@@ -627,10 +627,10 @@
         <img id="masthead-reference" src="uploads/zaydan-screenshot-wordmark.png" alt="" aria-hidden="true">
         <span id="masthead-replay">&lt;click&gt;<br>to replay animation</span>
       </div>
+      <canvas id="horse-canvas"></canvas>
       <canvas id="portrait-canvas"></canvas>
     </div>
     <div class="panel" id="panel-2">
-      <canvas id="horse-canvas"></canvas>
       <div id="panel-2-inner">
         <div class="p2-quote-wrap">
           <span class="p2-quote-mark">&ldquo;</span>
@@ -893,32 +893,12 @@ const zaydanAnimationReady = (() => {
     }
   });
 
-  // Restore the horse in panel 2 after it has galloped off-screen.
-  let horseRestorePending = false;
-  function maybeRestoreHorse() {
-    if (!horseGone || horseRestorePending) return;
-    if (currentX > 10) return;
-    horseRestorePending = true;
-    setTimeout(() => {
-      horseGone            = false;
-      horseRunning         = false;
-      horseRestorePending  = false;
-      horseEl.style.display        = '';
-      horseEl.style.position       = '';
-      horseEl.style.left           = '';
-      horseEl.style.top            = '';
-      horseEl.style.right          = '';
-      horseEl.style.transformOrigin = 'top right';
-    }, 400);
-  }
-
   function renderHorizontalTrack() {
     // While horse is pulling the panel, follow its targetX instantly
     const lerpFactor = (isDragging || horseRunning) ? 1 : 0.12;
     currentX += (targetX - currentX) * lerpFactor;
     if (Math.abs(targetX - currentX) < 0.05) currentX = targetX;
     track.style.transform = `translate3d(-${currentX.toFixed(2)}px,0,0)`;
-    maybeRestoreHorse();
     requestAnimationFrame(renderHorizontalTrack);
   }
   requestAnimationFrame(renderHorizontalTrack);
@@ -1096,24 +1076,22 @@ const zaydanAnimationReady = (() => {
   const HORSE_BASE_SPEED = 260; // px/s
 
   let horseRunning = false;
-  let horseGone    = false;         // true after horse exits right into panel 2
   let horseCX = 0, horseCY = 0;
-  let horseVX = 0, horseVY = 0;
-  let horseLaunchCX = 0;            // x-center when launched
+  let horseVX = 0;
+  let horseRunProgress = 0;
   let horseLaunchTargetX = 0;       // scroll offset when launched
 
   const mobileScale    = isMobile ? 0.45 : 1;
   const horseScalePart = isMobile ? ' scale(0.45)' : '';
 
   function launchHorse() {
-    if (horseGone) return;
+    if (horseRunning) return;
     const rect = horseEl.getBoundingClientRect();
     horseCX = rect.left + rect.width  / 2;
     horseCY = rect.top  + rect.height / 2;
-    horseLaunchCX      = horseCX;
     horseLaunchTargetX = targetX;
+    horseRunProgress   = 0;
     horseVX = HORSE_BASE_SPEED + Math.random() * 60; // always right
-    horseVY = (Math.random() - 0.5) * 40;
     if (!horseRunning) {
       horseRunning = true;
       horseEl.style.position      = 'fixed';
@@ -1131,34 +1109,31 @@ const zaydanAnimationReady = (() => {
   }
 
   function tickHorse(dt) {
-    if (horseGone)    return;
     if (!horseRunning) { applyHorseSway(animTime); return; }
 
     const hw  = horseEl.offsetWidth;
-    const hh  = horseEl.offsetHeight;
     const vhw = hw * mobileScale / 2;
-    const vhh = hh * mobileScale / 2;
 
-    horseCX += horseVX * dt;
-    horseCY += horseVY * dt;
+    horseRunProgress = Math.min(
+      1,
+      horseRunProgress + (horseVX * dt) / Math.max(1, maxX - horseLaunchTargetX)
+    );
 
-    // Vertical bounce only — horse runs straight off the right edge
-    const minY = 70 + vhh, maxY = window.innerHeight - vhh;
-    if (horseCY < minY) { horseCY = minY; horseVY =  Math.abs(horseVY) * 0.55; }
-    if (horseCY > maxY) { horseCY = maxY; horseVY = -Math.abs(horseVY) * 0.55; }
+    // Keep the horse visible at the top-right while it pulls the panels to screen 2.
+    horseCX = window.innerWidth - vhw - window.innerWidth * 0.02;
+    targetX = clampX(horseLaunchTargetX + horseRunProgress * (maxX - horseLaunchTargetX));
 
-    // Drive horizontal scroll proportionally to horse travel progress.
-    // Horse travels from horseLaunchCX to (viewport width + half horse width) off-screen.
-    const exitX    = window.innerWidth + vhw;
-    const progress = Math.max(0, Math.min(1, (horseCX - horseLaunchCX) / (exitX - horseLaunchCX)));
-    targetX = clampX(horseLaunchTargetX + progress * (maxX - horseLaunchTargetX));
-
-    // Horse has galloped off-screen → land on panel 2
-    if (horseCX >= exitX) {
+    // Horse has reached the top-right of the second panel: park it there.
+    if (horseRunProgress >= 1) {
       targetX        = maxX;
       horseRunning   = false;
-      horseGone      = true;
-      horseEl.style.display = 'none';
+      horseEl.style.display = '';
+      horseEl.style.position = 'fixed';
+      horseEl.style.left = '';
+      horseEl.style.right = '2vw';
+      horseEl.style.top = '70px';
+      horseEl.style.transformOrigin = 'top right';
+      applyHorseSway(animTime);
       return;
     }
 
