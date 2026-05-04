@@ -6,7 +6,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Zaydan Kabir Amanullah</title>
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@100;200&display=swap" rel="stylesheet">
   <style>
@@ -227,34 +229,52 @@
       background: #0a0a0a;
       pointer-events: none;
       transform: translateZ(0);
+      height: 32px;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      contain: paint;
     }
+    #upcoming-ticker.ticker-ready { opacity: 1; }
     .upcoming-track {
       display: flex;
+      align-items: center;
       width: max-content;
-      transform: translate3d(100vw, 0, 0);
-      animation: upcoming-scroll 56s linear infinite;
+      height: 100%;
+      animation: upcoming-scroll 46s linear infinite;
+      animation-play-state: paused;
       will-change: transform;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
     }
+    #upcoming-ticker.ticker-ready .upcoming-track { animation-play-state: running; }
     .upcoming-group {
       display: flex;
+      align-items: center;
       flex: 0 0 auto;
+      height: 100%;
       min-width: max-content;
     }
     .upcoming-group span {
       flex: 0 0 auto;
-      padding: 6px 44px 7px 0;
+      display: grid;
+      place-items: center;
+      height: 100%;
+      padding: 0 56px 0 0;
       font-family: 'VT323', monospace;
       font-size: clamp(18px, 1.6vw, 24px);
+      line-height: 1;
       letter-spacing: 0.08em;
       color: rgba(255,255,255,0.76);
       text-shadow: 0 0 10px rgba(255,255,255,0.16);
       white-space: nowrap;
+      transform: translateY(-0.08em);
     }
     @keyframes upcoming-scroll {
-      from { transform: translate3d(100vw, 0, 0); }
-      to { transform: translate3d(-100%, 0, 0); }
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(-50%, 0, 0); }
     }
     @media (prefers-reduced-motion: reduce) {
+      #upcoming-ticker { opacity: 1; }
       .upcoming-track { animation: none; }
     }
 
@@ -436,12 +456,11 @@
       background: none; border: none;
       cursor: none !important; padding: 0;
       text-transform: lowercase;
-      transition: color .15s, text-shadow .15s;
+      transition: color .15s;
       display: block; text-align: right;
     }
     .pixel-btn:hover {
       color: #fff;
-      text-shadow: 0 0 8px #fff, 0 0 20px rgba(255,255,255,.7), 0 0 40px rgba(255,255,255,.4);
     }
     .p-popup-overlay {
       position: fixed; inset: 0; z-index: 350;
@@ -451,9 +470,10 @@
     }
     .p-popup-box {
       background: #fff;
-      min-width: 320px; max-width: 460px; width: 90%;
+      min-width: 280px; max-width: 460px; width: 90%;
       padding: 48px 40px 40px; position: relative;
       box-shadow: 0 24px 64px rgba(0,0,0,.4);
+      max-height: 90vh; overflow-y: auto;
     }
     .p-popup-close {
       position: absolute; top: 14px; right: 20px;
@@ -465,7 +485,98 @@
     .p-popup-content {
       font-family: 'Lora', Georgia, serif;
       font-size: 15px; line-height: 1.75; color: #333;
+      text-align: center;
     }
+    .p-popup-content .contact-label {
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #999; margin-top: 20px; margin-bottom: 2px;
+    }
+    .p-popup-content .contact-label:first-child { margin-top: 0; }
+    .p-popup-content a {
+      color: #111; text-decoration: none; border-bottom: 1px solid #ccc;
+    }
+    .p-popup-content a:hover { border-bottom-color: #111; }
+
+    /* ── Mobile ─────────────────────────────────────────────── */
+    @media (pointer: coarse) {
+      body { cursor: auto; }
+      a, button, a:hover, button:hover, .pixel-btn { cursor: auto !important; }
+      #cursor, #trail-canvas { display: none; }
+      .pixel-btn:hover { color: rgba(255,255,255,.55); text-shadow: none; }
+    }
+    @media (max-width: 600px) {
+      #header { padding: 14px 20px 8px; }
+      #upcoming-ticker { top: 46px; }
+      #scroll-capture { inset: 58px 0 0; }
+      #page-info-contact { bottom: 20px; right: 16px; gap: 10px; }
+      .p-popup-box { padding: 36px 24px 28px; width: 94%; }
+      .p-popup-content { font-size: 14px; }
+      #masthead-guide { font-size: 13px; }
+      #masthead-replay { font-size: 13px; }
+      #horse-canvas { top: 90px; }
+      #portrait-canvas { transform: scale(0.5); transform-origin: bottom left; left: -40px; }
+    }
+
+    /* ── Panel 2 — quote ─────────────────────────────────────── */
+    #panel-2-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(clamp(48px, 6vw, 88px) + 64px) clamp(48px, 10vw, 160px) clamp(48px, 6vw, 88px);
+      overflow: hidden;
+    }
+    .p2-quote-wrap {
+      max-width: 700px;
+      width: 100%;
+    }
+    .p2-quote-mark {
+      font-family: 'Lora', serif;
+      font-size: clamp(48px, 6vw, 88px);
+      line-height: 0.75;
+      color: rgba(255,255,255,0.07);
+      margin-bottom: clamp(12px, 1.6vw, 22px);
+      display: block;
+      user-select: none;
+    }
+    .p2-quote-text {
+      font-family: 'Lora', serif;
+      font-size: clamp(13px, 1.15vw, 17px);
+      line-height: 1.82;
+      color: var(--gray2);
+      font-style: italic;
+    }
+    .p2-quote-attr {
+      margin-top: clamp(20px, 2.4vw, 36px);
+      font-family: 'VT323', monospace;
+      font-size: clamp(12px, 1vw, 15px);
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.28);
+      text-transform: uppercase;
+    }
+    html[data-theme="light"] .p2-quote-mark { color: rgba(0,0,0,0.07); }
+    html[data-theme="light"] .p2-quote-attr { color: rgba(0,0,0,0.28); }
+
+    @media (max-width: 600px) {
+      #panel-2-inner {
+        align-items: flex-start;
+        padding: 80px 28px 48px;
+        overflow-y: auto;
+      }
+    }
+  </style>
+  <script src="theme.js?v=20260501-light-first-all"></script>
+  <link rel="stylesheet" href="theme.css?v=20260501-light-first-all">
+  <style>
+    html[data-theme="light"] #masthead-guide,
+    html[data-theme="light"] #masthead-replay { color: rgba(10,10,10,.42) !important; }
+    html[data-theme="dark"] #masthead-guide,
+    html[data-theme="dark"] #masthead-replay { color: rgba(255,255,255,.24) !important; }
+    html[data-theme="light"] #intro-wordmark,
+    html[data-theme="light"] #masthead-reference { filter: invert(1) drop-shadow(0 0 22px rgba(0,0,0,.08)) !important; }
+    html[data-theme="dark"] #intro-wordmark,
+    html[data-theme="dark"] #masthead-reference { filter: none !important; }
   </style>
 </head>
 <body>
@@ -520,7 +631,15 @@
       <canvas id="horse-canvas"></canvas>
       <canvas id="portrait-canvas"></canvas>
     </div>
-    <div class="panel" id="panel-2"></div>
+    <div class="panel" id="panel-2">
+      <div id="panel-2-inner">
+        <div class="p2-quote-wrap">
+          <span class="p2-quote-mark">&ldquo;</span>
+          <p class="p2-quote-text">I saw my life branching out before me like the green fig tree in the story. From the tip of every branch, like a fat purple fig, a wonderful future beckoned and winked. One fig was a husband and a happy home and children, and another fig was a famous poet and another fig was a brilliant professor, and another fig was Ee Gee, the amazing editor, and another fig was Europe and Africa and South America, and another fig was Constantin and Socrates and Attila and a pack of other lovers with queer names and offbeat professions, and another fig was an Olympic lady crew champion, and beyond and above these figs were many more figs I couldn&rsquo;t quite make out. I saw myself sitting in the crotch of this fig tree, starving to death, just because I couldn&rsquo;t make up my mind which of the figs I would choose. I wanted each and every one of them, but choosing one meant losing all the rest, and, as I sat there, unable to decide, the figs began to wrinkle and go black, and, one by one, they plopped to the ground at my feet.&rdquo;</p>
+          <div class="p2-quote-attr">&#8213;&nbsp; Sylvia Plath &mdash; <em>The Bell Jar</em></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <div id="scroll-capture" aria-hidden="true"></div>
@@ -544,6 +663,48 @@
 </div>
 
 <script>
+const zaydanAnimationReady = (() => {
+  const maxWait = 15000;
+  const timeout = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  function waitForImage(img) {
+    if (!img) return Promise.resolve();
+    if (img.complete && img.naturalWidth) return Promise.resolve();
+
+    const loaded = img.decode
+      ? img.decode().catch(() => {})
+      : new Promise(resolve => {
+          img.addEventListener('load', resolve, { once: true });
+          img.addEventListener('error', resolve, { once: true });
+        });
+
+    return Promise.race([loaded, timeout(maxWait)]);
+  }
+
+  function waitForFonts() {
+    if (!document.fonts) return Promise.resolve();
+
+    const fonts = [
+      document.fonts.load('1em AtlanticCruise'),
+      document.fonts.load('1em UnifrakturCook'),
+      document.fonts.load('1em OldEnglishTextMT'),
+      document.fonts.load('1em FetteUNZFraktur'),
+      document.fonts.load('1em CloisterBlack')
+    ];
+
+    return Promise.race([
+      Promise.allSettled(fonts).then(() => document.fonts.ready),
+      timeout(maxWait)
+    ]);
+  }
+
+  return Promise.allSettled([
+    waitForFonts(),
+    waitForImage(document.getElementById('intro-wordmark')),
+    waitForImage(document.getElementById('masthead-reference'))
+  ]);
+})();
+
 (() => {
   'use strict';
 
@@ -607,7 +768,30 @@
     playMastheadRoll(true);
   });
 
-  playMastheadRoll();
+  zaydanAnimationReady.then(() => playMastheadRoll());
+
+  function revealUpcomingTicker() {
+    const ticker = document.getElementById('upcoming-ticker');
+    const track = ticker && ticker.querySelector('.upcoming-track');
+    if (!ticker || !track) return;
+
+    track.style.animation = 'none';
+    track.style.transform = 'translate3d(0,0,0)';
+    void track.offsetWidth;
+    track.style.animation = '';
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => ticker.classList.add('ticker-ready'));
+    });
+  }
+
+  const tickerReady = document.fonts
+    ? Promise.race([
+        document.fonts.load('1em VT323').then(() => document.fonts.ready),
+        new Promise(resolve => setTimeout(resolve, 3000))
+      ])
+    : Promise.resolve();
+  tickerReady.then(() => setTimeout(revealUpcomingTicker, 250));
 
   // ── Page-out transition ───────────────────────────────────────────
   const overlay = document.getElementById('page-out');
@@ -629,10 +813,13 @@
   let targetX = 0;
   let currentX = 0;
   let maxX = window.innerWidth;
-  let touchStartY = null;
 
   function clampX(value) {
     return Math.max(0, Math.min(maxX, value));
+  }
+
+  function snapToNearest() {
+    targetX = targetX > maxX / 2 ? maxX : 0;
   }
 
   function moveHorizontal(delta) {
@@ -641,7 +828,7 @@
 
   function resizeHorizontalRange() {
     maxX = window.innerWidth;
-    targetX = clampX(targetX);
+    targetX = targetX > 0 ? maxX : 0;
     currentX = clampX(currentX);
   }
   window.addEventListener('resize', resizeHorizontalRange);
@@ -649,34 +836,158 @@
   function handleWheel(e) {
     if (e.ctrlKey) return;
     e.preventDefault();
-    moveHorizontal(-(e.deltaY || e.deltaX));
+    moveHorizontal(e.deltaY + e.deltaX);
   }
 
   scrollCapture.addEventListener('wheel', handleWheel, { passive: false });
   document.addEventListener('wheel', handleWheel, { passive: false });
 
+  // Touch: direct finger tracking + velocity snap on release
+  let isDragging = false;
+  let dragStartClientX = 0;
+  let dragStartTargetX = 0;
+  let swipeVelocity = 0;
+  let lastClientX = 0;
+  let lastClientTime = 0;
+
   scrollCapture.addEventListener('touchstart', e => {
-    touchStartY = e.touches[0].clientY;
+    isDragging = true;
+    dragStartClientX = e.touches[0].clientX;
+    dragStartTargetX = targetX;
+    lastClientX = dragStartClientX;
+    lastClientTime = Date.now();
+    swipeVelocity = 0;
   }, { passive: true });
 
   scrollCapture.addEventListener('touchmove', e => {
-    if (touchStartY === null) return;
+    if (!isDragging) return;
     e.preventDefault();
-    const nextY = e.touches[0].clientY;
-    moveHorizontal((nextY - touchStartY) * 1.25);
-    touchStartY = nextY;
+    const x = e.touches[0].clientX;
+    const now = Date.now();
+    const dt = now - lastClientTime;
+    if (dt > 0) swipeVelocity = (x - lastClientX) / dt;
+    lastClientX = x;
+    lastClientTime = now;
+    // swipe right (x > start) → targetX increases → moves toward panel 2
+    targetX = clampX(dragStartTargetX + (x - dragStartClientX));
   }, { passive: false });
 
+  scrollCapture.addEventListener('touchend', () => {
+    if (!isDragging) return;
+    isDragging = false;
+    const SNAP_VEL = 0.25; // px/ms threshold for flick
+    if (swipeVelocity > SNAP_VEL) {
+      targetX = maxX; // flick right → panel 2
+    } else if (swipeVelocity < -SNAP_VEL) {
+      targetX = 0;    // flick left → panel 1
+    } else {
+      snapToNearest();
+    }
+  }, { passive: true });
+
+  // ── Horse click detection (through transparent scroll-capture overlay) ──
+  scrollCapture.addEventListener('click', e => {
+    const rect = horseEl.getBoundingClientRect();
+    if (e.clientX >= rect.left && e.clientX <= rect.right &&
+        e.clientY >= rect.top  && e.clientY <= rect.bottom) {
+      launchHorse();
+    }
+  });
+
+  // When user scrolls back to panel 1, restore the horse
+  let horseRestorePending = false;
+  function maybeRestoreHorse() {
+    if (!horseGone || horseRestorePending) return;
+    if (currentX > 10) return; // not back at panel 1 yet
+    horseRestorePending = true;
+    setTimeout(() => {
+      horseGone            = false;
+      horseRunning         = false;
+      horseRestorePending  = false;
+      horseEl.style.display        = '';
+      horseEl.style.position       = '';
+      horseEl.style.left           = '';
+      horseEl.style.top            = '';
+      horseEl.style.right          = '';
+      horseEl.style.transformOrigin = 'top right';
+    }, 400);
+  }
+
+  let horseScrolling = false; // slower lerp while horse-triggered scroll plays out
+
   function renderHorizontalTrack() {
-    currentX += (targetX - currentX) * 0.18;
-    if (Math.abs(targetX - currentX) < 0.05) currentX = targetX;
+    let lerpFactor;
+    if (isDragging) lerpFactor = 1;
+    else if (horseScrolling) lerpFactor = 0.055; // deliberate ~1.5s drag to panel 2
+    else lerpFactor = 0.12;
+
+    currentX += (targetX - currentX) * lerpFactor;
+    if (Math.abs(targetX - currentX) < 0.5) { currentX = targetX; horseScrolling = false; }
     track.style.transform = `translate3d(-${currentX.toFixed(2)}px,0,0)`;
+    maybeRestoreHorse();
     requestAnimationFrame(renderHorizontalTrack);
   }
-  renderHorizontalTrack();
+  requestAnimationFrame(renderHorizontalTrack);
 
-  // ── ASCII ramp ────────────────────────────────────────────────────
-  const RAMP = ' .\'`,:;-+!iIlr=*o%#&@';
+  // ── Variable-typographic ASCII via pretext ───────────────────────
+  let typoPalette = null;
+
+  async function buildTypoPalette(fontSize) {
+    const { prepareWithSegments } = await import('./node_modules/@chenglou/pretext/dist/layout.js');
+    const CHARS = " .,:;!il|-+=*#@%&abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const variants = [
+      { weight: 400, style: 'normal'  },
+      { weight: 400, style: 'italic'  },
+      { weight: 700, style: 'normal'  },
+      { weight: 700, style: 'italic'  },
+    ];
+    const tw = Math.ceil(fontSize * 3), th = Math.ceil(fontSize * 2);
+    const tmp = document.createElement('canvas');
+    tmp.width = tw; tmp.height = th;
+    const tc = tmp.getContext('2d', { willReadFrequently: true });
+    const entries = [];
+    for (const { weight, style } of variants) {
+      const fontStr = `${style} ${weight} ${fontSize}px 'Georgia',serif`;
+      for (const ch of CHARS) {
+        const prep = prepareWithSegments(ch, fontStr);
+        const width = (prep.widths && prep.widths.length > 0) ? prep.widths[0] : fontSize * 0.5;
+        let brightness = 0;
+        if (ch !== ' ') {
+          tc.clearRect(0, 0, tw, th);
+          tc.font = fontStr;
+          tc.fillStyle = '#000';
+          tc.textBaseline = 'alphabetic';
+          tc.fillText(ch, 1, Math.ceil(fontSize * 1.25));
+          const data = tc.getImageData(0, 0, tw, th).data;
+          let inkSum = 0;
+          for (let p = 3; p < data.length; p += 4) inkSum += data[p];
+          brightness = inkSum / (255 * tw * th);
+        }
+        entries.push({ ch, fontStr, width, brightness });
+      }
+    }
+    entries.sort((a, b) => a.brightness - b.brightness);
+    return entries;
+  }
+
+  function findBestChar(palette, targetBrightness, targetWidth) {
+    let lo = 0, hi = palette.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (palette[mid].brightness < targetBrightness) lo = mid + 1;
+      else hi = mid;
+    }
+    let best = palette[lo], bestScore = Infinity;
+    const s = Math.max(0, lo - 20), e = Math.min(palette.length - 1, lo + 20);
+    for (let k = s; k <= e; k++) {
+      const en = palette[k];
+      const be = Math.abs(en.brightness - targetBrightness);
+      const we = Math.abs(en.width - targetWidth) / Math.max(targetWidth, 1);
+      const score = be * 2.5 + we;
+      if (score < bestScore) { bestScore = score; best = en; }
+    }
+    return best;
+  }
 
   // ── Luminance grid (min-lum for dark-chars-on-light-bg sources) ───
   function toGrid(img, cols, rows) {
@@ -703,15 +1014,23 @@
   }
 
   // ── Canvas setup ──────────────────────────────────────────────────
+  const isMobile = window.innerWidth < 600;
+  if (isMobile) {
+    const guide = document.getElementById('masthead-guide');
+    if (guide) guide.innerHTML = '&lt;swipe right&gt;<br>to move forward';
+    const replay = document.getElementById('masthead-replay');
+    if (replay) replay.innerHTML = '&lt;tap&gt;<br>to replay animation';
+  }
+
   const horseEl = document.getElementById('horse-canvas');
   const hCtx    = horseEl.getContext('2d');
-  const H_COLS = 70, H_ROWS = 62, H_CW = 6, H_CH = 6;
+  const H_COLS = 60, H_ROWS = 37, H_CW = 7, H_CH = 10;
   horseEl.width  = H_COLS * H_CW;
   horseEl.height = H_ROWS * H_CH;
 
   const portEl = document.getElementById('portrait-canvas');
   const pCtx   = portEl.getContext('2d');
-  const P_COLS = 64, P_ROWS = 96, P_CW = 7, P_CH = 7;
+  const P_COLS = 64, P_ROWS = 67, P_CW = 7, P_CH = 10;
   portEl.width  = P_COLS * P_CW;
   portEl.height = P_ROWS * P_CH;
 
@@ -729,22 +1048,25 @@
   }
   initGrids();
   window.addEventListener('load', initGrids);
+  buildTypoPalette(H_CH).then(p => { typoPalette = p; });
 
   // ── Render helpers ────────────────────────────────────────────────
+  const MONO_RAMP = " .'`,:;-+!iIlr=*o%#&@";
   function renderGrid(ctx, gridData, cw, ch, t) {
     ctx.clearRect(0, 0, gridData.cols * cw, gridData.rows * ch);
     if (!gridData) return;
     const { grid, cols, rows } = gridData;
-    ctx.font = `bold ${ch}px 'Courier New', monospace`;
+    const theme = document.documentElement.dataset.theme;
+    const asciiColor = theme === 'light' ? '0,0,0' : '255,255,255';
 
     let minLum = 1, maxLum = 0;
     for (let i = 0; i < grid.length; i++) {
       if (grid[i] < minLum) minLum = grid[i];
       if (grid[i] > maxLum) maxLum = grid[i];
     }
-    // Adaptive threshold: skip top 30% of luminance (background)
     const maxPass = minLum + (maxLum - minLum) * 0.70;
 
+    ctx.textBaseline = 'alphabetic';
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const lum = grid[r * cols + c];
@@ -752,89 +1074,233 @@
         const norm = 1 - (lum - minLum) / Math.max(0.01, maxPass - minLum);
         if (norm < 0.1) continue;
 
-        const flicker = Math.sin(t * 1.1 + c * 0.38 + r * 0.22) > 0.82 ? 1 : 0;
-        const base    = Math.floor(norm * (RAMP.length - 1));
-        const ci      = Math.max(0, Math.min(RAMP.length - 1, base + flicker));
-        const char    = RAMP[ci];
-        if (!char || char === ' ') continue;
-
         const breath = Math.sin(t * 0.55 + c * 0.18 + r * 0.09) * 0.5 + 0.5;
-        const alpha  = Math.min(0.95, norm * (0.6 + breath * 0.3));
-        ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(3)})`;
-        ctx.fillText(char, c * cw, (r + 1) * ch);
+        const alpha  = Math.min(1, norm * (theme === 'light' ? 1.2 : 0.6 + breath * 0.3));
+
+        if (typoPalette) {
+          const flicker = Math.sin(t * 1.1 + c * 0.38 + r * 0.22) > 0.88 ? 0.05 : 0;
+          const best = findBestChar(typoPalette, Math.min(1, norm + flicker), cw);
+          ctx.font = best.fontStr;
+          ctx.fillStyle = `rgba(${asciiColor},${alpha.toFixed(3)})`;
+          ctx.fillText(best.ch, c * cw, (r + 1) * ch);
+        } else {
+          const flicker = Math.sin(t * 1.1 + c * 0.38 + r * 0.22) > 0.82 ? 1 : 0;
+          const base = Math.floor(norm * (MONO_RAMP.length - 1));
+          const ci   = Math.max(0, Math.min(MONO_RAMP.length - 1, base + flicker));
+          const char = MONO_RAMP[ci];
+          if (!char || char === ' ') continue;
+          ctx.font = `bold ${ch}px 'Courier New',monospace`;
+          ctx.fillStyle = `rgba(${asciiColor},${alpha.toFixed(3)})`;
+          ctx.fillText(char, c * cw, (r + 1) * ch);
+        }
       }
     }
   }
 
-  // ── Idle horse sway ───────────────────────────────────────────────
+  // ── Horse animation state ─────────────────────────────────────────
   let animTime = 0, lastTs = null;
+  const HORSE_BASE_SPEED = 260; // px/s
+
+  let horseRunning = false;
+  let horseGone    = false;         // true after horse exits right into panel 2
+  let horseCX = 0, horseCY = 0;
+  let horseVX = 0, horseVY = 0;
+
+  const mobileScale    = isMobile ? 0.45 : 1;
+  const horseScalePart = isMobile ? ' scale(0.45)' : '';
+
+  function launchHorse() {
+    if (horseGone || horseRunning) return;
+
+    // Start from the horse's current home position (top right)
+    const rect = horseEl.getBoundingClientRect();
+    horseCX = rect.left + rect.width  / 2;
+    horseCY = rect.top  + rect.height / 2;
+    horseVX = HORSE_BASE_SPEED + Math.random() * 60; // gallop right
+    horseVY = (Math.random() - 0.5) * 30;
+
+    // Trigger the panel scroll immediately — horse visually leads it
+    targetX      = maxX;
+    horseScrolling = true;
+
+    horseRunning = true;
+    horseEl.style.position      = 'fixed';
+    horseEl.style.top           = '';
+    horseEl.style.right         = '';
+    horseEl.style.transformOrigin = 'center center';
+  }
 
   function applyHorseSway(t) {
     const tx = Math.sin(t * 1.73) * 2.5 + Math.sin(t * 0.97) * 1.1;
     const ty = Math.sin(t * 2.31) * 1.2 + Math.sin(t * 1.41) * 0.6;
     const rz = Math.sin(t * 0.83) * 0.4;
-    horseEl.style.transform = `translate(${tx.toFixed(2)}px,${ty.toFixed(2)}px) rotate(${rz.toFixed(3)}deg)`;
+    horseEl.style.transform = `translate(${tx.toFixed(2)}px,${ty.toFixed(2)}px) rotate(${rz.toFixed(3)}deg)${horseScalePart}`;
+  }
+
+  function tickHorse(dt) {
+    if (horseGone)     return;
+    if (!horseRunning) { applyHorseSway(animTime); return; }
+
+    const hw  = horseEl.offsetWidth;
+    const hh  = horseEl.offsetHeight;
+    const vhw = hw * mobileScale / 2;
+    const vhh = hh * mobileScale / 2;
+
+    horseCX += horseVX * dt;
+    horseCY += horseVY * dt;
+
+    // Vertical bounce between header and bottom
+    const minY = 70 + vhh, maxY = window.innerHeight - vhh;
+    if (horseCY < minY) { horseCY = minY; horseVY =  Math.abs(horseVY) * 0.55; }
+    if (horseCY > maxY) { horseCY = maxY; horseVY = -Math.abs(horseVY) * 0.55; }
+
+    // Exit: horse gallops off-screen right into panel 2
+    if (horseCX >= window.innerWidth + vhw) {
+      horseRunning = false;
+      horseGone    = true;
+      horseEl.style.display = 'none';
+      return;
+    }
+
+    // Gallop bob and forward lean
+    const bob  = Math.abs(Math.sin(animTime * 13)) * 10;
+    horseEl.style.left = (horseCX - hw / 2).toFixed(1) + 'px';
+    horseEl.style.top  = (horseCY - hh / 2 + bob).toFixed(1) + 'px';
+    horseEl.style.transform = `scaleX(1) rotate(5deg)${horseScalePart}`;
   }
 
   // ── Animation loop ─────────────────────────────────────────────────
   function tick(ts) {
     if (!lastTs) lastTs = ts;
-    animTime += Math.min(0.05, (ts - lastTs) / 1000);
+    const dt = Math.min(0.05, (ts - lastTs) / 1000);
+    animTime += dt;
     lastTs = ts;
 
     if (horseGrid)    renderGrid(hCtx, horseGrid, H_CW, H_CH, animTime);
     if (portraitGrid) renderGrid(pCtx, portraitGrid, P_CW, P_CH, animTime);
-    applyHorseSway(animTime);
+    tickHorse(dt);
 
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
 
-  // ── Cursor + white trail ──────────────────────────────────────────
+  // ── Cursor + trail ────────────────────────────────────────────────
   const cursorEl    = document.getElementById('cursor');
   const trailCanvas = document.getElementById('trail-canvas');
   const tCtx        = trailCanvas.getContext('2d');
+  const trailOverlay = document.createElement('canvas');
+  const overlayCtx   = trailOverlay.getContext('2d');
+  const wordmarkImg  = document.getElementById('masthead-reference');
+  const wordmarkMask = document.createElement('canvas');
+  const wordmarkCtx  = wordmarkMask.getContext('2d', { willReadFrequently: true });
+  let wordmarkMaskReady = false;
+
+  function buildWordmarkMask() {
+    if (!wordmarkImg.complete || !wordmarkImg.naturalWidth) return;
+    wordmarkMask.width = wordmarkImg.naturalWidth;
+    wordmarkMask.height = wordmarkImg.naturalHeight;
+    wordmarkCtx.clearRect(0, 0, wordmarkMask.width, wordmarkMask.height);
+    wordmarkCtx.drawImage(wordmarkImg, 0, 0);
+    wordmarkMaskReady = true;
+  }
+
+  if (wordmarkImg.complete && wordmarkImg.naturalWidth) buildWordmarkMask();
+  else wordmarkImg.addEventListener('load', buildWordmarkMask, { once: true });
+
+  function isOverZaydanLetter(x, y) {
+    if (wordmarkMaskReady) {
+      const rect = wordmarkImg.getBoundingClientRect();
+      if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+        const px = Math.max(0, Math.min(wordmarkMask.width - 1, Math.floor(((x - rect.left) / rect.width) * wordmarkMask.width)));
+        const py = Math.max(0, Math.min(wordmarkMask.height - 1, Math.floor(((y - rect.top) / rect.height) * wordmarkMask.height)));
+        const data = wordmarkCtx.getImageData(px, py, 1, 1).data;
+        const luminance = data[0] * 0.299 + data[1] * 0.587 + data[2] * 0.114;
+        return data[3] > 24 && luminance > 96;
+      }
+    }
+
+    if (masthead.classList.contains('wordmark-landed')) return false;
+
+    const textRect = mastheadText.getBoundingClientRect();
+    return x >= textRect.left && x <= textRect.right && y >= textRect.top && y <= textRect.bottom;
+  }
+
+  function isOverPopup(x, y) {
+    const popup = document.querySelector('.p-popup-box');
+    if (!popup || getComputedStyle(popup.parentElement).display === 'none') return false;
+
+    const rect = popup.getBoundingClientRect();
+    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+  }
+
+  function cursorColorAt(x, y) {
+    const overInvertedSurface = isOverPopup(x, y) || isOverZaydanLetter(x, y);
+    const theme = document.documentElement.dataset.theme;
+    return overInvertedSurface === (theme === 'light') ? '#fff' : '#000';
+  }
 
   const resizeTrail = () => {
     trailCanvas.width = innerWidth;
     trailCanvas.height = innerHeight;
+    trailOverlay.width = innerWidth;
+    trailOverlay.height = innerHeight;
   };
   resizeTrail();
   window.addEventListener('resize', resizeTrail);
-
-  let overPopup = false;
-  document.querySelector('.p-popup-box').addEventListener('mouseenter', () => {
-    overPopup = true;
-    cursorEl.style.background = '#000';
-  });
-  document.querySelector('.p-popup-box').addEventListener('mouseleave', () => {
-    overPopup = false;
-    cursorEl.style.background = '#fff';
-  });
 
   const pts = [];
   document.addEventListener('mousemove', e => {
     cursorEl.style.left = e.clientX + 'px';
     cursorEl.style.top  = e.clientY + 'px';
+    cursorEl.style.background = cursorColorAt(e.clientX, e.clientY);
     pts.push({ x: e.clientX, y: e.clientY, t: Date.now() });
     if (pts.length > 40) pts.shift();
   });
 
+  function drawTrailPath(ctx, color) {
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    for (let i = 1; i < pts.length; i++) {
+      ctx.beginPath();
+      ctx.moveTo(pts[i - 1].x, pts[i - 1].y);
+      ctx.lineTo(pts[i].x, pts[i].y);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = (i / pts.length) * 2.5;
+      ctx.stroke();
+    }
+  }
+
+  function drawBlackTrailOverZaydan() {
+    if (!wordmarkMaskReady) return;
+
+    const rect = wordmarkImg.getBoundingClientRect();
+    overlayCtx.clearRect(0, 0, trailOverlay.width, trailOverlay.height);
+    drawTrailPath(overlayCtx, '#000');
+    overlayCtx.globalCompositeOperation = 'destination-in';
+    overlayCtx.drawImage(wordmarkMask, rect.left, rect.top, rect.width, rect.height);
+    overlayCtx.globalCompositeOperation = 'source-over';
+    tCtx.drawImage(trailOverlay, 0, 0);
+  }
+
+  function drawBlackTrailOverPopup() {
+    const popup = document.querySelector('.p-popup-box');
+    if (!popup || getComputedStyle(popup.parentElement).display === 'none') return;
+
+    const rect = popup.getBoundingClientRect();
+    tCtx.save();
+    tCtx.beginPath();
+    tCtx.rect(rect.left, rect.top, rect.width, rect.height);
+    tCtx.clip();
+    drawTrailPath(tCtx, '#000');
+    tCtx.restore();
+  }
+
   (function drawTrail() {
     tCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
     const now = Date.now();
-    tCtx.lineCap = 'round'; tCtx.lineJoin = 'round';
-    const trailColor = overPopup ? '0,0,0' : '255,255,255';
-    for (let i = 1; i < pts.length; i++) {
-      const age = (now - pts[i].t) / 300;
-      const a = Math.max(0, 1 - age);
-      tCtx.beginPath();
-      tCtx.moveTo(pts[i-1].x, pts[i-1].y);
-      tCtx.lineTo(pts[i].x, pts[i].y);
-      tCtx.strokeStyle = `rgba(${trailColor},${(a * 0.55).toFixed(3)})`;
-      tCtx.lineWidth = (i / pts.length) * 2.5;
-      tCtx.stroke();
-    }
+    drawTrailPath(tCtx, '#fff');
+    drawBlackTrailOverZaydan();
+    drawBlackTrailOverPopup();
     while (pts.length && now - pts[0].t > 300) pts.shift();
     requestAnimationFrame(drawTrail);
   })();
@@ -849,11 +1315,24 @@
   const pagePopup  = document.getElementById('page-popup');
   const pagePopupTxt = document.getElementById('page-popup-content');
   document.getElementById('page-btn-info').addEventListener('click', () => {
-    pagePopupTxt.innerHTML = '<p>Info coming soon.</p>';
+    pagePopupTxt.innerHTML = `
+      <p>Zaydan is an interdisciplinary designer based in Stanford, California, whose work sits at the intersection of human-centered design, systems thinking, and social impact.</p>
+      <p style="margin-top:14px">He is currently building with the Stanford Impact Lab for Equitable Access to Education and The Gordian Knot Center for National Security Innovation, leveraging design to widen access to secondary education and reimagine disability benefit access for veterans.</p>
+      <p style="margin-top:14px">Working across UI/UX design, product development, user research, and needfinding, his practice is rooted in identifying structural gaps and translating them into intuitive, equitable, and materially effective solutions.</p>
+    `;
     pagePopup.style.display = 'flex';
   });
   document.getElementById('page-btn-contact').addEventListener('click', () => {
-    pagePopupTxt.innerHTML = '<p>Contact coming soon.</p>';
+    pagePopupTxt.innerHTML = `
+      <p class="contact-label">General Inquiries</p>
+      <p><a href="mailto:zaydan1234@gmail.com">zaydan1234@gmail.com</a></p>
+      <p class="contact-label">LinkedIn</p>
+      <p><a href="https://www.linkedin.com/in/zaydanka" target="_blank">Zaydan Kabir Amanullah</a></p>
+      <p class="contact-label">Instagram</p>
+      <p><a href="https://instagram.com/zaydan_kabir" target="_blank">@zaydan_kabir</a></p>
+      <p class="contact-label">Substack</p>
+      <p><a href="https://zaydanamanullah.substack.com" target="_blank">zaydanamanullah</a></p>
+    `;
     pagePopup.style.display = 'flex';
   });
   document.getElementById('page-btn-resume').addEventListener('click', () => {
@@ -890,9 +1369,8 @@
     setTimeout(dismiss, 1400);
   }
 
-  // Fade in already showing UnifrakturCook (same as page masthead's first font),
-  // then roll through the remaining fonts exactly as the page does
-  setTimeout(() => {
+  function playIntro() {
+    if (screen._gone) return;
     title.style.opacity = '1';
     title.style.transform = 'translateY(0)';
     setFont(classes[0]);
@@ -900,7 +1378,11 @@
       setTimeout(() => setFont(cls), (i + 1) * 170)
     );
     setTimeout(landWordmark, classes.length * 170);
-  }, 150);
+  }
+
+  // Fade in after the wordmark image and custom fonts are ready, so slow loads
+  // do not let the final logo moment happen before the assets exist.
+  zaydanAnimationReady.then(() => setTimeout(playIntro, 150));
 
   // Skip on click or key
   screen.addEventListener('click', dismiss);
