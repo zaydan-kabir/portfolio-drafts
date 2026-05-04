@@ -627,6 +627,7 @@
         <img id="masthead-reference" src="uploads/zaydan-screenshot-wordmark.png" alt="" aria-hidden="true">
         <span id="masthead-replay">&lt;click&gt;<br>to replay animation</span>
       </div>
+
       <canvas id="horse-canvas"></canvas>
       <canvas id="portrait-canvas"></canvas>
     </div>
@@ -893,12 +894,32 @@ const zaydanAnimationReady = (() => {
     }
   });
 
+  // When user scrolls back to panel 1, restore the horse
+  let horseRestorePending = false;
+  function maybeRestoreHorse() {
+    if (!horseGone || horseRestorePending) return;
+    if (currentX > 10) return; // not back at panel 1 yet
+    horseRestorePending = true;
+    setTimeout(() => {
+      horseGone            = false;
+      horseRunning         = false;
+      horseRestorePending  = false;
+      horseEl.style.display        = '';
+      horseEl.style.position       = '';
+      horseEl.style.left           = '';
+      horseEl.style.top            = '';
+      horseEl.style.right          = '';
+      horseEl.style.transformOrigin = 'top right';
+    }, 400);
+  }
+
   function renderHorizontalTrack() {
     // While horse is pulling the panel, follow its targetX instantly
     const lerpFactor = (isDragging || horseRunning) ? 1 : 0.12;
     currentX += (targetX - currentX) * lerpFactor;
     if (Math.abs(targetX - currentX) < 0.05) currentX = targetX;
     track.style.transform = `translate3d(-${currentX.toFixed(2)}px,0,0)`;
+    maybeRestoreHorse();
     requestAnimationFrame(renderHorizontalTrack);
   }
   requestAnimationFrame(renderHorizontalTrack);
@@ -1076,33 +1097,34 @@ const zaydanAnimationReady = (() => {
   const HORSE_BASE_SPEED = 260; // px/s
 
   let horseRunning = false;
+  let horseGone    = false;         // true after horse exits right into panel 2
   let horseCX = 0, horseCY = 0;
-  let horseVX = 0;
-  let horseRunProgress = 0;
-  let horseLaunchTargetX = 0;       // scroll offset when launched
-  let horseStartCX = 0;
-  let horseEndCX = 0;
+  let horseVX = 0, horseVY = 0;
 
   const mobileScale    = isMobile ? 0.45 : 1;
   const horseScalePart = isMobile ? ' scale(0.45)' : '';
 
   function launchHorse() {
-    if (horseRunning) return;
-    const rect = horseEl.getBoundingClientRect();
-    horseCX = rect.left + rect.width  / 2;
-    horseCY = rect.top  + rect.height / 2;
-    horseStartCX = horseCX;
-    horseEndCX = window.innerWidth - rect.width / 2 - window.innerWidth * 0.02;
-    horseLaunchTargetX = targetX;
-    horseRunProgress   = 0;
-    horseVX = HORSE_BASE_SPEED + Math.random() * 60; // always right
-    if (!horseRunning) {
-      horseRunning = true;
-      horseEl.style.position      = 'fixed';
-      horseEl.style.top           = '';
-      horseEl.style.right         = '';
-      horseEl.style.transformOrigin = 'center center';
-    }
+    if (horseGone || horseRunning) return;
+
+    const hw  = horseEl.offsetWidth;
+    const hh  = horseEl.offsetHeight;
+    const vhh = hh * mobileScale / 2;
+
+    // Appear from just off the left edge, below the header
+    horseCX = -(hw * mobileScale) / 2;
+    horseCY = 70 + vhh + 20;
+    horseVX = HORSE_BASE_SPEED + Math.random() * 60;
+    horseVY = (Math.random() - 0.5) * 30;
+
+    // Scroll starts at panel 1 so the full-width run covers the whole transition
+    targetX = 0;
+
+    horseRunning = true;
+    horseEl.style.position      = 'fixed';
+    horseEl.style.top           = '';
+    horseEl.style.right         = '';
+    horseEl.style.transformOrigin = 'center center';
   }
 
   function applyHorseSway(t) {
@@ -1113,42 +1135,39 @@ const zaydanAnimationReady = (() => {
   }
 
   function tickHorse(dt) {
+    if (horseGone)     return;
     if (!horseRunning) { applyHorseSway(animTime); return; }
 
     const hw  = horseEl.offsetWidth;
     const hh  = horseEl.offsetHeight;
+    const vhw = hw * mobileScale / 2;
+    const vhh = hh * mobileScale / 2;
 
-    horseRunProgress = Math.min(
-      1,
-      horseRunProgress + (horseVX * dt) / Math.max(1, maxX - horseLaunchTargetX)
-    );
+    horseCX += horseVX * dt;
+    horseCY += horseVY * dt;
 
-    // Let the horse visibly gallop while the panels move, then return it to the top-right.
-    const travelArc = Math.sin(horseRunProgress * Math.PI) * Math.min(140, window.innerWidth * 0.12);
-    horseCX = horseStartCX + (horseEndCX - horseStartCX) * horseRunProgress - travelArc;
-    targetX = clampX(horseLaunchTargetX + horseRunProgress * (maxX - horseLaunchTargetX));
+    // Vertical bounce between header and bottom
+    const minY = 70 + vhh, maxY = window.innerHeight - vhh;
+    if (horseCY < minY) { horseCY = minY; horseVY =  Math.abs(horseVY) * 0.55; }
+    if (horseCY > maxY) { horseCY = maxY; horseVY = -Math.abs(horseVY) * 0.55; }
 
-    // Horse has reached the top-right of the second panel: park it there.
-    if (horseRunProgress >= 1) {
-      targetX        = maxX;
-      horseRunning   = false;
-      horseEl.style.display = '';
-      horseEl.style.position = 'fixed';
-      horseEl.style.left = '';
-      horseEl.style.right = '2vw';
-      horseEl.style.top = '70px';
-      horseEl.style.transformOrigin = 'top right';
-      applyHorseSway(animTime);
+    // Scroll progress = horse center x / viewport width (0 → 1 as horse crosses screen)
+    targetX = clampX((horseCX / window.innerWidth) * maxX);
+
+    // Exit: horse fully off-screen right → panel 2 complete
+    if (horseCX >= window.innerWidth + vhw) {
+      targetX      = maxX;
+      horseRunning = false;
+      horseGone    = true;
+      horseEl.style.display = 'none';
       return;
     }
 
     // Gallop bob and forward lean
     const bob  = Math.abs(Math.sin(animTime * 13)) * 10;
-    const tilt = 5; // constant forward lean while at speed
-
     horseEl.style.left = (horseCX - hw / 2).toFixed(1) + 'px';
     horseEl.style.top  = (horseCY - hh / 2 + bob).toFixed(1) + 'px';
-    horseEl.style.transform = `scaleX(1) rotate(${tilt}deg)${horseScalePart}`;
+    horseEl.style.transform = `scaleX(1) rotate(5deg)${horseScalePart}`;
   }
 
   // ── Animation loop ─────────────────────────────────────────────────
