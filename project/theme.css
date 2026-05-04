@@ -280,3 +280,7 @@ html[data-theme="light"] .archive-item {
   background: rgba(242,242,242,.9);
   box-shadow: 0 18px 44px rgba(0,0,0,.14);
 }
+
+#panel-2-writing {
+  display: none !important;
+}
