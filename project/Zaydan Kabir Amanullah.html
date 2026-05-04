@@ -919,9 +919,10 @@ const zaydanAnimationReady = (() => {
     if (currentX > 10) return; // not back at panel 1 yet
     horseRestorePending = true;
     setTimeout(() => {
-      horseGone            = false;
-      horseRunning         = false;
-      horseRestorePending  = false;
+      horseGone           = false;
+      horseRunning        = false;
+      horseCrossedPhase   = false;
+      horseRestorePending = false;
       horseEl.style.display        = '';
       horseEl.style.position       = '';
       horseEl.style.left           = '';
@@ -936,7 +937,7 @@ const zaydanAnimationReady = (() => {
   function renderHorizontalTrack() {
     let lerpFactor;
     if (isDragging) lerpFactor = 1;
-    else if (horseScrolling) lerpFactor = 0.055; // deliberate ~1.5s drag to panel 2
+    else if (horseScrolling) lerpFactor = 0.18; // scroll follows horse phase 1 exit
     else lerpFactor = 0.12;
 
     currentX += (targetX - currentX) * lerpFactor;
@@ -1119,8 +1120,9 @@ const zaydanAnimationReady = (() => {
   let animTime = 0, lastTs = null;
   const HORSE_BASE_SPEED = 260; // px/s
 
-  let horseRunning = false;
-  let horseGone    = false;         // true after horse exits right into panel 2
+  let horseRunning       = false;
+  let horseGone          = false;   // true after horse exits end of panel 2
+  let horseCrossedPhase  = false;   // true after horse exits panel 1 right edge
   let horseCX = 0, horseCY = 0;
   let horseVX = 0, horseVY = 0;
 
@@ -1130,18 +1132,17 @@ const zaydanAnimationReady = (() => {
   function launchHorse() {
     if (horseGone || horseRunning) return;
 
-    // Start from the horse's current home position (top right)
     const rect = horseEl.getBoundingClientRect();
     horseCX = rect.left + rect.width  / 2;
     horseCY = rect.top  + rect.height / 2;
-    horseVX = HORSE_BASE_SPEED + Math.random() * 60; // gallop right
-    horseVY = (Math.random() - 0.5) * 30;
+    horseVX = 200 + Math.random() * 40; // moderate speed — phase 1 exit is visible
+    horseVY = (Math.random() - 0.5) * 25;
 
-    // Trigger the panel scroll immediately — horse visually leads it
-    targetX      = maxX;
-    horseScrolling = true;
+    targetX        = maxX;   // scroll toward panel 2 while horse exits
+    horseScrolling    = true;
+    horseCrossedPhase = false;
+    horseRunning      = true;
 
-    horseRunning = true;
     horseEl.style.position      = 'fixed';
     horseEl.style.top           = '';
     horseEl.style.right         = '';
@@ -1167,21 +1168,35 @@ const zaydanAnimationReady = (() => {
     horseCX += horseVX * dt;
     horseCY += horseVY * dt;
 
-    // Vertical bounce between header and bottom
     const minY = 70 + vhh, maxY = window.innerHeight - vhh;
     if (horseCY < minY) { horseCY = minY; horseVY =  Math.abs(horseVY) * 0.55; }
     if (horseCY > maxY) { horseCY = maxY; horseVY = -Math.abs(horseVY) * 0.55; }
 
-    // Exit: horse gallops off-screen right into panel 2
-    if (horseCX >= window.innerWidth + vhw) {
+    // Phase 1 → Phase 2 transition: horse exits right edge of panel 1
+    if (!horseCrossedPhase && horseCX >= window.innerWidth + vhw) {
+      horseCrossedPhase = true;
+      horseRunning      = false; // pause while scroll settles at panel 2
+      horseEl.style.left = (-hw - vhw).toFixed(1) + 'px'; // park off-screen left
+      setTimeout(() => {
+        // Re-enter from left of panel 2
+        horseCX  = -vhw;
+        horseCY  = 70 + (window.innerHeight - 70) * (0.3 + Math.random() * 0.4);
+        horseVX  = HORSE_BASE_SPEED + Math.random() * 60;
+        horseVY  = (Math.random() - 0.5) * 20;
+        horseRunning = true;
+      }, 380);
+      return;
+    }
+
+    // Phase 2: exit at far right — horse disappears into end of panel 2
+    if (horseCrossedPhase && horseCX >= window.innerWidth + vhw) {
       horseRunning = false;
       horseGone    = true;
       horseEl.style.display = 'none';
       return;
     }
 
-    // Gallop bob and forward lean
-    const bob  = Math.abs(Math.sin(animTime * 13)) * 10;
+    const bob = Math.abs(Math.sin(animTime * 13)) * 10;
     horseEl.style.left = (horseCX - hw / 2).toFixed(1) + 'px';
     horseEl.style.top  = (horseCY - hh / 2 + bob).toFixed(1) + 'px';
     horseEl.style.transform = `scaleX(1) rotate(5deg)${horseScalePart}`;
