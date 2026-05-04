@@ -746,7 +746,7 @@
     const g=new Float32Array(cols*rows);
     for(let r=0;r<rows;r++) for(let c2=0;c2<cols;c2++){
       const r2=r*2,c3=c2*2;
-      g[r*cols+c2]=(lum2[r2*sw+c3]+lum2[r2*sw+c3+1]+lum2[(r2+1)*sw+c3]+lum2[(r2+1)*sw+c3+1])/4;
+      g[r*cols+c2]=Math.min(lum2[r2*sw+c3],lum2[r2*sw+c3+1],lum2[(r2+1)*sw+c3],lum2[(r2+1)*sw+c3+1]);
     }
     return {grid:g,cols,rows};
   }
@@ -776,7 +776,7 @@
     ctx.font=`bold ${ch}px 'Courier New',monospace`;
     let minL=1,maxL=0;
     for(let i=0;i<grid.length;i++){if(grid[i]<minL)minL=grid[i];if(grid[i]>maxL)maxL=grid[i];}
-    const mxP=minL+(maxL-minL)*.92;
+    const mxP=minL+(maxL-minL)*.85;
     for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
       const lum=grid[r*cols+c]; if(lum>mxP) continue;
       const norm=1-(lum-minL)/Math.max(.01,mxP-minL); if(norm<.04) continue;
