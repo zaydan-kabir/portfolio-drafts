@@ -885,6 +885,15 @@ const zaydanAnimationReady = (() => {
     }
   }, { passive: true });
 
+  // ── Horse click detection (through transparent scroll-capture overlay) ──
+  scrollCapture.addEventListener('click', e => {
+    const rect = horseEl.getBoundingClientRect();
+    if (e.clientX >= rect.left && e.clientX <= rect.right &&
+        e.clientY >= rect.top  && e.clientY <= rect.bottom) {
+      launchHorse();
+    }
+  });
+
   function renderHorizontalTrack() {
     const lerpFactor = isDragging ? 1 : 0.12;
     currentX += (targetX - currentX) * lerpFactor;
@@ -1062,26 +1071,106 @@ const zaydanAnimationReady = (() => {
     }
   }
 
-  // ── Idle horse sway ───────────────────────────────────────────────
+  // ── Horse animation state ─────────────────────────────────────────
   let animTime = 0, lastTs = null;
+  const HORSE_BASE_SPEED = 220; // px/s
+  const HORSE_RUN_FOR    = 7;   // seconds at full speed before decelerating
 
-  const horseScale = isMobile ? ' scale(0.45)' : '';
+  let horseRunning = false;
+  let horseCX = 0, horseCY = 0;   // viewport-center of horse while running
+  let horseVX = 0, horseVY = 0;
+  let horseDir  = 1;              // 1 = facing right, -1 = facing left
+  let horseRunTime = 0;
+
+  function launchHorse() {
+    const rect = horseEl.getBoundingClientRect();
+    horseCX = rect.left + rect.width  / 2;
+    horseCY = rect.top  + rect.height / 2;
+    const speed = HORSE_BASE_SPEED + Math.random() * 90;
+    horseDir = Math.random() > 0.5 ? 1 : -1;
+    horseVX  = horseDir * speed;
+    horseVY  = (Math.random() - 0.5) * 50;
+    horseRunTime = 0;
+    if (!horseRunning) {
+      horseRunning = true;
+      horseEl.style.position      = 'fixed';
+      horseEl.style.top           = '';
+      horseEl.style.right         = '';
+      horseEl.style.transformOrigin = 'center center';
+    }
+  }
+
+  function stopHorse() {
+    horseRunning = false;
+    // Restore original CSS-controlled position
+    horseEl.style.position      = '';
+    horseEl.style.left          = '';
+    horseEl.style.top           = '';
+    horseEl.style.right         = '';
+    horseEl.style.transformOrigin = 'top right';
+  }
+
+  const mobileScale = isMobile ? 0.45 : 1;
+  const horseScalePart = isMobile ? ' scale(0.45)' : '';
+
   function applyHorseSway(t) {
     const tx = Math.sin(t * 1.73) * 2.5 + Math.sin(t * 0.97) * 1.1;
     const ty = Math.sin(t * 2.31) * 1.2 + Math.sin(t * 1.41) * 0.6;
     const rz = Math.sin(t * 0.83) * 0.4;
-    horseEl.style.transform = `translate(${tx.toFixed(2)}px,${ty.toFixed(2)}px) rotate(${rz.toFixed(3)}deg)${horseScale}`;
+    horseEl.style.transform = `translate(${tx.toFixed(2)}px,${ty.toFixed(2)}px) rotate(${rz.toFixed(3)}deg)${horseScalePart}`;
+  }
+
+  function tickHorse(dt) {
+    if (!horseRunning) { applyHorseSway(animTime); return; }
+
+    horseRunTime += dt;
+
+    const hw  = horseEl.offsetWidth;
+    const hh  = horseEl.offsetHeight;
+    const vhw = hw * mobileScale / 2;
+    const vhh = hh * mobileScale / 2;
+
+    // Decelerate after run time expires
+    if (horseRunTime > HORSE_RUN_FOR) {
+      const decay = Math.pow(0.88, 60 * dt);
+      horseVX *= decay;
+      horseVY *= decay;
+      if (Math.abs(horseVX) < 6) { stopHorse(); return; }
+    }
+
+    horseCX += horseVX * dt;
+    horseCY += horseVY * dt;
+
+    // Bounce off viewport edges; flip direction on left/right
+    const minX = vhw, maxX = window.innerWidth  - vhw;
+    const minY = 70 + vhh, maxY = window.innerHeight - vhh;
+    if (horseCX < minX) { horseCX = minX; horseVX =  Math.abs(horseVX); horseDir =  1; }
+    if (horseCX > maxX) { horseCX = maxX; horseVX = -Math.abs(horseVX); horseDir = -1; }
+    if (horseCY < minY) { horseCY = minY; horseVY =  Math.abs(horseVY) * 0.55; }
+    if (horseCY > maxY) { horseCY = maxY; horseVY = -Math.abs(horseVY) * 0.55; }
+
+    // Gallop bob: abs-sine gives a "lift off ground" feel (always upward)
+    const speedRatio = Math.min(1, Math.abs(horseVX) / HORSE_BASE_SPEED);
+    const bob = Math.abs(Math.sin(animTime * 13)) * 10 * speedRatio;
+
+    // Forward lean: tilt into direction of travel, ease off when slowing
+    const tilt = speedRatio * 5;   // degrees; scaleX flip makes it correct for both dirs
+
+    horseEl.style.left = (horseCX - hw / 2).toFixed(1) + 'px';
+    horseEl.style.top  = (horseCY - hh / 2 + bob).toFixed(1) + 'px';
+    horseEl.style.transform = `scaleX(${horseDir}) rotate(${tilt.toFixed(2)}deg)${horseScalePart}`;
   }
 
   // ── Animation loop ─────────────────────────────────────────────────
   function tick(ts) {
     if (!lastTs) lastTs = ts;
-    animTime += Math.min(0.05, (ts - lastTs) / 1000);
+    const dt = Math.min(0.05, (ts - lastTs) / 1000);
+    animTime += dt;
     lastTs = ts;
 
     if (horseGrid)    renderGrid(hCtx, horseGrid, H_CW, H_CH, animTime);
     if (portraitGrid) renderGrid(pCtx, portraitGrid, P_CW, P_CH, animTime);
-    applyHorseSway(animTime);
+    tickHorse(dt);
 
     requestAnimationFrame(tick);
   }
