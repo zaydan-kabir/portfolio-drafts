@@ -106,6 +106,7 @@
       'html[data-theme=\"light\"] #panel-2-flow .p2-flow-attr{color:rgba(10,10,10,.56);}',
       '#panel-2 .p2-quote-wrap{display:none!important;}',
       '#panel-2-fig{left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;width:clamp(88px,11vw,170px)!important;z-index:4!important;transform:translate(-50%,-50%)!important;filter:drop-shadow(0 12px 22px rgba(0,0,0,.28));will-change:left,top;}',
+      'body.panel-2-pointer-active #trail-canvas{opacity:0!important;}',
       '@media(max-width:600px){#panel-2-fig{width:clamp(70px,24vw,105px)!important;}}'
     ].join('\n');
     document.head.appendChild(style);
@@ -218,8 +219,16 @@
       if ((visibleX * visibleY) / area > 0.14) beginDrop();
     }
 
+    function setPanelPointerState(clientX, clientY) {
+      var rect = panel.getBoundingClientRect();
+      var active = clientX >= rect.left && clientX <= rect.right &&
+        clientY >= rect.top && clientY <= rect.bottom;
+      document.body.classList.toggle('panel-2-pointer-active', active);
+    }
+
     document.addEventListener('mousemove', function (event) {
       var rect = panel.getBoundingClientRect();
+      setPanelPointerState(event.clientX, event.clientY);
       if (event.clientX >= rect.left && event.clientX <= rect.right &&
           event.clientY >= rect.top && event.clientY <= rect.bottom) {
         setTarget(event.clientX, event.clientY);
@@ -310,7 +319,6 @@
         width: rect.width
       };
 
-      var theme = root.dataset.theme;
       var fontSize = Math.max(13, Math.min(18, rect.width * (isMobile ? 0.043 : 0.018)));
       var lineHeight = fontSize * 1.68;
       var font = 'italic 400 ' + fontSize + 'px Lora, Georgia, serif';
