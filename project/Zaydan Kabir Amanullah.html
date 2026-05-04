@@ -913,11 +913,16 @@ const zaydanAnimationReady = (() => {
     }, 400);
   }
 
+  let horseScrolling = false; // slower lerp while horse-triggered scroll plays out
+
   function renderHorizontalTrack() {
-    // While horse is pulling the panel, follow its targetX instantly
-    const lerpFactor = (isDragging || horseRunning) ? 1 : 0.12;
+    let lerpFactor;
+    if (isDragging) lerpFactor = 1;
+    else if (horseScrolling) lerpFactor = 0.055; // deliberate ~1.5s drag to panel 2
+    else lerpFactor = 0.12;
+
     currentX += (targetX - currentX) * lerpFactor;
-    if (Math.abs(targetX - currentX) < 0.05) currentX = targetX;
+    if (Math.abs(targetX - currentX) < 0.5) { currentX = targetX; horseScrolling = false; }
     track.style.transform = `translate3d(-${currentX.toFixed(2)}px,0,0)`;
     maybeRestoreHorse();
     requestAnimationFrame(renderHorizontalTrack);
@@ -1107,18 +1112,16 @@ const zaydanAnimationReady = (() => {
   function launchHorse() {
     if (horseGone || horseRunning) return;
 
-    const hw  = horseEl.offsetWidth;
-    const hh  = horseEl.offsetHeight;
-    const vhh = hh * mobileScale / 2;
-
-    // Appear from just off the left edge, below the header
-    horseCX = -(hw * mobileScale) / 2;
-    horseCY = 70 + vhh + 20;
-    horseVX = HORSE_BASE_SPEED + Math.random() * 60;
+    // Start from the horse's current home position (top right)
+    const rect = horseEl.getBoundingClientRect();
+    horseCX = rect.left + rect.width  / 2;
+    horseCY = rect.top  + rect.height / 2;
+    horseVX = HORSE_BASE_SPEED + Math.random() * 60; // gallop right
     horseVY = (Math.random() - 0.5) * 30;
 
-    // Scroll starts at panel 1 so the full-width run covers the whole transition
-    targetX = 0;
+    // Trigger the panel scroll immediately — horse visually leads it
+    targetX      = maxX;
+    horseScrolling = true;
 
     horseRunning = true;
     horseEl.style.position      = 'fixed';
@@ -1151,12 +1154,8 @@ const zaydanAnimationReady = (() => {
     if (horseCY < minY) { horseCY = minY; horseVY =  Math.abs(horseVY) * 0.55; }
     if (horseCY > maxY) { horseCY = maxY; horseVY = -Math.abs(horseVY) * 0.55; }
 
-    // Scroll progress = horse center x / viewport width (0 → 1 as horse crosses screen)
-    targetX = clampX((horseCX / window.innerWidth) * maxX);
-
-    // Exit: horse fully off-screen right → panel 2 complete
+    // Exit: horse gallops off-screen right into panel 2
     if (horseCX >= window.innerWidth + vhw) {
-      targetX      = maxX;
       horseRunning = false;
       horseGone    = true;
       horseEl.style.display = 'none';
