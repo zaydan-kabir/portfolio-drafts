@@ -101,9 +101,9 @@
       '#panel-2-manuscript{position:absolute;z-index:1;display:block;pointer-events:none;}',
       '#panel-2-flow{position:absolute;inset:0;z-index:2;pointer-events:none;}',
       '#panel-2-flow span{position:absolute;white-space:pre;font-family:Lora,Georgia,serif;font-style:italic;font-weight:400;line-height:1;color:rgba(240,240,240,.86);}',
-      'html[data-theme="light"] #panel-2-flow span{color:rgba(10,10,10,.9);}',
+      'html[data-theme=\"light\"] #panel-2-flow span{color:rgba(10,10,10,.9);}',
       '#panel-2-flow .p2-flow-attr{font-family:VT323,monospace;font-style:normal;letter-spacing:.08em;color:rgba(240,240,240,.5);}',
-      'html[data-theme="light"] #panel-2-flow .p2-flow-attr{color:rgba(10,10,10,.56);}',
+      'html[data-theme=\"light\"] #panel-2-flow .p2-flow-attr{color:rgba(10,10,10,.56);}',
       '#panel-2 .p2-quote-wrap{display:none!important;}',
       '#panel-2-fig{left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;width:clamp(118px,15vw,230px)!important;z-index:4!important;transform:translate(-50%,-50%)!important;filter:drop-shadow(0 14px 28px rgba(0,0,0,.32));will-change:left,top;}',
       '@media(max-width:600px){#panel-2-fig{width:clamp(92px,32vw,132px)!important;}}'
@@ -185,9 +185,11 @@
     function layoutCanvas() {
       var panelWidth = Math.max(1, panel.clientWidth || window.innerWidth);
       var panelHeight = Math.max(1, panel.clientHeight || window.innerHeight);
-      var side = window.innerWidth < 600
-        ? 22
-        : Math.max(28, Math.min(120, panelWidth * 0.07));
+      var maxWidth = window.innerWidth < 600
+        ? panelWidth - 44
+        : Math.min(920, panelWidth * 0.76);
+      var boxWidth = Math.max(1, Math.min(panelWidth - 44, maxWidth));
+      var side = (panelWidth - boxWidth) / 2;
       var top = window.innerWidth < 600
         ? 96
         : Math.max(96, Math.min(140, panelHeight * 0.12));
@@ -196,7 +198,7 @@
         : Math.max(64, Math.min(100, panelHeight * 0.08));
       canvas.style.left = side + 'px';
       canvas.style.top = top + 'px';
-      canvas.style.width = Math.max(1, panelWidth - side * 2) + 'px';
+      canvas.style.width = boxWidth + 'px';
       canvas.style.height = Math.max(1, panelHeight - top - bottom) + 'px';
     }
 
@@ -242,6 +244,7 @@
         width: rect.width
       };
 
+      var theme = root.dataset.theme;
       var fontSize = Math.max(13, Math.min(18, rect.width * (isMobile ? 0.043 : 0.018)));
       var lineHeight = fontSize * 1.68;
       var font = 'italic 400 ' + fontSize + 'px Lora, Georgia, serif';
@@ -265,22 +268,35 @@
         flow.style.width = canvas.style.width;
         flow.style.height = canvas.style.height;
 
+        function appendCenteredRange(range) {
+          var maxWidth = Math.max(0, range.end - range.start);
+          var lineWords = [];
+          var lineWidth = 0;
+          while (wordIndex < words.length) {
+            var word = words[wordIndex] + (wordIndex === words.length - 1 ? '' : ' ');
+            var wordWidth = textWidth(word, font);
+            if (lineWords.length && lineWidth + wordWidth > maxWidth) break;
+            if (!lineWords.length && wordWidth > maxWidth) break;
+            lineWords.push({ text: word, width: wordWidth });
+            lineWidth += wordWidth;
+            wordIndex++;
+          }
+          if (!lineWords.length) return;
+          var x = range.start + Math.max(0, (maxWidth - lineWidth) / 2);
+          lineWords.forEach(function (item) {
+            var span = document.createElement('span');
+            span.textContent = item.text;
+            span.style.left = x.toFixed(1) + 'px';
+            span.style.top = lineY.toFixed(1) + 'px';
+            span.style.fontSize = fontSize.toFixed(1) + 'px';
+            frag.appendChild(span);
+            x += item.width;
+          });
+        }
+
         while (wordIndex < words.length && lineY < rect.height - lineHeight * 2) {
           rangesForLine(lineY, lineHeight, obstacle).forEach(function (range) {
-            var x = range.start;
-            while (wordIndex < words.length) {
-              var word = words[wordIndex] + (wordIndex === words.length - 1 ? '' : ' ');
-              var wordWidth = textWidth(word, font);
-              if (x > range.start && x + wordWidth > range.end) break;
-              var span = document.createElement('span');
-              span.textContent = word;
-              span.style.left = x.toFixed(1) + 'px';
-              span.style.top = lineY.toFixed(1) + 'px';
-              span.style.fontSize = fontSize.toFixed(1) + 'px';
-              frag.appendChild(span);
-              x += wordWidth;
-              wordIndex++;
-            }
+            appendCenteredRange(range);
           });
           lineY += lineHeight;
         }
@@ -289,7 +305,8 @@
           var attrSpan = document.createElement('span');
           attrSpan.className = 'p2-flow-attr';
           attrSpan.textContent = attribution;
-          attrSpan.style.left = '0px';
+          var attrFont = '400 ' + Math.max(11, fontSize * 0.78) + 'px VT323, monospace';
+          attrSpan.style.left = Math.max(0, (rect.width - textWidth(attribution, attrFont)) / 2).toFixed(1) + 'px';
           attrSpan.style.top = Math.min(rect.height - lineHeight, lineY + lineHeight * 0.5).toFixed(1) + 'px';
           attrSpan.style.fontSize = Math.max(11, fontSize * 0.78).toFixed(1) + 'px';
           frag.appendChild(attrSpan);
