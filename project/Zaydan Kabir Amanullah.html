@@ -1080,6 +1080,8 @@ const zaydanAnimationReady = (() => {
   let horseVX = 0;
   let horseRunProgress = 0;
   let horseLaunchTargetX = 0;       // scroll offset when launched
+  let horseStartCX = 0;
+  let horseEndCX = 0;
 
   const mobileScale    = isMobile ? 0.45 : 1;
   const horseScalePart = isMobile ? ' scale(0.45)' : '';
@@ -1089,6 +1091,8 @@ const zaydanAnimationReady = (() => {
     const rect = horseEl.getBoundingClientRect();
     horseCX = rect.left + rect.width  / 2;
     horseCY = rect.top  + rect.height / 2;
+    horseStartCX = horseCX;
+    horseEndCX = window.innerWidth - rect.width / 2 - window.innerWidth * 0.02;
     horseLaunchTargetX = targetX;
     horseRunProgress   = 0;
     horseVX = HORSE_BASE_SPEED + Math.random() * 60; // always right
@@ -1112,15 +1116,16 @@ const zaydanAnimationReady = (() => {
     if (!horseRunning) { applyHorseSway(animTime); return; }
 
     const hw  = horseEl.offsetWidth;
-    const vhw = hw * mobileScale / 2;
+    const hh  = horseEl.offsetHeight;
 
     horseRunProgress = Math.min(
       1,
       horseRunProgress + (horseVX * dt) / Math.max(1, maxX - horseLaunchTargetX)
     );
 
-    // Keep the horse visible at the top-right while it pulls the panels to screen 2.
-    horseCX = window.innerWidth - vhw - window.innerWidth * 0.02;
+    // Let the horse visibly gallop while the panels move, then return it to the top-right.
+    const travelArc = Math.sin(horseRunProgress * Math.PI) * Math.min(140, window.innerWidth * 0.12);
+    horseCX = horseStartCX + (horseEndCX - horseStartCX) * horseRunProgress - travelArc;
     targetX = clampX(horseLaunchTargetX + horseRunProgress * (maxX - horseLaunchTargetX));
 
     // Horse has reached the top-right of the second panel: park it there.
