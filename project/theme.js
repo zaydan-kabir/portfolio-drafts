@@ -191,11 +191,11 @@
       var boxWidth = Math.max(1, Math.min(panelWidth - 44, maxWidth));
       var side = (panelWidth - boxWidth) / 2;
       var top = window.innerWidth < 600
-        ? 96
-        : Math.max(96, Math.min(140, panelHeight * 0.12));
+        ? Math.max(132, panelHeight * 0.24)
+        : Math.max(210, panelHeight * 0.32);
       var bottom = window.innerWidth < 600
-        ? 54
-        : Math.max(64, Math.min(100, panelHeight * 0.08));
+        ? 36
+        : Math.max(48, panelHeight * 0.08);
       canvas.style.left = side + 'px';
       canvas.style.top = top + 'px';
       canvas.style.width = boxWidth + 'px';
