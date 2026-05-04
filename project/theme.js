@@ -191,8 +191,8 @@
       var boxWidth = Math.max(1, Math.min(panelWidth - 44, maxWidth));
       var side = (panelWidth - boxWidth) / 2;
       var top = window.innerWidth < 600
-        ? Math.max(132, panelHeight * 0.24)
-        : Math.max(210, panelHeight * 0.32);
+        ? Math.max(150, panelHeight * 0.34)
+        : Math.max(260, panelHeight * 0.44);
       var bottom = window.innerWidth < 600
         ? 36
         : Math.max(48, panelHeight * 0.08);
