@@ -527,9 +527,21 @@
       padding: calc(clamp(48px, 6vw, 88px) + 64px) clamp(48px, 10vw, 160px) clamp(48px, 6vw, 88px);
       overflow: hidden;
     }
+    #panel-2-fig {
+      position: absolute;
+      right: clamp(18px, 4vw, 64px);
+      bottom: clamp(18px, 4vw, 58px);
+      width: clamp(120px, 18vw, 260px);
+      height: auto;
+      z-index: 2;
+      pointer-events: none;
+      user-select: none;
+    }
     .p2-quote-wrap {
       max-width: 700px;
       width: 100%;
+      position: relative;
+      z-index: 3;
     }
     .p2-quote-mark {
       font-family: 'Lora', serif;
@@ -563,6 +575,11 @@
         align-items: flex-start;
         padding: 80px 28px 48px;
         overflow-y: auto;
+      }
+      #panel-2-fig {
+        right: 14px;
+        bottom: 18px;
+        width: min(34vw, 130px);
       }
     }
   </style>
@@ -632,6 +649,7 @@
       <canvas id="portrait-canvas"></canvas>
     </div>
     <div class="panel" id="panel-2">
+      <img id="panel-2-fig" src="uploads/Uncut Fig 1.png" alt="" aria-hidden="true">
       <div id="panel-2-inner">
         <div class="p2-quote-wrap">
           <span class="p2-quote-mark">&ldquo;</span>
