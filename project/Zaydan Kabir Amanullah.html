@@ -539,9 +539,9 @@
     }
     #panel-2-writing {
       position: absolute;
-      right: clamp(54px, 7vw, 132px);
-      bottom: clamp(210px, 24vw, 336px);
-      width: clamp(280px, 38vw, 620px);
+      right: clamp(26px, 4.8vw, 84px);
+      bottom: clamp(176px, 21vw, 292px);
+      width: clamp(190px, 20vw, 300px);
       color: var(--ink);
       z-index: 4;
       pointer-events: none;
@@ -560,7 +560,7 @@
       overflow: hidden;
       white-space: nowrap;
       font-family: 'Bradley Hand', 'Comic Sans MS', cursive;
-      font-size: clamp(22px, 2.4vw, 38px);
+      font-size: clamp(16px, 1.45vw, 24px);
       font-weight: 700;
       line-height: 1.05;
       letter-spacing: 0.01em;
@@ -572,15 +572,15 @@
     }
     .p2-writing-arrow {
       display: block;
-      width: clamp(76px, 9vw, 132px);
-      height: clamp(100px, 12vw, 170px);
-      margin: clamp(4px, 0.8vw, 10px) auto 0;
+      width: clamp(44px, 4.8vw, 76px);
+      height: clamp(62px, 6.8vw, 104px);
+      margin: clamp(2px, 0.4vw, 6px) 28% 0 auto;
       overflow: visible;
     }
     .p2-writing-arrow path {
       fill: none;
       stroke: currentColor;
-      stroke-width: 9;
+      stroke-width: 6;
       stroke-linecap: round;
       stroke-linejoin: round;
       stroke-dasharray: 260;
@@ -589,7 +589,7 @@
     .p2-writing-arrow polygon {
       fill: currentColor;
       opacity: 0;
-      transform-origin: 45px 18px;
+      transform-origin: 30px 15px;
     }
     #panel-2.writing-active .p2-writing-arrow path {
       animation: p2-write-arrow 0.65s ease-out forwards;
@@ -652,14 +652,14 @@
         width: min(34vw, 130px);
       }
       #panel-2-writing {
-        right: 26px;
-        bottom: 146px;
-        width: min(84vw, 330px);
+        right: 12px;
+        bottom: 126px;
+        width: min(58vw, 210px);
       }
-      .p2-writing-line { font-size: clamp(18px, 6vw, 24px); }
+      .p2-writing-line { font-size: clamp(13px, 4.1vw, 17px); }
       .p2-writing-arrow {
-        width: 66px;
-        height: 88px;
+        width: 42px;
+        height: 58px;
       }
     }
   </style>
@@ -732,9 +732,9 @@
       <img id="panel-2-fig" src="uploads/Uncut Fig 1.png" alt="" aria-hidden="true">
       <div id="panel-2-writing" aria-hidden="true">
         <div class="p2-writing-line">In this life, I choose design.</div>
-        <svg class="p2-writing-arrow" viewBox="0 0 120 170" focusable="false">
-          <path d="M 72 160 C 72 118 65 86 47 42"></path>
-          <polygon points="47,18 25,50 63,42"></polygon>
+        <svg class="p2-writing-arrow" viewBox="0 0 80 120" focusable="false">
+          <path d="M 45 112 C 44 84 37 57 31 30"></path>
+          <polygon points="30,10 16,34 44,28"></polygon>
         </svg>
       </div>
       <div id="panel-2-inner">
