@@ -99,6 +99,11 @@
     style.textContent = [
       '#panel-2-inner{display:block!important;padding:0!important;overflow:hidden!important;}',
       '#panel-2-manuscript{position:absolute;z-index:1;display:block;pointer-events:none;}',
+      '#panel-2-flow{position:absolute;inset:0;z-index:2;pointer-events:none;}',
+      '#panel-2-flow span{position:absolute;white-space:pre;font-family:Lora,Georgia,serif;font-style:italic;font-weight:400;line-height:1;color:rgba(240,240,240,.86);}',
+      'html[data-theme="light"] #panel-2-flow span{color:rgba(10,10,10,.9);}',
+      '#panel-2-flow .p2-flow-attr{font-family:VT323,monospace;font-style:normal;letter-spacing:.08em;color:rgba(240,240,240,.5);}',
+      'html[data-theme="light"] #panel-2-flow .p2-flow-attr{color:rgba(10,10,10,.56);}',
       '#panel-2 .p2-quote-wrap{display:none!important;}',
       '#panel-2-fig{left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;width:clamp(118px,15vw,230px)!important;z-index:4!important;transform:translate(-50%,-50%)!important;filter:drop-shadow(0 14px 28px rgba(0,0,0,.32));will-change:left,top;}',
       '@media(max-width:600px){#panel-2-fig{width:clamp(92px,32vw,132px)!important;}}'
@@ -113,6 +118,13 @@
       inner.insertBefore(canvas, inner.firstChild);
     }
     var ctx = canvas.getContext('2d');
+    var flow = document.getElementById('panel-2-flow');
+    if (!flow) {
+      flow = document.createElement('div');
+      flow.id = 'panel-2-flow';
+      flow.setAttribute('aria-hidden', 'true');
+      inner.insertBefore(flow, canvas.nextSibling);
+    }
     var text = quote.textContent.trim();
     var attribution = attr ? attr.textContent.trim() : '';
     var isMobile = window.innerWidth < 600;
@@ -121,6 +133,7 @@
     var targetX = figX;
     var targetY = figY;
     var prepareWithSegments = null;
+    var lastLayoutKey = '';
 
     import('./node_modules/@chenglou/pretext/dist/layout.js')
       .then(function (mod) { prepareWithSegments = mod.prepareWithSegments; })
@@ -136,6 +149,11 @@
         } catch (err) {}
       }
       return ctx.measureText(value).width;
+    }
+
+    function textWidth(value, font) {
+      ctx.font = font;
+      return measure(value, font);
     }
 
     function setTarget(clientX, clientY) {
@@ -224,40 +242,61 @@
         width: rect.width
       };
 
-      var theme = root.dataset.theme;
-      var textColor = theme === 'light' ? 'rgba(10,10,10,.9)' : 'rgba(240,240,240,.84)';
-      var attrColor = theme === 'light' ? 'rgba(10,10,10,.56)' : 'rgba(240,240,240,.5)';
       var fontSize = Math.max(13, Math.min(18, rect.width * (isMobile ? 0.043 : 0.018)));
       var lineHeight = fontSize * 1.68;
       var font = 'italic 400 ' + fontSize + 'px Lora, Georgia, serif';
       var words = text.split(/\s+/);
       var wordIndex = 0;
       var lineY = 0;
+      var layoutKey = [
+        Math.round(figCenterX / 8),
+        Math.round(figCenterY / 8),
+        Math.round(rect.width),
+        Math.round(rect.height),
+        Math.round(fontSize)
+      ].join(':');
 
       ctx.clearRect(0, 0, rect.width, rect.height);
-      ctx.font = font;
-      ctx.fillStyle = textColor;
-      ctx.textBaseline = 'top';
+      if (layoutKey !== lastLayoutKey) {
+        var frag = document.createDocumentFragment();
+        flow.replaceChildren();
+        flow.style.left = canvas.style.left;
+        flow.style.top = canvas.style.top;
+        flow.style.width = canvas.style.width;
+        flow.style.height = canvas.style.height;
 
-      while (wordIndex < words.length && lineY < rect.height - lineHeight * 2) {
-        rangesForLine(lineY, lineHeight, obstacle).forEach(function (range) {
-          var x = range.start;
-          while (wordIndex < words.length) {
-            var word = words[wordIndex] + (wordIndex === words.length - 1 ? '' : ' ');
-            var wordWidth = measure(word, font);
-            if (x > range.start && x + wordWidth > range.end) break;
-            ctx.fillText(word, x, lineY);
-            x += wordWidth;
-            wordIndex++;
-          }
-        });
-        lineY += lineHeight;
-      }
+        while (wordIndex < words.length && lineY < rect.height - lineHeight * 2) {
+          rangesForLine(lineY, lineHeight, obstacle).forEach(function (range) {
+            var x = range.start;
+            while (wordIndex < words.length) {
+              var word = words[wordIndex] + (wordIndex === words.length - 1 ? '' : ' ');
+              var wordWidth = textWidth(word, font);
+              if (x > range.start && x + wordWidth > range.end) break;
+              var span = document.createElement('span');
+              span.textContent = word;
+              span.style.left = x.toFixed(1) + 'px';
+              span.style.top = lineY.toFixed(1) + 'px';
+              span.style.fontSize = fontSize.toFixed(1) + 'px';
+              frag.appendChild(span);
+              x += wordWidth;
+              wordIndex++;
+            }
+          });
+          lineY += lineHeight;
+        }
 
-      if (attribution) {
-        ctx.font = '400 ' + Math.max(11, fontSize * 0.78) + 'px VT323, monospace';
-        ctx.fillStyle = attrColor;
-        ctx.fillText(attribution, 0, Math.min(rect.height - lineHeight, lineY + lineHeight * 0.5));
+        if (attribution) {
+          var attrSpan = document.createElement('span');
+          attrSpan.className = 'p2-flow-attr';
+          attrSpan.textContent = attribution;
+          attrSpan.style.left = '0px';
+          attrSpan.style.top = Math.min(rect.height - lineHeight, lineY + lineHeight * 0.5).toFixed(1) + 'px';
+          attrSpan.style.fontSize = Math.max(11, fontSize * 0.78).toFixed(1) + 'px';
+          frag.appendChild(attrSpan);
+        }
+
+        flow.appendChild(frag);
+        lastLayoutKey = layoutKey;
       }
 
       requestAnimationFrame(draw);
