@@ -627,11 +627,10 @@
         <img id="masthead-reference" src="uploads/zaydan-screenshot-wordmark.png" alt="" aria-hidden="true">
         <span id="masthead-replay">&lt;click&gt;<br>to replay animation</span>
       </div>
-
-      <canvas id="horse-canvas"></canvas>
       <canvas id="portrait-canvas"></canvas>
     </div>
     <div class="panel" id="panel-2">
+      <canvas id="horse-canvas"></canvas>
       <div id="panel-2-inner">
         <div class="p2-quote-wrap">
           <span class="p2-quote-mark">&ldquo;</span>
@@ -894,11 +893,11 @@ const zaydanAnimationReady = (() => {
     }
   });
 
-  // When user scrolls back to panel 1, restore the horse
+  // Restore the horse in panel 2 after it has galloped off-screen.
   let horseRestorePending = false;
   function maybeRestoreHorse() {
     if (!horseGone || horseRestorePending) return;
-    if (currentX > 10) return; // not back at panel 1 yet
+    if (currentX > 10) return;
     horseRestorePending = true;
     setTimeout(() => {
       horseGone            = false;
