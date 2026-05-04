@@ -537,6 +537,76 @@
       pointer-events: none;
       user-select: none;
     }
+    #panel-2-writing {
+      position: absolute;
+      right: clamp(54px, 7vw, 132px);
+      bottom: clamp(210px, 24vw, 336px);
+      width: clamp(280px, 38vw, 620px);
+      color: var(--ink);
+      z-index: 4;
+      pointer-events: none;
+      user-select: none;
+      opacity: 0;
+      transform: rotate(-3deg) translateY(8px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    #panel-2.writing-active #panel-2-writing {
+      opacity: 1;
+      transform: rotate(-3deg) translateY(0);
+    }
+    .p2-writing-line {
+      display: inline-block;
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      font-family: 'Bradley Hand', 'Comic Sans MS', cursive;
+      font-size: clamp(22px, 2.4vw, 38px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: 0.01em;
+      filter: drop-shadow(0 0 1px currentColor);
+      clip-path: inset(0 100% 0 0);
+    }
+    #panel-2.writing-active .p2-writing-line {
+      animation: p2-write-text 1.8s steps(26, end) 0.55s forwards;
+    }
+    .p2-writing-arrow {
+      display: block;
+      width: clamp(76px, 9vw, 132px);
+      height: clamp(100px, 12vw, 170px);
+      margin: clamp(4px, 0.8vw, 10px) auto 0;
+      overflow: visible;
+    }
+    .p2-writing-arrow path {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 260;
+      stroke-dashoffset: 260;
+    }
+    .p2-writing-arrow polygon {
+      fill: currentColor;
+      opacity: 0;
+      transform-origin: 45px 18px;
+    }
+    #panel-2.writing-active .p2-writing-arrow path {
+      animation: p2-write-arrow 0.65s ease-out forwards;
+    }
+    #panel-2.writing-active .p2-writing-arrow polygon {
+      animation: p2-arrow-head 0.15s ease-out 0.55s forwards;
+    }
+    @keyframes p2-write-arrow {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes p2-arrow-head {
+      from { opacity: 0; transform: scale(0.6); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes p2-write-text {
+      to { clip-path: inset(0 0 0 0); }
+    }
     .p2-quote-wrap {
       max-width: 700px;
       width: 100%;
@@ -580,6 +650,16 @@
         right: 14px;
         bottom: 18px;
         width: min(34vw, 130px);
+      }
+      #panel-2-writing {
+        right: 26px;
+        bottom: 146px;
+        width: min(84vw, 330px);
+      }
+      .p2-writing-line { font-size: clamp(18px, 6vw, 24px); }
+      .p2-writing-arrow {
+        width: 66px;
+        height: 88px;
       }
     }
   </style>
@@ -650,6 +730,13 @@
     </div>
     <div class="panel" id="panel-2">
       <img id="panel-2-fig" src="uploads/Uncut Fig 1.png" alt="" aria-hidden="true">
+      <div id="panel-2-writing" aria-hidden="true">
+        <div class="p2-writing-line">In this life, I choose design.</div>
+        <svg class="p2-writing-arrow" viewBox="0 0 120 170" focusable="false">
+          <path d="M 72 160 C 72 118 65 86 47 42"></path>
+          <polygon points="47,18 25,50 63,42"></polygon>
+        </svg>
+      </div>
       <div id="panel-2-inner">
         <div class="p2-quote-wrap">
           <span class="p2-quote-mark">&ldquo;</span>
@@ -827,6 +914,7 @@ const zaydanAnimationReady = (() => {
 
   // ── Down-scroll → horizontal movement ────────────────────────────
   const track = document.getElementById('track');
+  const panel2 = document.getElementById('panel-2');
   const scrollCapture = document.getElementById('scroll-capture');
   let targetX = 0;
   let currentX = 0;
@@ -943,6 +1031,7 @@ const zaydanAnimationReady = (() => {
     currentX += (targetX - currentX) * lerpFactor;
     if (Math.abs(targetX - currentX) < 0.5) { currentX = targetX; horseScrolling = false; }
     track.style.transform = `translate3d(-${currentX.toFixed(2)}px,0,0)`;
+    panel2.classList.toggle('writing-active', currentX > maxX * 0.45);
     maybeRestoreHorse();
     requestAnimationFrame(renderHorizontalTrack);
   }
