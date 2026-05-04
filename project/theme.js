@@ -105,8 +105,8 @@
       '#panel-2-flow .p2-flow-attr{font-family:VT323,monospace;font-style:normal;letter-spacing:.08em;color:rgba(240,240,240,.5);}',
       'html[data-theme=\"light\"] #panel-2-flow .p2-flow-attr{color:rgba(10,10,10,.56);}',
       '#panel-2 .p2-quote-wrap{display:none!important;}',
-      '#panel-2-fig{left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;width:clamp(118px,15vw,230px)!important;z-index:4!important;transform:translate(-50%,-50%)!important;filter:drop-shadow(0 14px 28px rgba(0,0,0,.32));will-change:left,top;}',
-      '@media(max-width:600px){#panel-2-fig{width:clamp(92px,32vw,132px)!important;}}'
+      '#panel-2-fig{left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;width:clamp(88px,11vw,170px)!important;z-index:4!important;transform:translate(-50%,-50%)!important;filter:drop-shadow(0 12px 22px rgba(0,0,0,.28));will-change:left,top;}',
+      '@media(max-width:600px){#panel-2-fig{width:clamp(70px,24vw,105px)!important;}}'
     ].join('\n');
     document.head.appendChild(style);
 
@@ -231,8 +231,8 @@
       var overlaps = lineY + lineHeight > obstacle.top && lineY < obstacle.bottom;
       if (!overlaps) return [{ start: 0, end: obstacle.width }];
       var ranges = [];
-      if (obstacle.left > 120) ranges.push({ start: 0, end: obstacle.left });
-      if (obstacle.width - obstacle.right > 120) ranges.push({ start: obstacle.right, end: obstacle.width });
+      if (obstacle.left > 72) ranges.push({ start: 0, end: obstacle.left });
+      if (obstacle.width - obstacle.right > 72) ranges.push({ start: obstacle.right, end: obstacle.width });
       return ranges.length ? ranges : [{ start: 0, end: obstacle.width }];
     }
 
@@ -247,7 +247,7 @@
       var figArtRect = getFigArtRect(figRect);
       var figCenterX = figArtRect.left - rect.left + figArtRect.width / 2;
       var figCenterY = figArtRect.top - rect.top + figArtRect.height / 2;
-      var padding = Math.max(4, Math.min(8, figArtRect.width * 0.04));
+      var padding = Math.max(1, Math.min(3, figArtRect.width * 0.018));
       var obstacle = {
         left: figArtRect.left - rect.left - padding,
         right: figArtRect.left - rect.left + figArtRect.width + padding,
