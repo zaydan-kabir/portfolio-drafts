@@ -70,50 +70,76 @@
     }
     .tower {
       position: absolute;
-      left: 11.5%;
-      bottom: -3%;
-      width: 11.4%;
-      height: 58%;
-      z-index: 16;
-      filter: drop-shadow(0 10px 12px rgba(61,53,43,.16));
+      left: 11.2%;
+      bottom: -2.2%;
+      width: 9.6%;
+      height: 60.5%;
+      z-index: 26;
+      filter: drop-shadow(0 12px 12px rgba(61,53,43,.14));
     }
     .tower .dome {
       position: absolute;
-      left: 17%;
+      left: 13%;
       top: 0;
-      width: 66%;
-      height: 17%;
+      width: 74%;
+      height: 15%;
       border-radius: 100% 100% 0 0;
-      background: linear-gradient(180deg, #ffad7c, #e88966);
+      background: linear-gradient(180deg, #ffb077 0%, #f08d65 58%, #db7d61 100%);
+      box-shadow: inset 0 -7px 0 rgba(183,103,82,.16);
+      z-index: 3;
     }
     .tower .body {
       position: absolute;
-      left: 7%;
-      top: 13%;
-      width: 86%;
-      height: 87%;
+      left: 6%;
+      top: 11.5%;
+      width: 88%;
+      height: 88.5%;
       border-radius: 8px 8px 0 0;
-      background: linear-gradient(90deg, #e6ca9f 0 18%, #d5b38e 19% 32%, #e0c19a 33% 50%, #c9a887 51% 66%, #dfbf96 67% 100%);
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, transparent 0 16%, rgba(255,240,205,.34) 17% 20%, transparent 21% 38%, rgba(132,102,72,.12) 39% 43%, transparent 44% 60%, rgba(255,240,205,.28) 61% 64%, transparent 65% 80%, rgba(132,102,72,.12) 81% 84%, transparent 85% 100%),
+        linear-gradient(90deg, #e6c89b 0%, #d2ad86 38%, #e0bd93 64%, #c7a47f 100%);
+      box-shadow: inset 6px 0 0 rgba(255,237,199,.26), inset -8px 0 0 rgba(111,82,59,.12);
+    }
+    .tower .body::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 13%;
+      height: 2.6%;
+      background: rgba(255,238,198,.45);
+    }
+    .tower .body::after {
+      content: '';
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      bottom: 0;
+      height: 47%;
+      background: repeating-linear-gradient(90deg, rgba(117,88,62,.13) 0 3%, transparent 3% 15%);
+      opacity: .72;
     }
     .window {
       position: absolute;
-      width: 11%;
-      height: 11%;
-      border-radius: 10px 10px 3px 3px;
-      background: rgba(95,79,59,.36);
+      width: 10%;
+      height: 8.8%;
+      border-radius: 999px 999px 4px 4px;
+      background: rgba(101,80,58,.4);
+      box-shadow: inset 0 2px 0 rgba(255,234,195,.16);
       z-index: 2;
     }
-    .w1 { left: 25%; top: 23%; }
-    .w2 { left: 46%; top: 23%; }
-    .w3 { left: 68%; top: 23%; }
-    .w4 { left: 28%; top: 47%; height: 9%; }
-    .w5 { left: 49%; top: 47%; height: 9%; }
-    .w6 { left: 70%; top: 47%; height: 9%; }
+    .w1 { left: 25%; top: 21%; }
+    .w2 { left: 46%; top: 21%; }
+    .w3 { left: 67%; top: 21%; }
+    .w4 { left: 28%; top: 46%; height: 8%; width: 6%; }
+    .w5 { left: 49%; top: 46%; height: 8%; width: 6%; }
+    .w6 { left: 70%; top: 46%; height: 8%; width: 6%; }
     .forest {
       position: absolute;
       inset: auto -4% -1% -4%;
       height: 62%;
-      z-index: 20;
+      z-index: 24;
     }
     .tree {
       position: absolute;
@@ -204,7 +230,10 @@
         .to('.sun', { scale: 1.08, duration: 3.1, repeat: 1, yoyo: true, ease: 'sine.inOut' }, 1.4)
         .to('.click', { opacity: 0.42, duration: 0.9, repeat: 5, yoyo: true, ease: 'sine.inOut' }, 1.7);
       window.__timelines['clarity-preview'] = tl;
-      if (!window.__hyperframes) tl.play(0);
+      if (!window.__hyperframes) {
+        tl.eventCallback('onComplete', () => tl.restart());
+        tl.play(0);
+      }
     </script>
   </div>
 </body>
