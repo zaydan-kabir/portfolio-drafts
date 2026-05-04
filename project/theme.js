@@ -156,12 +156,23 @@
       return measure(value, font);
     }
 
+    function getFigArtRect(figRect) {
+      return {
+        left: figRect.left + figRect.width * (136 / 896),
+        top: figRect.top + figRect.height * (306 / 1200),
+        width: figRect.width * (632 / 896),
+        height: figRect.height * (558 / 1200)
+      };
+    }
+
     function setTarget(clientX, clientY) {
       var rect = panel.getBoundingClientRect();
       var figRect = fig.getBoundingClientRect();
-      var margin = Math.max(figRect.width, figRect.height) * 0.5;
-      targetX = Math.max(margin, Math.min(rect.width - margin, clientX - rect.left));
-      targetY = Math.max(margin + 70, Math.min(rect.height - margin, clientY - rect.top));
+      var artRect = getFigArtRect(figRect);
+      var marginX = artRect.width * 0.5;
+      var marginY = artRect.height * 0.5;
+      targetX = Math.max(marginX, Math.min(rect.width - marginX, clientX - rect.left));
+      targetY = Math.max(marginY + 70, Math.min(rect.height - marginY, clientY - rect.top));
     }
 
     document.addEventListener('mousemove', function (event) {
@@ -233,14 +244,15 @@
       fig.style.setProperty('top', figY.toFixed(1) + 'px', 'important');
 
       var figRect = fig.getBoundingClientRect();
-      var figCenterX = figRect.left - rect.left + figRect.width / 2;
-      var figCenterY = figRect.top - rect.top + figRect.height / 2;
-      var radius = Math.max(figRect.width, figRect.height) * 0.58;
+      var figArtRect = getFigArtRect(figRect);
+      var figCenterX = figArtRect.left - rect.left + figArtRect.width / 2;
+      var figCenterY = figArtRect.top - rect.top + figArtRect.height / 2;
+      var padding = Math.max(4, Math.min(8, figArtRect.width * 0.04));
       var obstacle = {
-        left: figCenterX - radius,
-        right: figCenterX + radius,
-        top: figCenterY - radius,
-        bottom: figCenterY + radius,
+        left: figArtRect.left - rect.left - padding,
+        right: figArtRect.left - rect.left + figArtRect.width + padding,
+        top: figArtRect.top - rect.top - padding,
+        bottom: figArtRect.top - rect.top + figArtRect.height + padding,
         width: rect.width
       };
 
