@@ -161,6 +161,17 @@
     }
 
     function getFigArtRect(figRect) {
+      var naturalRatio = fig.naturalWidth && fig.naturalHeight
+        ? fig.naturalWidth / fig.naturalHeight
+        : 0;
+      if (naturalRatio > 0 && naturalRatio < 0.9) {
+        return {
+          left: figRect.left + figRect.width * (136 / 896),
+          top: figRect.top + figRect.height * (306 / 1200),
+          width: figRect.width * (632 / 896),
+          height: figRect.height * (558 / 1200)
+        };
+      }
       return {
         left: figRect.left,
         top: figRect.top,
