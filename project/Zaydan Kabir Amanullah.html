@@ -922,7 +922,7 @@ const zaydanAnimationReady = (() => {
     maybeRestoreHorse();
     requestAnimationFrame(renderHorizontalTrack);
   }
-  renderHorizontalTrack();
+  requestAnimationFrame(renderHorizontalTrack);
 
   // ── Variable-typographic ASCII via pretext ───────────────────────
   let typoPalette = null;
