@@ -129,9 +129,13 @@
     var attribution = attr ? attr.textContent.trim() : '';
     var isMobile = window.innerWidth < 600;
     var figX = panel.clientWidth * 0.5;
-    var figY = panel.clientHeight * 0.5;
+    var figY = -Math.max(180, panel.clientHeight * 0.22);
     var targetX = figX;
-    var targetY = figY;
+    var targetY = panel.clientHeight * 0.5;
+    var dropStarted = false;
+    var dropActive = false;
+    var dropVelocity = 0;
+    var pointerHasMoved = false;
     var prepareWithSegments = null;
     var lastLayoutKey = '';
 
@@ -158,10 +162,10 @@
 
     function getFigArtRect(figRect) {
       return {
-        left: figRect.left + figRect.width * (136 / 896),
-        top: figRect.top + figRect.height * (306 / 1200),
-        width: figRect.width * (632 / 896),
-        height: figRect.height * (558 / 1200)
+        left: figRect.left,
+        top: figRect.top,
+        width: figRect.width,
+        height: figRect.height
       };
     }
 
@@ -171,8 +175,36 @@
       var artRect = getFigArtRect(figRect);
       var marginX = artRect.width * 0.5;
       var marginY = artRect.height * 0.5;
+      pointerHasMoved = true;
+      dropStarted = true;
+      dropActive = false;
       targetX = Math.max(marginX, Math.min(rect.width - marginX, clientX - rect.left));
       targetY = Math.max(marginY + 70, Math.min(rect.height - marginY, clientY - rect.top));
+    }
+
+    function resetDropStart() {
+      figX = panel.clientWidth * 0.5;
+      figY = -Math.max(180, panel.clientHeight * 0.22);
+      targetX = figX;
+      targetY = panel.clientHeight * 0.5;
+      dropVelocity = 0;
+      lastLayoutKey = '';
+    }
+
+    function beginDrop() {
+      if (dropStarted || pointerHasMoved) return;
+      dropStarted = true;
+      dropActive = true;
+      resetDropStart();
+    }
+
+    function checkPanelVisible() {
+      if (dropStarted || pointerHasMoved) return;
+      var rect = panel.getBoundingClientRect();
+      var visibleX = Math.max(0, Math.min(rect.right, window.innerWidth) - Math.max(rect.left, 0));
+      var visibleY = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
+      var area = Math.max(1, rect.width * rect.height);
+      if ((visibleX * visibleY) / area > 0.14) beginDrop();
     }
 
     document.addEventListener('mousemove', function (event) {
@@ -238,8 +270,19 @@
 
     function draw() {
       var rect = resizeCanvas();
-      figX += (targetX - figX) * 0.14;
-      figY += (targetY - figY) * 0.14;
+      if (dropActive && !pointerHasMoved) {
+        figX += (targetX - figX) * 0.12;
+        dropVelocity += (targetY - figY) * 0.035;
+        dropVelocity *= 0.72;
+        figY += dropVelocity;
+        if (Math.abs(targetY - figY) < 0.5 && Math.abs(dropVelocity) < 0.5) {
+          figY = targetY;
+          dropActive = false;
+        }
+      } else {
+        figX += (targetX - figX) * 0.14;
+        figY += (targetY - figY) * 0.14;
+      }
       fig.style.setProperty('left', figX.toFixed(1) + 'px', 'important');
       fig.style.setProperty('top', figY.toFixed(1) + 'px', 'important');
 
@@ -332,12 +375,33 @@
     }
 
     window.addEventListener('resize', function () {
-      figX = panel.clientWidth * 0.5;
-      figY = panel.clientHeight * 0.5;
-      targetX = figX;
-      targetY = figY;
+      if (pointerHasMoved) {
+        figX = panel.clientWidth * 0.5;
+        figY = panel.clientHeight * 0.5;
+        targetX = figX;
+        targetY = figY;
+      } else if (!dropStarted) {
+        resetDropStart();
+      } else {
+        targetX = panel.clientWidth * 0.5;
+        targetY = panel.clientHeight * 0.5;
+      }
+      dropVelocity = 0;
+      dropActive = dropStarted && !pointerHasMoved;
       isMobile = window.innerWidth < 600;
     });
+
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.14) beginDrop();
+        });
+      }, { threshold: [0, 0.14, 0.28] });
+      observer.observe(panel);
+    }
+    window.addEventListener('scroll', checkPanelVisible, { passive: true });
+    window.addEventListener('resize', checkPanelVisible);
+    checkPanelVisible();
 
     requestAnimationFrame(draw);
   }
